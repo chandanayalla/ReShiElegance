@@ -1,0 +1,300 @@
+:root {
+  --primary-color: #E91E63;
+  --secondary-color: #FCE4EC;
+  --accent-color: #F48FB1;
+  --background-color: #FFFFFF;
+  --text-color: #333333;
+  --light-gray: #F5F5F5;
+  --border-color: #E0E0E0;
+  --success-color: #4CAF50;
+  --warning-color: #FF9800;
+  --danger-color: #F44336;
+  --heading-font: 'Playfair Display', serif;
+  --body-font: 'Poppins', sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--body-font);
+  color: var(--text-color);
+  background-color: var(--background-color);
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--heading-font);
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: #C2185B;
+  border-color: #C2185B;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(233, 30, 99, 0.3);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-outline-primary {
+  color: var(--primary-color);
+  border-color: var(--primary-color);
+  font-weight: 600;
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: #C2185B;
+}
+
+.container-fluid {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+img,
+video,
+iframe,
+svg {
+  max-width: 100%;
+  height: auto;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+.row {
+  flex-wrap: wrap;
+}
+
+/* Utility Classes */
+.text-primary-color {
+  color: var(--primary-color);
+}
+
+.bg-light-pink {
+  background-color: var(--secondary-color);
+}
+
+.bg-accent {
+  background-color: var(--accent-color);
+}
+
+.text-muted {
+  color: #999 !important;
+}
+
+.badge-primary {
+  background-color: var(--primary-color);
+}
+
+/* Spacing Utilities */
+.py-lg {
+  padding-top: 4rem !important;
+  padding-bottom: 4rem !important;
+}
+
+.py-xl {
+  padding-top: 6rem !important;
+  padding-bottom: 6rem !important;
+}
+
+/* Transitions */
+.transition-all {
+  transition: all 0.3s ease;
+}
+
+/* Responsive Typography */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 1.75rem;
+  }
+  h2 {
+    font-size: 1.5rem;
+  }
+  h3 {
+    font-size: 1.25rem;
+  }
+}
+
+/* Loading Spinner */
+.spinner-custom {
+  width: 50px;
+  height: 50px;
+  border: 4px solid var(--secondary-color);
+  border-top: 4px solid var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Toast Notifications */
+.toast-custom {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: white;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 9999;
+  animation: slideIn 0.3s ease-out;
+}
+
+.toast-success {
+  border-left: 4px solid var(--success-color);
+}
+
+.toast-error {
+  border-left: 4px solid var(--danger-color);
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Scroll to Top Button */
+.scroll-to-top {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 50px;
+  height: 50px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  cursor: pointer;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 9998;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(233, 30, 99, 0.3);
+}
+
+.scroll-to-top:hover {
+  background-color: #C2185B;
+  transform: translateY(-3px);
+}
+
+.scroll-to-top.show {
+  display: flex;
+}
+
+/* Card Hover Effects */
+.card {
+  border: 1px solid var(--border-color);
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 24px rgba(233, 30, 99, 0.15);
+}
+
+/* Image Hover Effects */
+.image-hover {
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.image-hover img {
+  transition: transform 0.3s ease;
+}
+
+.image-hover:hover img {
+  transform: scale(1.05);
+}
+
+/* Badge Styles */
+.badge-discount {
+  background-color: var(--danger-color);
+  font-weight: 600;
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+}
+
+.badge-new {
+  background-color: var(--primary-color);
+  font-weight: 600;
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+}
+
+/* Rating Stars */
+.rating {
+  color: #FFC107;
+  font-size: 0.9rem;
+  letter-spacing: 2px;
+}
+
+/* Form Styling */
+.form-control {
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  font-family: var(--body-font);
+  transition: all 0.3s ease;
+}
+
+.form-control:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.2rem rgba(233, 30, 99, 0.25);
+}
+
+.form-control::placeholder {
+  color: #bbb;
+}
+
+/* Input Group */
+.input-group .form-control {
+  border-radius: 8px 0 0 8px;
+}
+
+.input-group .btn {
+  border-radius: 0 8px 8px 0;
+}

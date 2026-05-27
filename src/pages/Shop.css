@@ -1,0 +1,249 @@
+.shop-container {
+  background-color: var(--light-gray);
+  min-height: calc(100vh - 200px);
+  padding: 2rem 0;
+}
+
+.shop-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.shop-header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-color);
+}
+
+.shop-header p {
+  color: #999;
+  font-size: 1rem;
+}
+
+/* Filters Panel */
+.filters-panel {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 12px;
+  position: sticky;
+  top: 150px;
+  border: 1px solid var(--border-color);
+}
+
+.filters-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--border-color);
+}
+
+.filters-header h5 {
+  margin: 0;
+  color: var(--primary-color);
+}
+
+.filter-group {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.filter-group:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.filter-group h6 {
+  color: var(--text-color);
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+
+.filter-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.form-check {
+  display: flex;
+  align-items: center;
+}
+
+.form-check-input {
+  cursor: pointer;
+  width: 18px;
+  height: 18px;
+  border-color: var(--border-color);
+  transition: all 0.2s ease;
+}
+
+.form-check-input:checked {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.form-check-label {
+  cursor: pointer;
+  margin-left: 0.5rem;
+  margin-bottom: 0;
+  color: var(--text-color);
+  transition: color 0.2s ease;
+}
+
+.form-check:hover .form-check-label {
+  color: var(--primary-color);
+}
+
+/* Price Range */
+.price-inputs {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.price-inputs input {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.price-inputs span {
+  color: #999;
+  font-weight: 600;
+}
+
+/* Sort Bar */
+.sort-bar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.sort-bar label {
+  margin: 0;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.sort-bar .form-select {
+  flex: 0 0 200px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 0.5rem;
+}
+
+/* No Products */
+.no-products {
+  text-align: center;
+  padding: 4rem 2rem;
+  background-color: white;
+  border-radius: 12px;
+}
+
+.no-products i {
+  font-size: 4rem;
+  color: var(--primary-color);
+  opacity: 0.5;
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.no-products h4 {
+  color: var(--text-color);
+  margin-bottom: 0.5rem;
+}
+
+.no-products p {
+  color: #999;
+}
+
+/* Pagination */
+.pagination {
+  margin-top: 2rem;
+}
+
+.page-link {
+  color: var(--primary-color);
+  border-color: var(--border-color);
+  border-radius: 6px;
+  margin: 0 0.25rem;
+  transition: all 0.2s ease;
+}
+
+.page-link:hover {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  color: white;
+}
+
+.page-item.active .page-link {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.page-item.disabled .page-link {
+  color: #ccc;
+  pointer-events: none;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .filters-panel {
+    position: static;
+    top: auto;
+    margin-bottom: 2rem;
+  }
+
+  .sort-bar {
+    flex-wrap: wrap;
+  }
+
+  .sort-bar .form-select {
+    flex: 0 0 auto;
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .shop-header h1 {
+    font-size: 2rem;
+  }
+
+  .filters-panel {
+    padding: 1.5rem;
+  }
+
+  .sort-bar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .sort-bar label {
+    width: 100%;
+  }
+
+  .sort-bar .form-select {
+    width: 100%;
+  }
+}
+
+@media (max-width: 576px) {
+  .sort-bar {
+    padding: 1rem;
+    gap: 0.75rem;
+  }
+
+  .sort-bar .form-select {
+    flex: 1 1 100%;
+  }
+}

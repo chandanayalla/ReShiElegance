@@ -1,0 +1,143 @@
+.account-container {
+  background-color: var(--light-gray);
+  min-height: calc(100vh - 200px);
+  padding: 2rem 0;
+}
+
+.account-container h1 {
+  color: var(--text-color);
+}
+
+/* Sidebar */
+.account-sidebar {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  position: sticky;
+  top: 150px;
+}
+
+.user-profile {
+  text-align: center;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 1.5rem;
+}
+
+.avatar {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, var(--primary-color) 0%, #c2185b 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  color: white;
+  margin: 0 auto 1rem;
+}
+
+.user-profile h5 {
+  color: var(--text-color);
+  margin-bottom: 0.25rem;
+}
+
+.user-profile p {
+  color: #999;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+/* Menu Items */
+.menu-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  color: #666;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.menu-item:hover {
+  background-color: var(--light-gray);
+  color: var(--primary-color);
+}
+
+.menu-item.active {
+  background-color: var(--secondary-color);
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.menu-item i {
+  font-size: 1.1rem;
+}
+
+/* Content */
+.account-content {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+}
+
+.content-card {
+  padding: 1.5rem 0;
+}
+
+.content-card h4 {
+  color: var(--primary-color);
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: 1rem;
+}
+
+.form-label {
+  color: var(--text-color);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.form-control {
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 0.75rem;
+}
+
+.form-control:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.2rem rgba(233, 30, 99, 0.1);
+}
+
+.btn {
+  border-radius: 8px;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+}
+
+@media (max-width: 992px) {
+  .account-sidebar {
+    position: static;
+    top: auto;
+  }
+}
+
+@media (max-width: 576px) {
+  .account-sidebar {
+    padding: 1.5rem;
+  }
+
+  .account-content {
+    padding: 1.5rem;
+  }
+}
