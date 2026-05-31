@@ -7,7 +7,7 @@ import './Auth.css';
 
 const Login = () => {
   const navigate = useNavigate();
-  const { login } = useContext(AuthContext);
+  const { login, loginWithGoogle } = useContext(AuthContext);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -21,7 +21,7 @@ const Login = () => {
     setError('');
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (!formData.email || !formData.password) {
@@ -30,15 +30,26 @@ const Login = () => {
     }
 
     setIsLoading(true);
-    setTimeout(() => {
-      try {
-        login(formData.email, formData.password);
-        navigate('/');
-      } catch (err) {
-        setError('Invalid email or password');
-      }
+    try {
+      await login(formData.email, formData.password);
+      navigate('/');
+    } catch (err) {
+      setError(err?.message || 'Invalid email or password');
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    setError('');
+    setIsLoading(true);
+
+    try {
+      await loginWithGoogle();
+    } catch (err) {
+      setError(err?.message || 'Unable to start Google login');
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -104,7 +115,7 @@ const Login = () => {
 
               <div className="auth-divider">OR</div>
 
-              <button className="btn btn-outline-primary w-100 mb-3">
+              <button className="btn btn-outline-primary w-100 mb-3" type="button" onClick={handleGoogleLogin} disabled={isLoading}>
                 <i className="bi bi-google me-2"></i>
                 Continue with Google
               </button>

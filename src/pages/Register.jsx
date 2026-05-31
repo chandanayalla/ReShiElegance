@@ -7,7 +7,7 @@ import './Auth.css';
 
 const Register = () => {
   const navigate = useNavigate();
-  const { register } = useContext(AuthContext);
+  const { register, loginWithGoogle } = useContext(AuthContext);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -23,7 +23,7 @@ const Register = () => {
     setError('');
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (!formData.name || !formData.email || !formData.password || !formData.confirmPassword) {
@@ -42,15 +42,26 @@ const Register = () => {
     }
 
     setIsLoading(true);
-    setTimeout(() => {
-      try {
-        register(formData.email, formData.password, formData.name);
-        navigate('/');
-      } catch (err) {
-        setError('Registration failed');
-      }
+    try {
+      await register(formData.email, formData.password, formData.name);
+      navigate('/');
+    } catch (err) {
+      setError(err?.message || 'Registration failed');
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
+  };
+
+  const handleGoogleSignup = async () => {
+    setError('');
+    setIsLoading(true);
+
+    try {
+      await loginWithGoogle();
+    } catch (err) {
+      setError(err?.message || 'Unable to start Google signup');
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -148,7 +159,7 @@ const Register = () => {
 
               <div className="auth-divider">OR</div>
 
-              <button className="btn btn-outline-primary w-100 mb-3">
+              <button className="btn btn-outline-primary w-100 mb-3" type="button" onClick={handleGoogleSignup} disabled={isLoading}>
                 <i className="bi bi-google me-2"></i>
                 Sign up with Google
               </button>

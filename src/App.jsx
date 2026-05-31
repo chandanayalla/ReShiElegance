@@ -19,6 +19,7 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 import OrderSuccess from './pages/OrderSuccess';
 import ProductList from './pages/ProductList';
+import AuthCallback from './pages/AuthCallback';
 
 // Admin
 import AdminLogin from './pages/admin/AdminLogin';
@@ -44,6 +45,7 @@ function App() {
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/auth/callback" element={<AuthCallback />} />
               <Route path="/account" element={<Account />} />
               <Route path="/wishlist" element={<Wishlist />} />
               <Route path="/about" element={<About />} />
