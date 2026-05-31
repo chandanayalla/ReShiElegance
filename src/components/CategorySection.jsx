@@ -110,7 +110,7 @@ const CategorySection = ({ categories }) => {
         {/* Categories Grid */}
         <div className="row g-4">
           {items.map((category) => (
-            <div key={category.id} className="col-md-6 col-lg-4">
+            <div key={category.name} className="col-md-6 col-lg-4">
               <Link to={`/shop?category=${category.name}`} className="category-card-link">
                 <div className="category-card">
                   <div className="category-image">
