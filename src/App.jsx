@@ -29,6 +29,7 @@ import AddProduct from './pages/admin/AddProduct';
 import EditProduct from './pages/admin/EditProduct';
 import Orders from './pages/admin/Orders';
 import AdminProtectedRoute from './components/AdminProtectedRoute';
+import WhatsAppButton from './components/WhatsAppButton';
 
 function App() {
   return (
@@ -63,6 +64,7 @@ function App() {
 
               <Route path="*" element={<Navigate to="/" />} />
               </Routes>
+              <WhatsAppButton />
             </AdminAuthProvider>
           </CartProvider>
         </WishlistProvider>
