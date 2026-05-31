@@ -24,7 +24,12 @@ const Navbar = () => {
     e.preventDefault();
     if (searchQuery.trim()) {
       window.location.href = `/shop?search=${encodeURIComponent(searchQuery)}`;
+      setIsMenuOpen(false);
     }
+  };
+
+  const closeMobileMenu = () => {
+    setIsMenuOpen(false);
   };
 
   return (
@@ -80,60 +85,60 @@ const Navbar = () => {
             {/* Nav Links */}
             <ul className="navbar-nav ms-auto">
               <li className="nav-item">
-                <Link className="nav-link" to="/">Home</Link>
+                <Link className="nav-link" to="/" onClick={closeMobileMenu}>Home</Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link" to="/shop">Sarees</Link>
+                <Link className="nav-link" to="/shop" onClick={closeMobileMenu}>Sarees</Link>
               </li>
               <li className="nav-item dropdown">
-                <a className="nav-link dropdown-toggle" href="#" id="collectionsDropdown" role="button" data-bs-toggle="dropdown">
+                <a className="nav-link dropdown-toggle" href="#" id="collectionsDropdown" role="button" data-bs-toggle="dropdown" onClick={(e) => e.preventDefault()}>
                   Collections
                 </a>
                 <ul className="dropdown-menu">
-                  <li><Link className="dropdown-item" to="/shop?category=New Arrivals">New Arrivals</Link></li>
-                  <li><Link className="dropdown-item" to="/shop?category=Best Sellers">Best Sellers</Link></li>
-                  <li><Link className="dropdown-item" to="/shop?category=Bridal Sarees">Bridal Sarees</Link></li>
-                  <li><Link className="dropdown-item" to="/shop?category=Party Wear Sarees">Party Wear</Link></li>
+                  <li><Link className="dropdown-item" to="/shop?category=New Arrivals" onClick={closeMobileMenu}>New Arrivals</Link></li>
+                  <li><Link className="dropdown-item" to="/shop?category=Best Sellers" onClick={closeMobileMenu}>Best Sellers</Link></li>
+                  <li><Link className="dropdown-item" to="/shop?category=Bridal Sarees" onClick={closeMobileMenu}>Bridal Sarees</Link></li>
+                  <li><Link className="dropdown-item" to="/shop?category=Party Wear Sarees" onClick={closeMobileMenu}>Party Wear</Link></li>
                 </ul>
               </li>
               <li className="nav-item">
-                <Link className="nav-link" to="/about">About Us</Link>
+                <Link className="nav-link" to="/about" onClick={closeMobileMenu}>About Us</Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link" to="/contact">Contact Us</Link>
+                <Link className="nav-link" to="/contact" onClick={closeMobileMenu}>Contact Us</Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link" to="/admin/login">Admin</Link>
+                <Link className="nav-link" to="/admin/login" onClick={closeMobileMenu}>Admin</Link>
               </li>
             </ul>
 
             {/* Icons */}
             <div className="navbar-icons ms-lg-3">
-              <Link to="/wishlist" className="icon-link" title="Wishlist">
+              <Link to="/wishlist" className="icon-link" title="Wishlist" onClick={closeMobileMenu}>
                 <i className="bi bi-heart"></i>
               </Link>
               
               {isAuthenticated ? (
                 <div className="dropdown">
-                  <a href="#" className="icon-link dropdown-toggle" id="accountDropdown" data-bs-toggle="dropdown">
+                  <a href="#" className="icon-link dropdown-toggle" id="accountDropdown" data-bs-toggle="dropdown" onClick={(e) => e.preventDefault()}>
                     <i className="bi bi-person-circle"></i>
                   </a>
                   <ul className="dropdown-menu dropdown-menu-end">
                     <li><span className="dropdown-item-text">{user?.name}</span></li>
                     <li><hr className="dropdown-divider" /></li>
-                    <li><Link className="dropdown-item" to="/account">My Account</Link></li>
-                    <li><Link className="dropdown-item" to="/orders">My Orders</Link></li>
+                    <li><Link className="dropdown-item" to="/account" onClick={closeMobileMenu}>My Account</Link></li>
+                    <li><Link className="dropdown-item" to="/orders" onClick={closeMobileMenu}>My Orders</Link></li>
                     <li><hr className="dropdown-divider" /></li>
-                    <li><a className="dropdown-item" href="#" onClick={logout}>Logout</a></li>
+                    <li><a className="dropdown-item" href="#" onClick={(e) => { e.preventDefault(); logout(); closeMobileMenu(); }}>Logout</a></li>
                   </ul>
                 </div>
               ) : (
-                <Link to="/login" className="icon-link" title="Account">
+                <Link to="/login" className="icon-link" title="Account" onClick={closeMobileMenu}>
                   <i className="bi bi-person-circle"></i>
                 </Link>
               )}
               
-              <Link to="/cart" className="icon-link cart-icon" title="Cart">
+              <Link to="/cart" className="icon-link cart-icon" title="Cart" onClick={closeMobileMenu}>
                 <i className="bi bi-cart3"></i>
                 {getTotalItems() > 0 && (
                   <span className="cart-badge">{getTotalItems()}</span>

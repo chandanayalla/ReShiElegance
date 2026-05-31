@@ -18,6 +18,7 @@ const Shop = () => {
     fabric: '',
     occasion: '',
   });
+  const [showFilters, setShowFilters] = useState(false);
   const [sortBy, setSortBy] = useState('featured');
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -113,6 +114,7 @@ const Shop = () => {
   const uniqueColors = [...new Set(products.flatMap((p) => p.colors || []))];
   const uniqueFabrics = [...new Set(products.map((p) => p.fabric).filter(Boolean))];
   const uniqueOccasions = [...new Set(products.map((p) => p.occasion).filter(Boolean))];
+  const uniqueCategories = [...new Set(products.map((p) => p.category).filter(Boolean))];
 
   return (
     <>
@@ -131,6 +133,9 @@ const Shop = () => {
             <div className="col-12">
               {/* Sort Bar */}
               <div className="sort-bar mb-4">
+                <div className="d-flex d-lg-none align-items-center">
+                  <button className="btn btn-outline-primary me-2" onClick={() => setShowFilters(true)}>Filters</button>
+                </div>
                 <label htmlFor="sort-select">Sort by:</label>
                 <select
                   id="sort-select"
@@ -147,6 +152,64 @@ const Shop = () => {
                   <option value="newest">Newest</option>
                   <option value="rating">Top Rated</option>
                 </select>
+              </div>
+
+              {/* Off-canvas Filters (mobile) */}
+              <div className={`filters-offcanvas ${showFilters ? 'open' : ''}`} role="dialog" aria-hidden={!showFilters}>
+                <div className="filters-offcanvas-inner">
+                  <div className="filters-offcanvas-header d-flex justify-content-between align-items-center">
+                    <h5>Filters</h5>
+                    <button className="btn btn-link text-muted" onClick={() => setShowFilters(false)}>Close</button>
+                  </div>
+
+                  <div className="filters-panel p-3">
+                    <div className="filter-group">
+                      <h6>Category</h6>
+                      <select className="form-select" value={filters.category} onChange={(e) => handleFilterChange('category', e.target.value)}>
+                        <option value="">All</option>
+                        {uniqueCategories.map((c) => <option key={c} value={c}>{c}</option>)}
+                      </select>
+                    </div>
+
+                    <div className="filter-group">
+                      <h6>Color</h6>
+                      <select className="form-select" value={filters.color} onChange={(e) => handleFilterChange('color', e.target.value)}>
+                        <option value="">Any</option>
+                        {uniqueColors.map((c) => <option key={c} value={c}>{c}</option>)}
+                      </select>
+                    </div>
+
+                    <div className="filter-group">
+                      <h6>Fabric</h6>
+                      <select className="form-select" value={filters.fabric} onChange={(e) => handleFilterChange('fabric', e.target.value)}>
+                        <option value="">Any</option>
+                        {uniqueFabrics.map((f) => <option key={f} value={f}>{f}</option>)}
+                      </select>
+                    </div>
+
+                    <div className="filter-group">
+                      <h6>Occasion</h6>
+                      <select className="form-select" value={filters.occasion} onChange={(e) => handleFilterChange('occasion', e.target.value)}>
+                        <option value="">Any</option>
+                        {uniqueOccasions.map((o) => <option key={o} value={o}>{o}</option>)}
+                      </select>
+                    </div>
+
+                    <div className="filter-group">
+                      <h6>Price Range</h6>
+                      <div className="d-flex gap-2">
+                        <input type="number" className="form-control" value={filters.priceRange[0]} onChange={(e) => handleFilterChange('priceRange', [Number(e.target.value || 0), filters.priceRange[1]])} />
+                        <input type="number" className="form-control" value={filters.priceRange[1]} onChange={(e) => handleFilterChange('priceRange', [filters.priceRange[0], Number(e.target.value || 0)])} />
+                      </div>
+                    </div>
+
+                    <div className="d-flex gap-2 mt-3">
+                      <button className="btn btn-primary flex-grow-1" onClick={() => { setShowFilters(false); }}>Apply</button>
+                      <button className="btn btn-outline-secondary flex-grow-1" onClick={() => { handleResetFilters(); }}>Reset</button>
+                    </div>
+                  </div>
+                </div>
+                <div className="filters-offcanvas-backdrop" onClick={() => setShowFilters(false)}></div>
               </div>
 
               {/* Products Grid */}

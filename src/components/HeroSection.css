@@ -2,7 +2,7 @@
   min-height: 680px;
   background: linear-gradient(180deg, rgba(252, 231, 236, 0.95) 0%, rgba(255, 255, 255, 0.98) 100%);
   padding: 4rem 0;
-  overflow: hidden;
+  overflow-x: clip;
   position: relative;
 }
 
@@ -66,7 +66,7 @@
 }
 
 .hero-title {
-  font-size: 3.8rem;
+  font-size: clamp(2.2rem, 5vw, 3.8rem);
   font-weight: 700;
   line-height: 1.08;
   margin-bottom: 1rem;
@@ -224,8 +224,16 @@
     padding: 3rem 0;
   }
 
+  .hero-frame {
+    padding: 1.25rem;
+  }
+
+  .hero-card {
+    padding: 2.35rem;
+  }
+
   .hero-title {
-    font-size: 3rem;
+    font-size: 2.8rem;
   }
 
   .hero-image {
@@ -242,16 +250,39 @@
     padding: 2rem 0;
   }
 
+  .hero-frame {
+    padding: 0;
+  }
+
+  .hero-frame::before {
+    display: none;
+  }
+
+  .hero-card {
+    padding: 1.5rem;
+    border-radius: 1.25rem;
+  }
+
+  .hero-card::after {
+    width: 120px;
+    height: 120px;
+    top: 14px;
+    right: 14px;
+  }
+
   .hero-title {
-    font-size: 2.25rem;
+    font-size: 2rem;
+    line-height: 1.15;
   }
 
   .hero-subtitle {
-    font-size: 1.05rem;
+    font-size: 0.98rem;
   }
 
   .hero-description {
-    font-size: 0.95rem;
+    font-size: 0.9rem;
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
   }
 
   .hero-buttons {
@@ -261,14 +292,7 @@
   .hero-buttons .btn {
     width: 100%;
     justify-content: center;
-  }
-
-  .hero-frame {
-    padding: 1rem;
-  }
-
-  .hero-card {
-    padding: 2rem;
+    padding: 0.85rem 1.25rem;
   }
 
   .hero-image {
@@ -277,5 +301,44 @@
 
   .image-card {
     max-width: 100%;
+    padding: 0.9rem;
+    border-radius: 1.25rem;
+  }
+
+  .image-card::before,
+  .image-card::after {
+    border-radius: 1rem;
+  }
+
+  .image-card::before {
+    top: -10px;
+    left: -10px;
+  }
+
+  .image-card::after {
+    right: -10px;
+    bottom: -10px;
+  }
+
+  .image-tag {
+    top: 0.8rem;
+    left: 0.8rem;
+    font-size: 0.74rem;
+    padding: 0.35rem 0.7rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .hero-label {
+    font-size: 0.78rem;
+    padding: 0.42rem 0.7rem;
+  }
+
+  .hero-title {
+    font-size: 1.72rem;
+  }
+
+  .hero-subtitle {
+    font-size: 0.9rem;
   }
 }

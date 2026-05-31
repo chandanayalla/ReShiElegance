@@ -142,6 +142,16 @@ const Cart = () => {
         </div>
       </div>
 
+      {/* Mobile sticky checkout bar */}
+      <div className="mobile-checkout-bar d-lg-none">
+        <div className="container-fluid">
+          <div className="mobile-checkout-inner">
+            <div className="mobile-total">Total: ₹{total.toFixed(2)}</div>
+            <Link to="/checkout" className="btn btn-primary">Checkout</Link>
+          </div>
+        </div>
+      </div>
+
       <Footer />
     </>
   );

@@ -23,6 +23,13 @@ html {
   scroll-behavior: smooth;
 }
 
+html,
+body,
+#root {
+  width: 100%;
+  max-width: 100%;
+}
+
 body {
   font-family: var(--body-font);
   color: var(--text-color);
@@ -78,8 +85,8 @@ a:hover {
 .container-fluid {
   max-width: 1400px;
   margin: 0 auto;
-  padding-left: 1rem;
-  padding-right: 1rem;
+  padding-left: clamp(0.85rem, 2.5vw, 1.25rem);
+  padding-right: clamp(0.85rem, 2.5vw, 1.25rem);
 }
 
 img,
@@ -145,6 +152,32 @@ body {
   }
   h3 {
     font-size: 1.25rem;
+  }
+
+  .py-5 {
+    padding-top: 2.5rem !important;
+    padding-bottom: 2.5rem !important;
+  }
+
+  .my-5 {
+    margin-top: 2.5rem !important;
+    margin-bottom: 2.5rem !important;
+  }
+}
+
+@media (max-width: 576px) {
+  body {
+    font-size: 0.95rem;
+  }
+
+  .py-5 {
+    padding-top: 2rem !important;
+    padding-bottom: 2rem !important;
+  }
+
+  .my-5 {
+    margin-top: 2rem !important;
+    margin-bottom: 2rem !important;
   }
 }
 

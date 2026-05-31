@@ -57,7 +57,7 @@ const Checkout = () => {
           <div className="row">
             {/* Checkout Form */}
             <div className="col-lg-8 mb-4">
-              <form onSubmit={handleSubmit}>
+              <form id="checkoutForm" onSubmit={handleSubmit}>
                 {/* Billing Information */}
                 <div className="checkout-section">
                   <h4>Billing Information</h4>
@@ -244,6 +244,16 @@ const Checkout = () => {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile sticky order bar */}
+      <div className="mobile-order-bar d-lg-none">
+        <div className="container-fluid">
+          <div className="mobile-order-inner">
+            <div className="mobile-total">₹{total.toFixed(2)}</div>
+            <button form="checkoutForm" className="btn btn-primary">Place Order</button>
           </div>
         </div>
       </div>
