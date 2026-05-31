@@ -4,6 +4,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { CartContext } from '../context/CartContext';
 import { AuthContext } from '../context/AuthContext';
+import api from '../services/api';
 import './Checkout.css';
 
 const Checkout = () => {
@@ -23,6 +24,7 @@ const Checkout = () => {
     country: 'India',
   });
   const [isProcessing, setIsProcessing] = useState(false);
+  const [error, setError] = useState('');
 
   const subtotal = getTotalPrice();
   const shipping = subtotal > 999 ? 0 : 100;
@@ -34,16 +36,97 @@ const Checkout = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const loadRazorpay = () => new Promise((resolve, reject) => {
+    if (window.Razorpay) {
+      resolve(true);
+      return;
+    }
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.onload = () => resolve(true);
+    script.onerror = () => reject(new Error('Unable to load Razorpay checkout.'));
+    document.body.appendChild(script);
+  });
+
+  const buildOrderPayload = () => ({
+    customerName: `${formData.firstName} ${formData.lastName}`.trim(),
+    customerEmail: formData.email,
+    customerPhone: formData.phone,
+    address: {
+      line1: formData.address,
+      city: formData.city,
+      state: formData.state,
+      zipCode: formData.zipCode,
+      country: formData.country,
+    },
+    products: cartItems.map((item) => ({
+      id: item.id,
+      name: item.name,
+      price: Number(item.price || 0),
+      quantity: item.quantity,
+      image: item.images?.[0] || item.image || '',
+    })),
+    subtotal,
+    shipping,
+    tax,
+    total,
+  });
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
     setIsProcessing(true);
 
-    // Simulate payment processing
-    setTimeout(() => {
+    try {
+      const orderPayload = buildOrderPayload();
+
+      if (paymentMethod === 'cod') {
+        await api.post('/orders', { ...orderPayload, paymentStatus: 'cod' });
+        clearCart();
+        navigate('/order-success');
+        return;
+      }
+
+      await loadRazorpay();
+      const { data: razorpayOrder } = await api.post('/payments/razorpay/order', { amount: total });
+
+      const options = {
+        key: razorpayOrder.keyId,
+        amount: razorpayOrder.amount,
+        currency: razorpayOrder.currency,
+        name: 'ReShi Elegance',
+        description: 'Premium women clothing order',
+        order_id: razorpayOrder.id,
+        prefill: {
+          name: orderPayload.customerName,
+          email: orderPayload.customerEmail,
+          contact: orderPayload.customerPhone,
+        },
+        theme: { color: '#8f2346' },
+        handler: async (response) => {
+          await api.post('/payments/razorpay/verify', {
+            ...response,
+            order: orderPayload,
+          });
+          clearCart();
+          navigate('/order-success');
+        },
+        modal: {
+          ondismiss: () => setIsProcessing(false),
+        },
+      };
+
+      const checkout = new window.Razorpay(options);
+      checkout.on('payment.failed', (response) => {
+        setError(response.error?.description || 'Payment failed. Please try again.');
+        setIsProcessing(false);
+      });
+      checkout.open();
       setIsProcessing(false);
-      clearCart();
-      navigate('/order-success');
-    }, 2000);
+    } catch (err) {
+      setError(err?.response?.data?.message || err.message || 'Checkout failed. Please try again.');
+      setIsProcessing(false);
+    }
   };
 
   return (
@@ -58,6 +141,7 @@ const Checkout = () => {
             {/* Checkout Form */}
             <div className="col-lg-8 mb-4">
               <form onSubmit={handleSubmit}>
+                {error && <div className="alert alert-danger">{error}</div>}
                 {/* Billing Information */}
                 <div className="checkout-section">
                   <h4>Billing Information</h4>
@@ -158,9 +242,7 @@ const Checkout = () => {
                   <h4>Payment Method</h4>
                   <div className="payment-options">
                     {[
-                      { id: 'razorpay', name: 'Razorpay', icon: 'bi-credit-card' },
-                      { id: 'upi', name: 'UPI', icon: 'bi-wallet2' },
-                      { id: 'card', name: 'Debit/Credit Card', icon: 'bi-credit-card' },
+                      { id: 'razorpay', name: 'Razorpay Secure Checkout', icon: 'bi-credit-card' },
                       { id: 'cod', name: 'Cash on Delivery', icon: 'bi-box2-heart' },
                     ].map(method => (
                       <div key={method.id} className="payment-option">
@@ -193,7 +275,7 @@ const Checkout = () => {
                       Processing...
                     </>
                   ) : (
-                    'Place Order'
+                    paymentMethod === 'razorpay' ? 'Pay with Razorpay' : 'Place COD Order'
                   )}
                 </button>
               </form>

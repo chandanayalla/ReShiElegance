@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import AdminLayout from './AdminLayout';
 import api from '../../services/api';
 
-const statusOptions = ['Pending', 'Shipped', 'Delivered'];
+const statusOptions = ['Pending', 'Packed', 'Shipped', 'Delivered', 'Cancelled'];
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -26,7 +26,7 @@ const Orders = () => {
   const handleStatusChange = async (orderId, status) => {
     try {
       await api.put(`/orders/${orderId}/status`, { status });
-      setOrders((prevOrders) => prevOrders.map((order) => (order._id === orderId ? { ...order, status } : order)));
+      setOrders((prevOrders) => prevOrders.map((order) => ((order.id || order._id) === orderId ? { ...order, status } : order)));
     } catch (error) {
       console.error('Order update error:', error);
     }
@@ -62,8 +62,8 @@ const Orders = () => {
                 </tr>
               ) : (
                 orders.map((order) => (
-                  <tr key={order._id}>
-                    <td>{order._id.slice(-8).toUpperCase()}</td>
+                  <tr key={order.id || order._id}>
+                    <td>{String(order.id || order._id).slice(-8).toUpperCase()}</td>
                     <td>{order.customerName}</td>
                     <td>{order.products.map((item) => item.name).join(', ')}</td>
                     <td>{order.status}</td>
@@ -71,7 +71,7 @@ const Orders = () => {
                       <select
                         className="form-select rounded-pill w-auto d-inline-block me-2"
                         value={order.status}
-                        onChange={(event) => handleStatusChange(order._id, event.target.value)}
+                        onChange={(event) => handleStatusChange(order.id || order._id, event.target.value)}
                       >
                         {statusOptions.map((option) => (
                           <option key={option} value={option}>

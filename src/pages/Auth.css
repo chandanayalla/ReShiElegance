@@ -68,7 +68,7 @@
 
 .form-control:focus {
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 0.2rem rgba(233, 30, 99, 0.1);
+  box-shadow: 0 0 0 0.2rem rgba(128, 32, 43, 0.16);
   outline: none;
 }
 
@@ -108,8 +108,8 @@
 }
 
 .btn-primary:hover:not(:disabled) {
-  background-color: #C2185B;
-  border-color: #C2185B;
+  background-color: var(--maroon-deep);
+  border-color: var(--maroon-deep);
   transform: translateY(-2px);
 }
 

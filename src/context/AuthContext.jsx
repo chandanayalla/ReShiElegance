@@ -79,6 +79,9 @@ export const AuthProvider = ({ children }) => {
     });
 
     if (error) {
+      if (error.message?.toLowerCase().includes('unsupported provider')) {
+        throw new Error('Google login is not enabled in Supabase. Enable Google in Supabase Auth Providers or keep VITE_ENABLE_GOOGLE_AUTH=false.');
+      }
       throw error;
     }
   }, []);

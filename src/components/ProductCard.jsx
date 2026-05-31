@@ -1,11 +1,13 @@
 import React, { useContext, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { CartContext } from '../context/CartContext';
 import { WishlistContext } from '../context/WishlistContext';
+import fallbackImage from '../assets/main.jpeg';
 import './ProductCard.css';
 
 const ProductCard = ({ product, onAddToCart }) => {
-  const { addToCart } = useContext(CartContext);
+  const navigate = useNavigate();
+  const { addToCart, buyNow } = useContext(CartContext);
   const { toggleWishlist, isInWishlist } = useContext(WishlistContext);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
@@ -26,6 +28,11 @@ const ProductCard = ({ product, onAddToCart }) => {
     setTimeout(() => setShowToast(false), 2000);
   };
 
+  const handleBuyNow = () => {
+    buyNow(product, 1);
+    navigate('/checkout');
+  };
+
   const inWishlist = isInWishlist(product.id);
 
   return (
@@ -35,9 +42,12 @@ const ProductCard = ({ product, onAddToCart }) => {
         <Link to={`/product/${product.id}`}>
           <div className="image-hover">
             <img
-              src={product.images?.[0] || 'https://via.placeholder.com/300x400'}
+              src={product.images?.[0] || product.image || fallbackImage}
               alt={product.name}
               className="product-image"
+              onError={(event) => {
+                event.currentTarget.src = fallbackImage;
+              }}
             />
           </div>
         </Link>
@@ -107,6 +117,15 @@ const ProductCard = ({ product, onAddToCart }) => {
         >
           <i className="bi bi-cart3 me-2"></i>
           Add to Cart
+        </button>
+
+        <button
+          className="btn btn-outline-primary btn-buy-now w-100"
+          onClick={handleBuyNow}
+          disabled={product.stock === 0}
+        >
+          <i className="bi bi-lightning-charge me-2"></i>
+          Buy Now
         </button>
 
         {/* Quick View Link */}

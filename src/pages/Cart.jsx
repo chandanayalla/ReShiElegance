@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { CartContext } from '../context/CartContext';
+import fallbackImage from '../assets/main.jpeg';
 import './Cart.css';
 
 const Cart = () => {
@@ -49,13 +50,19 @@ const Cart = () => {
                 {cartItems.map(item => (
                   <div key={item.id} className="cart-item">
                     <div className="item-image">
-                      <img src={item.images?.[0]} alt={item.name} />
+                      <img
+                        src={item.images?.[0] || item.image || fallbackImage}
+                        alt={item.name}
+                        onError={(event) => {
+                          event.currentTarget.src = fallbackImage;
+                        }}
+                      />
                     </div>
 
                     <div className="item-details">
                       <h5>{item.name}</h5>
                       <p className="category">{item.category}</p>
-                      <p className="price">₹{item.price.toLocaleString()}</p>
+                      <p className="price">₹{Number(item.price || 0).toLocaleString()}</p>
                     </div>
 
                     <div className="item-quantity">
@@ -75,7 +82,7 @@ const Cart = () => {
                     </div>
 
                     <div className="item-total">
-                      <p>₹{(item.price * item.quantity).toLocaleString()}</p>
+                      <p>₹{(Number(item.price || 0) * item.quantity).toLocaleString()}</p>
                     </div>
 
                     <button
