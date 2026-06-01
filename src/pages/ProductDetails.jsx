@@ -6,6 +6,7 @@ import { CartContext } from '../context/CartContext';
 import { WishlistContext } from '../context/WishlistContext';
 import api from '../services/api';
 import fallbackImage from '../assets/main.jpeg';
+import { readArrayResponse } from '../utils/apiData';
 import './ProductDetails.css';
 
 const ProductDetails = () => {
@@ -49,8 +50,9 @@ const ProductDetails = () => {
 
       try {
         const response = await api.get('/products');
+        const products = readArrayResponse(response.data);
         setRelatedProducts(
-          response.data
+          products
             .filter((p) => p.category === product.category && p.id !== product.id)
             .slice(0, 3)
         );

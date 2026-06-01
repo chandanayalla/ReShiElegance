@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import AdminLayout from './AdminLayout';
 import api from '../../services/api';
 import ProductTable from '../../components/ProductTable';
+import { readArrayResponse } from '../../utils/apiData';
 
 const Products = () => {
   const [products, setProducts] = useState([]);
@@ -12,7 +13,7 @@ const Products = () => {
   const loadProducts = async () => {
     try {
       const response = await api.get('/products');
-      setProducts(response.data || []);
+      setProducts(readArrayResponse(response.data));
     } catch (error) {
       console.error('Product load error:', error);
     } finally {

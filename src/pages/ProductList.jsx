@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import api from '../services/api';
+import { readArrayResponse } from '../utils/apiData';
 import './Shop.css';
 
 const ProductList = () => {
@@ -16,7 +17,7 @@ const ProductList = () => {
 
       try {
         const response = await api.get('/products');
-        setProducts(response.data || []);
+        setProducts(readArrayResponse(response.data));
       } catch (err) {
         setError('Unable to load products. Please try again later.');
       } finally {

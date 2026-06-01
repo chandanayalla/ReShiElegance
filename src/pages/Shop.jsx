@@ -4,6 +4,7 @@ import Navbar from '../components/Navbar';
 import ProductCard from '../components/ProductCard';
 import Footer from '../components/Footer';
 import api from '../services/api';
+import { readArrayResponse } from '../utils/apiData';
 import './Shop.css';
 
 const Shop = () => {
@@ -32,7 +33,7 @@ const Shop = () => {
 
       try {
         const response = await api.get('/products');
-        setProducts(response.data || []);
+        setProducts(readArrayResponse(response.data));
       } catch (err) {
         setError('Unable to load products.');
       } finally {

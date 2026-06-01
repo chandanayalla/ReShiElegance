@@ -23,8 +23,8 @@ export const requireAdmin = (req, res, next) => {
 
 router.post('/login', (req, res) => {
   const { email, password } = req.body;
-  const adminEmail = process.env.ADMIN_EMAIL || 'admin@reshi.com';
-  const adminPassword = process.env.ADMIN_PASSWORD || 'change-me';
+  const adminEmail = process.env.ADMIN_EMAIL || 'reshielegance@gmail.com';
+  const adminPassword = process.env.ADMIN_PASSWORD || 'Rs@12345678';
 
   if (email !== adminEmail || password !== adminPassword) {
     return res.status(401).json({ message: 'Invalid admin credentials.' });

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import AdminLayout from './AdminLayout';
 import api from '../../services/api';
+import { readArrayResponse } from '../../utils/apiData';
 
 const statusOptions = ['Pending', 'Packed', 'Shipped', 'Delivered', 'Cancelled'];
 
@@ -11,7 +12,7 @@ const Orders = () => {
   const loadOrders = async () => {
     try {
       const response = await api.get('/orders');
-      setOrders(response.data || []);
+      setOrders(readArrayResponse(response.data));
     } catch (error) {
       console.error('Order load error:', error);
     } finally {
@@ -65,7 +66,7 @@ const Orders = () => {
                   <tr key={order.id || order._id}>
                     <td>{String(order.id || order._id).slice(-8).toUpperCase()}</td>
                     <td>{order.customerName}</td>
-                    <td>{order.products.map((item) => item.name).join(', ')}</td>
+                    <td>{(order.products || []).map((item) => item.name).join(', ')}</td>
                     <td>{order.status}</td>
                     <td className="text-end">
                       <select
