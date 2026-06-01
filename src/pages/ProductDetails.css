@@ -230,6 +230,19 @@
   font-weight: 600;
 }
 
+.btn-buy-now-detail {
+  background: var(--gold-soft);
+  border-color: var(--gold-muted);
+  color: var(--maroon-deep);
+  font-weight: 900;
+}
+
+.btn-buy-now-detail:hover {
+  background: var(--maroon-deep);
+  border-color: var(--maroon-deep);
+  color: var(--ivory);
+}
+
 /* Features List */
 .features-list {
   display: grid;

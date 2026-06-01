@@ -1,16 +1,21 @@
 :root {
-  --primary-color: #E91E63;
-  --secondary-color: #FCE4EC;
-  --accent-color: #F48FB1;
-  --background-color: #FFFFFF;
-  --text-color: #333333;
-  --light-gray: #F5F5F5;
-  --border-color: #E0E0E0;
+  --primary-color: #80202b;
+  --secondary-color: #fff1d8;
+  --accent-color: #dda95d;
+  --background-color: #fff7e8;
+  --text-color: #351017;
+  --light-gray: #f7ead2;
+  --border-color: #dec396;
+  --maroon-deep: #54111b;
+  --maroon: #80202b;
+  --ivory: #fff7e8;
+  --gold-soft: #f0c77a;
+  --gold-muted: #c5914d;
   --success-color: #4CAF50;
   --warning-color: #FF9800;
   --danger-color: #F44336;
-  --heading-font: 'Playfair Display', serif;
-  --body-font: 'Poppins', sans-serif;
+  --heading-font: Georgia, 'Times New Roman', serif;
+  --body-font: 'Trebuchet MS', Arial, sans-serif;
 }
 
 * {
@@ -33,7 +38,10 @@ body,
 body {
   font-family: var(--body-font);
   color: var(--text-color);
-  background-color: var(--background-color);
+  background:
+    linear-gradient(rgba(255, 247, 232, 0.96), rgba(255, 247, 232, 0.96)),
+    radial-gradient(circle at 10% 10%, rgba(128, 32, 43, 0.08), transparent 28%),
+    radial-gradient(circle at 90% 20%, rgba(221, 169, 93, 0.12), transparent 24%);
   line-height: 1.6;
 }
 
@@ -46,19 +54,19 @@ h1, h2, h3, h4, h5, h6 {
 .btn-primary {
   background-color: var(--primary-color);
   border-color: var(--primary-color);
+  color: var(--ivory);
   font-weight: 600;
-  transition: all 0.3s ease;
+  transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.btn-primary:hover {
-  background-color: #C2185B;
-  border-color: #C2185B;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(233, 30, 99, 0.3);
-}
-
-.btn-primary:active {
-  transform: translateY(0);
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active,
+.btn-primary:first-child:active {
+  background-color: var(--maroon-deep);
+  border-color: var(--maroon-deep);
+  color: var(--ivory);
+  box-shadow: 0 8px 18px rgba(84, 17, 27, 0.22);
 }
 
 .btn-outline-primary {
@@ -67,19 +75,49 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 600;
 }
 
-.btn-outline-primary:hover {
+.btn-outline-primary:hover,
+.btn-outline-primary:focus,
+.btn-outline-primary:active,
+.btn-outline-primary:first-child:active {
   background-color: var(--primary-color);
   border-color: var(--primary-color);
+  color: var(--ivory);
+}
+
+.text-primary,
+.link-primary,
+.page-link {
+  color: var(--maroon) !important;
+}
+
+.bg-primary,
+.page-item.active .page-link,
+.progress-bar {
+  background-color: var(--maroon) !important;
+  border-color: var(--maroon) !important;
+}
+
+.form-check-input:checked {
+  background-color: var(--maroon);
+  border-color: var(--maroon);
+}
+
+.form-check-input:focus,
+.btn:focus,
+.btn-close:focus,
+.page-link:focus {
+  border-color: var(--maroon);
+  box-shadow: 0 0 0 0.2rem rgba(128, 32, 43, 0.2);
 }
 
 a {
   color: var(--primary-color);
   text-decoration: none;
-  transition: color 0.3s ease;
+  transition: color 0.2s ease;
 }
 
 a:hover {
-  color: #C2185B;
+  color: var(--maroon-deep);
 }
 
 .container-fluid {
@@ -246,11 +284,11 @@ body {
   align-items: center;
   z-index: 9998;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(233, 30, 99, 0.3);
+  box-shadow: 0 4px 12px rgba(84, 17, 27, 0.24);
 }
 
 .scroll-to-top:hover {
-  background-color: #C2185B;
+  background-color: var(--maroon-deep);
   transform: translateY(-3px);
 }
 
@@ -266,7 +304,7 @@ body {
 
 .card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 8px 24px rgba(233, 30, 99, 0.15);
+  box-shadow: 0 8px 24px rgba(84, 17, 27, 0.14);
 }
 
 /* Image Hover Effects */
@@ -316,7 +354,7 @@ body {
 
 .form-control:focus {
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 0.2rem rgba(233, 30, 99, 0.25);
+  box-shadow: 0 0 0 0.2rem rgba(128, 32, 43, 0.2);
 }
 
 .form-control::placeholder {

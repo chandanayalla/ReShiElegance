@@ -40,7 +40,7 @@
 
 .form-control:focus {
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 0.2rem rgba(233, 30, 99, 0.1);
+  box-shadow: 0 0 0 0.2rem rgba(128, 32, 43, 0.16);
 }
 
 /* Payment Options */

@@ -86,8 +86,8 @@ const Dashboard = () => {
                 </tr>
               ) : (
                 orders.slice(0, 5).map((order) => (
-                  <tr key={order._id}>
-                    <td>{order._id.slice(-8).toUpperCase()}</td>
+                  <tr key={order.id || order._id}>
+                    <td>{String(order.id || order._id).slice(-8).toUpperCase()}</td>
                     <td>{order.customerName}</td>
                     <td>{order.products.map((item) => item.name).join(', ')}</td>
                     <td>

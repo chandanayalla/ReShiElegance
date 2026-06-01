@@ -58,6 +58,9 @@ export const AuthProvider = ({ children }) => {
 
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
+      if (error.status === 401 || error.message?.toLowerCase().includes('invalid login credentials')) {
+        throw new Error('Invalid email or password. If you just registered, check your email confirmation settings in Supabase.');
+      }
       throw error;
     }
 
@@ -79,6 +82,9 @@ export const AuthProvider = ({ children }) => {
     });
 
     if (error) {
+      if (error.message?.toLowerCase().includes('unsupported provider')) {
+        throw new Error('Google login is not enabled in Supabase. Enable Google in Supabase Auth Providers or keep VITE_ENABLE_GOOGLE_AUTH=false.');
+      }
       throw error;
     }
   }, []);

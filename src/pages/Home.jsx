@@ -114,7 +114,7 @@ const Home = () => {
 
           <div className="row g-4">
             {newArrivals.map(product => (
-              <div key={product.id} className="col-lg-4 col-md-6">
+              <div key={product.id} className="col-6 col-lg-4 col-md-6">
                 <ProductCard product={product} onAddToCart={handleAddToCart} />
               </div>
             ))}
@@ -147,7 +147,7 @@ const Home = () => {
 
           <div className="row g-4">
             {bestSellers.map(product => (
-              <div key={product.id} className="col-lg-4 col-md-6">
+              <div key={product.id} className="col-6 col-lg-4 col-md-6">
                 <ProductCard product={product} onAddToCart={handleAddToCart} />
               </div>
             ))}

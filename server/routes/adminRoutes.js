@@ -3,11 +3,27 @@ import jwt from 'jsonwebtoken';
 
 const router = express.Router();
 
+const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret';
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@reshi.com';
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'change-me';
-const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret';
 
-// Simple admin login route — compares against env creds and returns a JWT
+const createToken = (admin) => jwt.sign(admin, JWT_SECRET, { expiresIn: '8h' });
+
+export const requireAdmin = (req, res, next) => {
+  const header = req.headers.authorization || '';
+  const token = header.startsWith('Bearer ') ? header.slice(7) : '';
+
+  if (!token) return res.status(401).json({ message: 'Admin authentication required.' });
+
+  try {
+    req.admin = jwt.verify(token, JWT_SECRET);
+    return next();
+  } catch (err) {
+    return res.status(401).json({ message: 'Invalid or expired admin session.' });
+  }
+};
+
+// Admin login
 router.post('/login', (req, res) => {
   const { email, password } = req.body || {};
 
@@ -19,9 +35,14 @@ router.post('/login', (req, res) => {
     return res.status(401).json({ message: 'Invalid credentials.' });
   }
 
-  const token = jwt.sign({ email, role: 'admin' }, JWT_SECRET, { expiresIn: '7d' });
+  const admin = { email: ADMIN_EMAIL, name: 'ReShi Admin', role: 'admin' };
+  const token = createToken(admin);
 
-  return res.json({ admin: { email }, token });
+  return res.json({ admin, token });
+});
+
+router.get('/me', requireAdmin, (req, res) => {
+  res.json({ admin: req.admin });
 });
 
 export default router;
