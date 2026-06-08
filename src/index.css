@@ -1,14 +1,14 @@
 :root {
-  --primary-color: #F055B7;
-  --primary-rgb: 240, 85, 183;
+  --primary-color: #f8bbd0;
+  --primary-rgb: 248, 187, 208;
   --secondary-color: #fff1d8;
   --accent-color: #dda95d;
   --background-color: #fff7e8;
   --text-color: #351017;
   --light-gray: #f7ead2;
   --border-color: #dec396;
-  --maroon-deep: #D93A9B;
-  --maroon: #F055B7;
+  --maroon-deep: #f4a9c7;
+  --maroon: #f8bbd0;
   --ivory: #fff7e8;
   --gold-soft: #f0c77a;
   --gold-muted: #c5914d;

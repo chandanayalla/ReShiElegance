@@ -1,6 +1,6 @@
 /* Announcement bar */
 .announcement-bar {
-  background: linear-gradient(135deg, #ff8bd0 0%, var(--primary-color) 100%);
+  background: linear-gradient(135deg, #fff0f6 0%, var(--primary-color) 100%);
   color: white;
   padding: 0.75rem 0;
   text-align: center;
@@ -44,9 +44,9 @@
   height: 74px;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid rgba(var(--primary-rgb), 0.28);
-  background: linear-gradient(135deg, rgba(255, 225, 243, 0.98), rgba(var(--primary-rgb), 0.08));
-  box-shadow: 0 12px 28px rgba(var(--primary-rgb), 0.18);
+  border: 3px solid rgba(var(--primary-rgb), 0.32);
+  background: linear-gradient(135deg, rgba(255, 248, 251, 0.98), rgba(var(--primary-rgb), 0.1));
+  box-shadow: 0 12px 28px rgba(var(--primary-rgb), 0.16);
 }
 
 .navbar-collapse { grid-column: 2; display: flex !important; justify-content: center; }
@@ -67,29 +67,29 @@
   padding: 0.45rem 0 !important; position: relative;
 }
 
-.nav-link::after { content: ''; position: absolute; left: 0; right: 0.22em; bottom: 0.05rem; height: 2px; background: var(--primary-color); transform: scaleX(0); transform-origin: center; transition: transform 0.2s ease; }
+.nav-link::after { content: ''; position: absolute; left: 0; right: 0.22em; bottom: 0.05rem; height: 2px; background: var(--maroon-deep); transform: scaleX(0); transform-origin: center; transition: transform 0.2s ease; }
 
-.nav-link:hover, .nav-link.active { color: var(--primary-color) !important; }
+.nav-link:hover, .nav-link.active { color: var(--maroon-deep) !important; }
 .nav-link:hover::after, .nav-link.active::after { transform: scaleX(1); }
 
 .navbar-actions { grid-column: 3; display: flex; align-items: center; justify-content: flex-end; gap: 0.8rem; justify-self: end; white-space: nowrap; }
 
 .brand-tool, .icon-link {
-  width: 42px; height: 42px; border: 0; border-radius: 50%; background: rgba(var(--primary-rgb), 0.08); color: var(--maroon-deep);
+  width: 42px; height: 42px; border: 0; border-radius: 50%; background: rgba(var(--primary-rgb), 0.12); color: var(--maroon-deep);
   display: inline-flex; align-items: center; justify-content: center; font-size: 1.45rem; position: relative;
 }
 
-.brand-tool:hover, .icon-link:hover { color: var(--maroon); background: rgba(var(--primary-rgb), 0.14); transform: translateY(-1px); }
+.brand-tool:hover, .icon-link:hover { color: var(--maroon-deep); background: rgba(var(--primary-rgb), 0.22); transform: translateY(-1px); }
 
 .dropdown-toggle::after { display: none; }
-.dropdown-menu { background: #fff8fc; border: 1px solid rgba(var(--primary-rgb), 0.18); border-radius: 16px; box-shadow: 0 18px 40px rgba(var(--primary-rgb), 0.16); overflow: hidden; }
+.dropdown-menu { background: #fff8fc; border: 1px solid rgba(var(--primary-rgb), 0.2); border-radius: 16px; box-shadow: 0 18px 40px rgba(var(--primary-rgb), 0.12); overflow: hidden; }
 
 .dropdown-item { color: var(--maroon-deep); font-size: 0.82rem; font-weight: 800; padding: 0.8rem 1.15rem; }
-.dropdown-item:hover { background: rgba(var(--primary-rgb), 0.1); color: var(--primary-color); }
+.dropdown-item:hover { background: rgba(var(--primary-rgb), 0.1); color: var(--maroon-deep); }
 
-.cart-badge { position: absolute; top: 0; right: 0; background: var(--primary-color); color: var(--ivory); font-size: 0.72rem; font-weight: 900; min-width: 20px; height: 20px; border-radius: 999px; border: 2px solid var(--ivory); display: flex; align-items: center; justify-content: center; }
+.cart-badge { position: absolute; top: 0; right: 0; background: var(--maroon-deep); color: var(--ivory); font-size: 0.72rem; font-weight: 900; min-width: 20px; height: 20px; border-radius: 999px; border: 2px solid var(--ivory); display: flex; align-items: center; justify-content: center; }
 
-.navbar-actions .dropdown .icon-link { background: linear-gradient(135deg, var(--primary-color), var(--maroon-deep)); color: var(--ivory); font-family: var(--heading-font); font-size: 0; box-shadow: 0 10px 22px rgba(var(--primary-rgb), 0.18); }
+.navbar-actions .dropdown .icon-link { background: linear-gradient(135deg, var(--primary-color), rgba(var(--primary-rgb), 0.75)); color: var(--ivory); font-family: var(--heading-font); font-size: 0; box-shadow: 0 10px 22px rgba(var(--primary-rgb), 0.14); }
 .navbar-actions .dropdown .icon-link::before { content: 'M'; font-size: 1.05rem; font-weight: 900; }
 
 .search-form { grid-column: 1 / -1; grid-row: 2; justify-self: end; width: 0; overflow: hidden; opacity: 0; pointer-events: none; transition: width 0.2s ease, opacity 0.2s ease; }
