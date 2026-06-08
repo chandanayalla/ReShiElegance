@@ -94,46 +94,13 @@ const Navbar = () => {
               </li>
             </ul>
 
-            {/* Icons */}
-            <div className="navbar-icons ms-lg-3">
-              <Link to="/wishlist" className="icon-link" title="Wishlist" onClick={closeMobileMenu}>
-                <i className="bi bi-heart"></i>
-              </Link>
-              
-              {isAuthenticated ? (
-                <div className="dropdown">
-                  <a href="#" className="icon-link dropdown-toggle" id="accountDropdown" data-bs-toggle="dropdown" onClick={(e) => e.preventDefault()}>
-                    <i className="bi bi-person-circle"></i>
-                  </a>
-                  <ul className="dropdown-menu dropdown-menu-end">
-                    <li><span className="dropdown-item-text">{user?.name}</span></li>
-                    <li><hr className="dropdown-divider" /></li>
-                    <li><Link className="dropdown-item" to="/account" onClick={closeMobileMenu}>My Account</Link></li>
-                    <li><Link className="dropdown-item" to="/orders" onClick={closeMobileMenu}>My Orders</Link></li>
-                    <li><hr className="dropdown-divider" /></li>
-                    <li><a className="dropdown-item" href="#" onClick={(e) => { e.preventDefault(); logout(); closeMobileMenu(); }}>Logout</a></li>
-                  </ul>
-                </div>
-              ) : (
-                <Link to="/login" className="icon-link" title="Account" onClick={closeMobileMenu}>
-                  <i className="bi bi-person-circle"></i>
-                </Link>
-              )}
-              
-              <Link to="/cart" className="icon-link cart-icon" title="Cart" onClick={closeMobileMenu}>
-                <i className="bi bi-cart3"></i>
-                {getTotalItems() > 0 && (
-                  <span className="cart-badge">{getTotalItems()}</span>
-                )}
-              </Link>
-            </div>
           </div>
 
-          <div className="navbar-icons">
+          <div className="navbar-actions">
             <button className="icon-link search-toggle" type="button" title="Search" aria-label="Search" onClick={() => setIsSearchOpen((open) => !open)}>
               <i className="bi bi-search"></i>
             </button>
-            <Link to="/wishlist" className="icon-link" title="Wishlist" aria-label="Wishlist">
+            <Link to="/wishlist" className="icon-link" title="Wishlist" aria-label="Wishlist" onClick={closeMobileMenu}>
               <i className="bi bi-heart"></i>
             </Link>
             {isAuthenticated ? (
@@ -144,18 +111,18 @@ const Navbar = () => {
                 <ul className="dropdown-menu dropdown-menu-end">
                   <li><span className="dropdown-item-text">{user?.name}</span></li>
                   <li><hr className="dropdown-divider" /></li>
-                  <li><Link className="dropdown-item" to="/account">My Account</Link></li>
-                  <li><Link className="dropdown-item" to="/orders">My Orders</Link></li>
+                  <li><Link className="dropdown-item" to="/account" onClick={closeMobileMenu}>My Account</Link></li>
+                  <li><Link className="dropdown-item" to="/orders" onClick={closeMobileMenu}>My Orders</Link></li>
                   <li><hr className="dropdown-divider" /></li>
-                  <li><a className="dropdown-item" href="#" onClick={logout}>Logout</a></li>
+                  <li><a className="dropdown-item" href="#" onClick={(e) => { e.preventDefault(); logout(); closeMobileMenu(); }}>Logout</a></li>
                 </ul>
               </div>
             ) : (
-              <Link to="/login" className="icon-link" title="Account" aria-label="Account">
+              <Link to="/login" className="icon-link" title="Account" aria-label="Account" onClick={closeMobileMenu}>
                 <i className="bi bi-person-circle"></i>
               </Link>
             )}
-            <Link to="/cart" className="icon-link cart-icon" title="Cart" aria-label="Cart">
+            <Link to="/cart" className="icon-link cart-icon" title="Cart" aria-label="Cart" onClick={closeMobileMenu}>
               <i className="bi bi-bag"></i>
               {getTotalItems() > 0 && <span className="cart-badge">{getTotalItems()}</span>}
             </Link>
