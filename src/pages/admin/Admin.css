@@ -12,7 +12,7 @@
   width: 270px;
   background: #fffaf0;
   border-right: 1px solid rgba(197, 145, 77, 0.28);
-  box-shadow: 8px 0 40px rgba(84, 17, 27, 0.05);
+  box-shadow: 8px 0 40px rgba(var(--primary-rgb), 0.05);
   min-height: 100vh;
 }
 
@@ -28,7 +28,7 @@
   height: 72px;
   margin: 0 auto 1rem;
   border-radius: 24px;
-  background: rgba(128, 32, 43, 0.08);
+  background: rgba(var(--primary-rgb), 0.08);
 }
 
 .brand-circle {
@@ -57,7 +57,7 @@
 
 .admin-sidebar .nav-link:hover,
 .admin-sidebar .nav-link.active {
-  background: rgba(128, 32, 43, 0.12);
+  background: rgba(var(--primary-rgb), 0.12);
   color: var(--maroon);
   box-shadow: inset 4px 0 0 var(--gold-muted);
   font-weight: 800;
@@ -72,7 +72,7 @@
   background: rgba(255, 255, 255, 0.92);
   border-radius: 1.5rem;
   padding: 1.5rem;
-  box-shadow: 0 18px 45px rgba(84, 17, 27, 0.08);
+  box-shadow: 0 18px 45px rgba(var(--primary-rgb), 0.08);
 }
 
 .admin-navbar-actions {
@@ -90,7 +90,7 @@
   background: #ffffff;
   border: none;
   border-radius: 1.7rem;
-  box-shadow: 0 16px 40px rgba(84, 17, 27, 0.08);
+  box-shadow: 0 16px 40px rgba(var(--primary-rgb), 0.08);
 }
 
 .table-responsive {
@@ -118,7 +118,7 @@
   background: var(--maroon);
   border-color: var(--maroon);
   color: white;
-  box-shadow: 0 10px 22px rgba(84, 17, 27, 0.18);
+  box-shadow: 0 10px 22px rgba(var(--primary-rgb), 0.18);
 }
 
 .btn-pink:hover {
@@ -153,8 +153,8 @@
 }
 
 .btn-soft-danger {
-  background: rgba(128, 32, 43, 0.08);
-  border: 1px solid rgba(128, 32, 43, 0.15);
+  background: rgba(var(--primary-rgb), 0.08);
+  border: 1px solid rgba(var(--primary-rgb), 0.15);
   color: #d32f2f;
 }
 
@@ -169,7 +169,7 @@
   overflow: hidden;
   position: relative;
   background: var(--secondary-color);
-  box-shadow: 0 16px 36px rgba(84, 17, 27, 0.06);
+  box-shadow: 0 16px 36px rgba(var(--primary-rgb), 0.06);
 }
 
 .image-preview-card img {
@@ -191,6 +191,20 @@
 
 .admin-login-card {
   border-radius: 2rem;
+}
+
+.brand-logo {
+  /* highlight the logo with pink accent */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 1rem;
+  border-radius: 24px;
+  background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.12), rgba(var(--primary-rgb), 0.06));
+  border: 2px solid rgba(var(--primary-rgb), 0.18);
+  box-shadow: 0 8px 30px rgba(var(--primary-rgb), 0.12);
 }
 
 .login-logo {

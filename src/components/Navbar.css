@@ -21,7 +21,7 @@
 
 .navbar.sticky-top { position: sticky; top: 0; z-index: 999; }
 
-.navbar-shadow { box-shadow: 0 12px 28px rgba(84, 17, 27, 0.1); }
+.navbar-shadow { box-shadow: 0 12px 28px rgba(var(--primary-rgb), 0.1); }
 
 .navbar .container-fluid {
   max-width: 1540px;
@@ -46,7 +46,7 @@
   object-fit: cover;
   border: 2px solid var(--gold-muted);
   background: var(--maroon-deep);
-  box-shadow: 0 10px 24px rgba(84, 17, 27, 0.16);
+  box-shadow: 0 10px 24px rgba(var(--primary-rgb), 0.16);
 }
 
 .navbar-collapse { grid-column: 2; display: flex !important; justify-content: center; }
@@ -79,13 +79,13 @@
   display: inline-flex; align-items: center; justify-content: center; font-size: 1.45rem; position: relative;
 }
 
-.brand-tool:hover, .icon-link:hover { color: var(--maroon); background: rgba(128, 32, 43, 0.08); }
+.brand-tool:hover, .icon-link:hover { color: var(--maroon); background: rgba(var(--primary-rgb), 0.08); }
 
 .dropdown-toggle::after { display: none; }
 .dropdown-menu { background: var(--ivory); border: 1px solid var(--gold-muted); border-radius: 8px; box-shadow: 0 18px 40px rgba(55, 12, 19, 0.2); }
 
 .dropdown-item { color: var(--maroon-deep); font-size: 0.82rem; font-weight: 800; padding: 0.75rem 1.15rem; }
-.dropdown-item:hover { background: rgba(128, 32, 43, 0.08); color: var(--maroon); }
+.dropdown-item:hover { background: rgba(var(--primary-rgb), 0.08); color: var(--maroon); }
 
 .cart-badge { position: absolute; top: 0; right: 0; background: var(--maroon-deep); color: var(--ivory); font-size: 0.72rem; font-weight: 900; min-width: 20px; height: 20px; border-radius: 999px; border: 2px solid var(--ivory); display: flex; align-items: center; justify-content: center; }
 
@@ -95,7 +95,7 @@
 .search-form { grid-column: 1 / -1; grid-row: 2; justify-self: end; width: 0; overflow: hidden; opacity: 0; pointer-events: none; transition: width 0.2s ease, opacity 0.2s ease; }
 .search-form.show, .search-form:focus-within { width: 220px; opacity: 1; pointer-events: auto; }
 
-.search-form .input-group { border: 1px solid rgba(128, 32, 43, 0.2); border-radius: 999px; overflow: hidden; background: var(--ivory); }
+.search-form .input-group { border: 1px solid rgba(var(--primary-rgb), 0.2); border-radius: 999px; overflow: hidden; background: var(--ivory); }
 .search-form .form-control, .search-form .btn { border: 0; box-shadow: none; }
 .search-form .form-control { background: transparent; color: var(--maroon-deep); font-size: 0.88rem; padding: 0.55rem 0.9rem; }
 .search-form .btn { min-width: 42px; padding: 0.55rem; }

@@ -1,13 +1,14 @@
 :root {
-  --primary-color: #80202b;
+  --primary-color: #E91E63; /* pink */
+  --primary-rgb: 233, 30, 99;
   --secondary-color: #fff1d8;
   --accent-color: #dda95d;
   --background-color: #fff7e8;
   --text-color: #351017;
   --light-gray: #f7ead2;
   --border-color: #dec396;
-  --maroon-deep: #54111b;
-  --maroon: #80202b;
+  --maroon-deep: #C2185B; /* deep pink */
+  --maroon: #E91E63; /* legacy var mapped to pink */
   --ivory: #fff7e8;
   --gold-soft: #f0c77a;
   --gold-muted: #c5914d;
@@ -40,7 +41,7 @@ body {
   color: var(--text-color);
   background:
     linear-gradient(rgba(255, 247, 232, 0.96), rgba(255, 247, 232, 0.96)),
-    radial-gradient(circle at 10% 10%, rgba(128, 32, 43, 0.08), transparent 28%),
+    radial-gradient(circle at 10% 10%, rgba(var(--primary-rgb), 0.08), transparent 28%),
     radial-gradient(circle at 90% 20%, rgba(221, 169, 93, 0.12), transparent 24%);
   line-height: 1.6;
 }
@@ -66,7 +67,7 @@ h1, h2, h3, h4, h5, h6 {
   background-color: var(--maroon-deep);
   border-color: var(--maroon-deep);
   color: var(--ivory);
-  box-shadow: 0 8px 18px rgba(84, 17, 27, 0.22);
+  box-shadow: 0 8px 18px rgba(var(--primary-rgb), 0.22);
 }
 
 .btn-outline-primary {
@@ -107,7 +108,7 @@ h1, h2, h3, h4, h5, h6 {
 .btn-close:focus,
 .page-link:focus {
   border-color: var(--maroon);
-  box-shadow: 0 0 0 0.2rem rgba(128, 32, 43, 0.2);
+  box-shadow: 0 0 0 0.2rem rgba(var(--primary-rgb), 0.2);
 }
 
 a {
