@@ -16,19 +16,19 @@ const makeCategoryImage = ({ title, base, accent, highlight, motif }) => {
           <stop offset="1" stop-color="#fff7e8" stop-opacity="0"/>
         </radialGradient>
         <pattern id="motif" width="90" height="90" patternUnits="userSpaceOnUse">
-          <path d="${motif}" fill="none" stroke="#f0c77a" stroke-width="4" opacity="0.35"/>
+          <path d="${motif}" fill="none" stroke="#f2a4c5" stroke-width="4" opacity="0.35"/>
         </pattern>
       </defs>
       <rect width="900" height="620" fill="url(#bg)"/>
       <rect width="900" height="620" fill="url(#glow)"/>
       <rect width="900" height="620" fill="url(#motif)" opacity="0.72"/>
       <path d="M90 620 C180 430 210 250 450 140 C690 250 720 430 810 620 Z" fill="#fff7e8" opacity="0.16"/>
-      <path d="M260 620 C300 465 330 330 450 250 C570 330 600 465 640 620 Z" fill="#54111b" opacity="0.28"/>
-      <path d="M322 620 C350 500 380 405 450 346 C520 405 550 500 578 620 Z" fill="#fff7e8" opacity="0.18"/>
-      <circle cx="450" cy="196" r="58" fill="#fff7e8" opacity="0.22"/>
-      <path d="M218 112 H682" stroke="#f0c77a" stroke-width="5" opacity="0.5"/>
-      <path d="M252 140 H648" stroke="#fff7e8" stroke-width="2" opacity="0.45"/>
-      <text x="450" y="520" text-anchor="middle" font-family="Georgia, serif" font-size="44" font-weight="700" fill="#fff7e8" letter-spacing="6">${title}</text>
+        <path d="M260 620 C300 465 330 330 450 250 C570 330 600 465 640 620 Z" fill="var(--maroon-deep)" opacity="0.28"/>
+        <path d="M322 620 C350 500 380 405 450 346 C520 405 550 500 578 620 Z" fill="var(--ivory)" opacity="0.18"/>
+        <circle cx="450" cy="196" r="58" fill="var(--ivory)" opacity="0.22"/>
+        <path d="M218 112 H682" stroke="var(--maroon)" stroke-width="5" opacity="0.5"/>
+        <path d="M252 140 H648" stroke="var(--ivory)" stroke-width="2" opacity="0.45"/>
+        <text x="450" y="520" text-anchor="middle" font-family="Georgia, serif" font-size="44" font-weight="700" fill="var(--ivory)" letter-spacing="6">${title}</text>
     </svg>
   `;
 

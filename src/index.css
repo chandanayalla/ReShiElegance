@@ -1,17 +1,17 @@
 :root {
-  --primary-color: #f8bbd0;
-  --primary-rgb: 248, 187, 208;
-  --secondary-color: #fff1d8;
-  --accent-color: #dda95d;
-  --background-color: #fff7e8;
-  --text-color: #351017;
-  --light-gray: #f7ead2;
-  --border-color: #dec396;
-  --maroon-deep: #f4a9c7;
-  --maroon: #f8bbd0;
-  --ivory: #fff7e8;
-  --gold-soft: #f0c77a;
-  --gold-muted: #c5914d;
+  --primary-color: #fde7f3;
+  --primary-rgb: 253, 231, 243;
+  --secondary-color: #fde7f3;
+  --accent-color: #f2a4c5;
+  --background-color: #ffffff;
+  --text-color: #000000;
+  --light-gray: #f7f7f7;
+  --border-color: #f2a4c5;
+  --maroon-deep: #f8bfd7;
+  --maroon: #f2a4c5;
+  --ivory: #ffffff;
+  --gold-soft: #f8bfd7;
+  --gold-muted: #f2a4c5;
   --success-color: #4CAF50;
   --warning-color: #FF9800;
   --danger-color: #F44336;
@@ -40,9 +40,9 @@ body {
   font-family: var(--body-font);
   color: var(--text-color);
   background:
-    linear-gradient(rgba(255, 247, 232, 0.96), rgba(255, 247, 232, 0.96)),
-    radial-gradient(circle at 10% 10%, rgba(var(--primary-rgb), 0.08), transparent 28%),
-    radial-gradient(circle at 90% 20%, rgba(221, 169, 93, 0.12), transparent 24%);
+    linear-gradient(rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.96)),
+    radial-gradient(circle at 10% 10%, rgba(var(--primary-rgb), 0.34), transparent 28%),
+    radial-gradient(circle at 90% 20%, rgba(242, 164, 197, 0.12), transparent 24%);
   line-height: 1.6;
 }
 
@@ -67,7 +67,7 @@ h1, h2, h3, h4, h5, h6 {
   background-color: var(--maroon-deep);
   border-color: var(--maroon-deep);
   color: var(--ivory);
-  box-shadow: 0 8px 18px rgba(var(--primary-rgb), 0.22);
+  box-shadow: 0 8px 18px rgba(248, 191, 215, 0.32);
 }
 
 .btn-outline-primary {
@@ -88,7 +88,7 @@ h1, h2, h3, h4, h5, h6 {
 .text-primary,
 .link-primary,
 .page-link {
-  color: var(--maroon) !important;
+  color: var(--text-color) !important;
 }
 
 .bg-primary,
@@ -108,7 +108,7 @@ h1, h2, h3, h4, h5, h6 {
 .btn-close:focus,
 .page-link:focus {
   border-color: var(--maroon);
-  box-shadow: 0 0 0 0.2rem rgba(var(--primary-rgb), 0.2);
+  box-shadow: 0 0 0 0.2rem rgba(var(--primary-rgb), 0.28);
 }
 
 a {

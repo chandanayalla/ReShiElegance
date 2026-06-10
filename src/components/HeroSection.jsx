@@ -6,28 +6,18 @@ import redOne from '../assets/red1.jpeg';
 import redTwo from '../assets/red2.jpeg';
 import './HeroSection.css';
 
-const heroPanels = [
-  { image: heroImg, label: 'Silk heirlooms' },
-  { image: redTwo, label: 'Festive drapes' },
-  { image: redOne, label: 'Bridal edits' },
-  { image: redTwo, label: 'Modern classics' },
-];
+
+// Single hero image to match the provided design (model on the right)
+const heroImage = mainImg;
 
 const HeroSection = () => {
   return (
     <section className="hero-section">
       <div className="hero-inner">
         <div className="hero-gallery" aria-label="ReShi Elegance featured saree collection">
-          {heroPanels.map((panel, index) => (
-            <Link to="/shop" className="hero-panel" key={panel.label}>
-              <img src={panel.image} alt={panel.label} loading={index === 0 ? 'eager' : 'lazy'} />
-              <span>{panel.label}</span>
-            </Link>
-          ))}
-          <div className="hero-monogram">
-            <span>RE</span>
-            <strong>ReShi Elegance</strong>
-          </div>
+          <Link to="/shop" className="hero-panel hero-single">
+            <img src={heroImage} alt="Featured collection" loading="eager" />
+          </Link>
         </div>
 
         <div className="hero-copy">

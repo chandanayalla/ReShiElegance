@@ -4,9 +4,9 @@
   background: var(--ivory);
 }
 
-.features-section { padding: 3rem 0; border-bottom: 1px solid rgba(197, 145, 77, 0.32); }
+.features-section { padding: 3rem 0; border-bottom: 1px solid rgba(242, 164, 197, 0.32); }
 
-.feature-card { text-align: center; padding: 1.5rem 1rem; background-color: transparent; border: 1px solid rgba(197, 145, 77, 0.34); min-height: 100%; }
+.feature-card { text-align: center; padding: 1.5rem 1rem; background-color: transparent; border: 1px solid rgba(242, 164, 197, 0.34); min-height: 100%; }
 .feature-card:hover { border-color: var(--maroon); box-shadow: 0 12px 28px rgba(84, 17, 27, 0.1); }
 
 .feature-icon { width: 52px; height: 52px; background: var(--maroon); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--ivory); font-size: 1.25rem; margin: 0 auto 1rem; }
@@ -28,21 +28,33 @@
 
 .section-header p { font-size: 0.95rem; color: rgba(53, 16, 23, 0.62); margin-bottom: 1rem; }
 
-.title-divider { width: 120px; height: 1px; background: var(--gold-muted); margin: 0 auto; }
+.title-divider { width: 120px; height: 1px; background: var(--maroon); margin: 0 auto; }
+.title-divider {
+  width: 120px;
+  height: 6px;
+  margin: 14px auto 0;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--primary-color), var(--maroon));
+  opacity: 0.98;
+}
 
-.promo-banner { background: var(--maroon-deep); color: var(--ivory); position: relative; overflow: hidden; margin: 1rem 0; border-top: 1px solid var(--gold-muted); border-bottom: 1px solid var(--gold-muted); }
-.promo-banner::before { content: ''; position: absolute; inset: 1rem; border: 1px solid rgba(240, 199, 122, 0.32); pointer-events: none; }
+.promo-banner { background: var(--maroon-deep); color: var(--ivory); position: relative; overflow: hidden; margin: 1rem 0; border-top: 1px solid var(--maroon); border-bottom: 1px solid var(--maroon); }
+.promo-banner::before { content: ''; position: absolute; inset: 1rem; border: 1px solid rgba(242, 164, 197, 0.32); pointer-events: none; }
 
 .banner-content { text-align: center; position: relative; z-index: 1; padding: 2.4rem 1rem; }
-.promo-banner h2 { color: var(--gold-soft); font-size: 0.82rem; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; margin-bottom: 0.45rem; }
 
-.promo-banner h3 { color: var(--ivory); font-size: clamp(2rem, 4vw, 3.25rem); margin-bottom: 0.8rem; }
+.banner-content { max-width: 860px; margin: 0 auto; padding: 2.8rem 1rem; }
+.promo-banner h2 { color: var(--primary-color); font-size: 0.82rem; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; margin-bottom: 0.45rem; }
+
+.promo-banner h3 { color: var(--ivory); font-size: clamp(2rem, 4vw, 3.6rem); margin-bottom: 0.6rem; font-weight:800; text-transform:none; letter-spacing:0.02em; }
+.promo-banner h3::after { content: ''; display:block; width: 84px; height: 6px; background: linear-gradient(90deg, var(--primary-color), var(--maroon)); margin: 10px auto 0; border-radius:4px; opacity:0.95; }
 
 .promo-banner p { color: rgba(255, 247, 232, 0.78); font-size: 1rem; margin-bottom: 1.5rem; }
 
-.promo-banner .btn { background-color: var(--gold-soft); color: var(--maroon-deep); border-color: var(--gold-soft); font-weight: 800; border-radius: 999px; }
+.promo-banner .btn { background: linear-gradient(90deg, var(--primary-color), var(--maroon)); color: var(--text-color); border: none; font-weight: 900; border-radius: 999px; padding: 0.9rem 1.6rem; box-shadow: 0 12px 28px rgba(var(--primary-rgb), 0.12); transition: transform 0.16s ease, box-shadow 0.16s ease; }
+.promo-banner .btn:hover { transform: translateY(-4px); box-shadow: 0 22px 48px rgba(var(--primary-rgb), 0.18); color: var(--ivory); }
 
-.cta-section { border-top: 1px solid rgba(197, 145, 77, 0.34); padding: 4rem 0; }
+.cta-section { border-top: 1px solid rgba(242, 164, 197, 0.34); padding: 4rem 0; }
 
 .cta-content { text-align: center; max-width: 680px; margin: 0 auto; }
 
@@ -51,7 +63,7 @@
 .cta-content p { color: rgba(53, 16, 23, 0.62); margin-bottom: 1.5rem; }
 
 .cta-form { display: flex; gap: 0.65rem; justify-content: center; }
-.cta-form input { flex: 1; min-width: 250px; padding: 0.78rem 1.2rem; border: 1px solid var(--border-color); border-radius: 999px; background: rgba(255, 251, 242, 0.95); }
+.cta-form input { flex: 1; min-width: 250px; padding: 0.78rem 1.2rem; border: 1px solid var(--border-color); border-radius: 999px; background: #ffffff; }
 .cta-form .btn { padding: 0.78rem 1.5rem; border-radius: 999px; }
 
 @media (max-width: 768px) {

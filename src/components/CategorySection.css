@@ -1,7 +1,9 @@
 .category-section {
   background-color: var(--ivory);
-  border-top: 1px solid rgba(197, 145, 77, 0.34);
-  border-bottom: 1px solid rgba(197, 145, 77, 0.34);
+  border-top: 1px solid rgba(var(--primary-rgb), 0.12);
+  border-bottom: 1px solid rgba(var(--primary-rgb), 0.12);
+  padding-top: 2.6rem;
+  padding-bottom: 2.6rem;
 }
 
 .category-card-link {
@@ -9,24 +11,33 @@
 }
 
 .category-card {
-  position: relative;
-  overflow: hidden;
-  border-radius: 0;
-  height: 290px;
-  border: 1px solid var(--border-color);
-  background: #ead9bb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 0.8rem;
+  border-radius: 8px;
+  height: auto;
+  padding: 1rem 0.6rem;
+  border: none;
+  background: transparent;
 }
 
 .category-card:hover {
-  box-shadow: 0 16px 32px rgba(84, 17, 27, 0.14);
-  border-color: var(--gold-muted);
+  transform: translateY(-6px);
 }
 
 .category-image {
-  position: relative;
-  width: 100%;
-  height: 100%;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, rgba(var(--primary-rgb),0.06), rgba(var(--primary-rgb),0.02));
+  border: 6px solid rgba(var(--primary-rgb),0.06);
+  box-shadow: 0 8px 20px rgba(var(--primary-rgb),0.08);
 }
 
 .category-image img {
@@ -40,39 +51,26 @@
   transform: scale(1.04);
 }
 
-.overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(84, 17, 27, 0.02), rgba(84, 17, 27, 0.56));
-}
+.overlay { display: none; }
 
-.category-content {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  padding: 1.35rem 1.2rem;
-  color: var(--ivory);
-}
-
+.category-content { text-align: center; }
 .category-content h4 {
-  color: var(--ivory);
-  font-size: 1.35rem;
-  margin-bottom: 0.35rem;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.category-content p {
-  font-size: 0.75rem;
+  color: var(--maroon-deep);
+  font-size: 1rem;
   margin: 0;
+  text-transform: none;
+  font-weight: 800;
+}
+.category-content p {
+  font-size: 0.72rem;
+  margin: 0;
+  color: var(--maroon);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  color: var(--gold-soft);
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
 }
 
 @media (max-width: 768px) {
