@@ -23,7 +23,12 @@ const Navbar = () => {
     event.preventDefault();
     if (searchQuery.trim()) {
       window.location.href = `/shop?search=${encodeURIComponent(searchQuery)}`;
+      setIsMenuOpen(false);
     }
+  };
+
+  const closeMobileMenu = () => {
+    setIsMenuOpen(false);
   };
 
   return (
@@ -43,14 +48,52 @@ const Navbar = () => {
           </Link>
 
           <div className={`collapse navbar-collapse ${isMenuOpen ? 'show' : ''}`} id="navbarNav">
-            <ul className="navbar-nav">
-              <li className="nav-item"><Link className="nav-link" to="/">Home</Link></li>
-              <li className="nav-item"><Link className="nav-link" to="/shop">Shop</Link></li>
-              <li className="nav-item"><Link className="nav-link" to="/shop?category=New Arrivals">New Arrivals</Link></li>
-              <li className="nav-item"><Link className="nav-link" to="/about">About</Link></li>
-              <li className="nav-item"><Link className="nav-link" to="/account">My Orders</Link></li>
-              <li className="nav-item"><Link className="nav-link" to="/contact">Contact</Link></li>
+            {/* Search Bar */}
+            <form className="search-form mx-auto" onSubmit={handleSearch}>
+              <div className="input-group">
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Search for sarees..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                <button className="btn btn-primary" type="submit">
+                  <i className="bi bi-search"></i>
+                </button>
+              </div>
+            </form>
+
+            {/* Nav Links */}
+            <ul className="navbar-nav ms-auto">
+              <li className="nav-item">
+                <Link className="nav-link" to="/" onClick={closeMobileMenu}>Home</Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/shop" onClick={closeMobileMenu}>Sarees</Link>
+              </li>
+              <li className="nav-item dropdown">
+                <a className="nav-link dropdown-toggle" href="#" id="collectionsDropdown" role="button" data-bs-toggle="dropdown" onClick={(e) => e.preventDefault()}>
+                  Collections
+                </a>
+                <ul className="dropdown-menu">
+                  <li><Link className="dropdown-item" to="/shop?category=New Arrivals" onClick={closeMobileMenu}>New Arrivals</Link></li>
+                  <li><Link className="dropdown-item" to="/shop?category=Best Sellers" onClick={closeMobileMenu}>Best Sellers</Link></li>
+                  <li><Link className="dropdown-item" to="/shop?category=Bridal Sarees" onClick={closeMobileMenu}>Bridal Sarees</Link></li>
+                  <li><Link className="dropdown-item" to="/shop?category=Party Wear Sarees" onClick={closeMobileMenu}>Party Wear</Link></li>
+                </ul>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/about" onClick={closeMobileMenu}>About Us</Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/contact" onClick={closeMobileMenu}>Contact Us</Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/admin/login" onClick={closeMobileMenu}>Admin</Link>
+              </li>
             </ul>
+
           </div>
 
           <div className="navbar-icons">

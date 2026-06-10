@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import AdminLayout from './AdminLayout';
 import api from '../../services/api';
-import { readArrayResponse } from '../../utils/apiData';
+
+const getProductNames = (products) => {
+  if (!Array.isArray(products)) return '';
+  return products.map((item) => item?.name).filter(Boolean).join(', ');
+};
 
 const Dashboard = () => {
   const [products, setProducts] = useState([]);
@@ -11,8 +15,8 @@ const Dashboard = () => {
   const loadData = async () => {
     try {
       const [productResponse, orderResponse] = await Promise.all([api.get('/products'), api.get('/orders')]);
-      setProducts(readArrayResponse(productResponse.data));
-      setOrders(readArrayResponse(orderResponse.data));
+      setProducts(productResponse.data || []);
+      setOrders(orderResponse.data || []);
     } catch (error) {
       console.error('Dashboard loading error:', error);
     } finally {
@@ -90,7 +94,7 @@ const Dashboard = () => {
                   <tr key={order.id || order._id}>
                     <td>{String(order.id || order._id).slice(-8).toUpperCase()}</td>
                     <td>{order.customerName}</td>
-                    <td>{(order.products || []).map((item) => item.name).join(', ')}</td>
+                    <td>{getProductNames(order.products)}</td>
                     <td>
                       <span className={`badge ${order.status === 'Delivered' ? 'bg-success' : order.status === 'Shipped' ? 'bg-warning' : 'bg-secondary'}`}>
                         {order.status}

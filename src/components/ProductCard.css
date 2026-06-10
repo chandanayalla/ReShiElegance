@@ -1,9 +1,9 @@
 .product-card {
   background: var(--ivory);
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: 0;
   overflow: hidden;
-  transition: box-shadow 0.25s ease, border-color 0.25s ease, transform 0.18s ease;
+  transition: box-shadow 0.25s ease, border-color 0.25s ease;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -11,9 +11,9 @@
 }
 
 .product-card:hover {
-  border-color: var(--gold-muted);
-  box-shadow: 0 16px 32px rgba(84, 17, 27, 0.14);
-  transform: translateY(-6px);
+  border-color: var(--maroon);
+  box-shadow: 0 20px 40px rgba(var(--primary-rgb), 0.12);
+  transform: translateY(-4px);
 }
 
 .product-image-container {
@@ -21,7 +21,7 @@
   width: 100%;
   aspect-ratio: 4 / 5;
   overflow: hidden;
-  background-color: #efe1c4;
+  background-color: var(--ivory);
 }
 
 .image-hover,
@@ -49,25 +49,27 @@
 }
 
 .badge {
-  padding: 0.36rem 0.68rem;
+  padding: 0.36rem 0.6rem;
   border-radius: 999px;
-  font-size: 0.7rem;
+  font-size: 0.66rem;
   font-weight: 800;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--ivory);
 }
 
-.badge-discount,
+.badge-discount {
+  background-color: var(--maroon);
+}
+
 .badge-new {
   background: linear-gradient(180deg, var(--primary-color), var(--maroon));
   color: var(--text-color);
-  animation: badgeSlideIn 0.36s ease;
 }
 
 .badge-bestseller {
-  background-color: var(--gold-muted);
-  color: var(--maroon-deep);
+  background-color: var(--maroon);
+  color: var(--ivory);
 }
 
 .wishlist-btn {
@@ -77,8 +79,8 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background-color: rgba(255, 247, 232, 0.92);
-  border: 1px solid var(--border-color);
+  background-color: var(--ivory);
+  border: 1px solid rgba(var(--primary-rgb), 0.16);
   color: var(--maroon-deep);
   cursor: pointer;
   display: flex;
@@ -105,7 +107,7 @@
 
 .product-category {
   font-size: 0.68rem;
-  color: var(--gold-muted);
+  color: var(--maroon);
   text-transform: uppercase;
   letter-spacing: 0.13em;
   margin-bottom: 0.42rem;
@@ -116,7 +118,7 @@
   font-family: var(--heading-font);
   font-size: 1rem;
   font-weight: 600;
-  color: var(--maroon-deep);
+  color: var(--text-color);
   margin-bottom: 0.65rem;
   line-height: 1.25;
   min-height: 2.5rem;
@@ -125,6 +127,7 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
 .product-rating {
   display: flex;
   align-items: center;
@@ -140,7 +143,7 @@
 }
 
 .stars i {
-  color: var(--gold-muted);
+  color: var(--maroon);
 }
 
 .rating-text {
@@ -192,14 +195,15 @@
   letter-spacing: 0.05em;
   text-transform: uppercase;
   font-size: 0.76rem;
-  background: var(--gold-soft);
-  border-color: var(--gold-muted);
-  color: var(--maroon-deep);
+  background: linear-gradient(90deg, var(--primary-color), var(--maroon));
+  border: none;
+  color: var(--text-color);
+  transition: transform 0.14s ease, box-shadow 0.14s ease;
 }
 
 .btn-buy-now:hover {
-  background: var(--maroon-deep);
-  border-color: var(--maroon-deep);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(var(--primary-rgb), 0.18);
   color: var(--ivory);
 }
 
@@ -217,7 +221,7 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   padding-top: 0.6rem;
-  border-top: 1px solid rgba(197, 145, 77, 0.35);
+  border-top: 1px solid rgba(var(--primary-rgb), 0.14);
 }
 
 .toast-notification {

@@ -3,35 +3,42 @@ import jwt from 'jsonwebtoken';
 
 const router = express.Router();
 
-const createToken = (admin) => jwt.sign(admin, process.env.JWT_SECRET || 'dev-secret', { expiresIn: '8h' });
+const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret';
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@reshi.com';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'change-me';
+
+const createToken = (admin) => jwt.sign(admin, JWT_SECRET, { expiresIn: '8h' });
 
 export const requireAdmin = (req, res, next) => {
   const header = req.headers.authorization || '';
   const token = header.startsWith('Bearer ') ? header.slice(7) : '';
 
-  if (!token) {
-    return res.status(401).json({ message: 'Admin authentication required.' });
-  }
+  if (!token) return res.status(401).json({ message: 'Admin authentication required.' });
 
   try {
-    req.admin = jwt.verify(token, process.env.JWT_SECRET || 'dev-secret');
+    req.admin = jwt.verify(token, JWT_SECRET);
     return next();
-  } catch {
+  } catch (err) {
     return res.status(401).json({ message: 'Invalid or expired admin session.' });
   }
 };
 
+// Admin login
 router.post('/login', (req, res) => {
-  const { email, password } = req.body;
-  const adminEmail = process.env.ADMIN_EMAIL || 'reshielegance@gmail.com';
-  const adminPassword = process.env.ADMIN_PASSWORD || 'Rs@12345678';
+  const { email, password } = req.body || {};
 
-  if (email !== adminEmail || password !== adminPassword) {
-    return res.status(401).json({ message: 'Invalid admin credentials.' });
+  if (!email || !password) {
+    return res.status(400).json({ message: 'Email and password are required.' });
   }
 
-  const admin = { email: adminEmail, name: 'ReShi Admin', role: 'admin' };
-  return res.json({ admin, token: createToken(admin) });
+  if (email !== ADMIN_EMAIL || password !== ADMIN_PASSWORD) {
+    return res.status(401).json({ message: 'Invalid credentials.' });
+  }
+
+  const admin = { email: ADMIN_EMAIL, name: 'ReShi Admin', role: 'admin' };
+  const token = createToken(admin);
+
+  return res.json({ admin, token });
 });
 
 router.get('/me', requireAdmin, (req, res) => {

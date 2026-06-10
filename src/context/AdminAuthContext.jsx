@@ -3,11 +3,18 @@ import api from '../services/api';
 
 export const AdminAuthContext = createContext();
 
-export const AdminAuthProvider = ({ children }) => {
-  const [admin, setAdmin] = useState(() => {
+const readStoredAdmin = () => {
+  try {
     const stored = localStorage.getItem('reshiAdmin');
     return stored ? JSON.parse(stored) : null;
-  });
+  } catch {
+    localStorage.removeItem('reshiAdmin');
+    return null;
+  }
+};
+
+export const AdminAuthProvider = ({ children }) => {
+  const [admin, setAdmin] = useState(readStoredAdmin);
   const [token, setToken] = useState(() => localStorage.getItem('reshiAdminToken') || '');
   const [loading, setLoading] = useState(false);
 
@@ -35,6 +42,10 @@ export const AdminAuthProvider = ({ children }) => {
       setAdmin(adminData);
       setToken(authToken);
       return response.data;
+    } catch (error) {
+      setAdmin(null);
+      setToken('');
+      throw error;
     } finally {
       setLoading(false);
     }

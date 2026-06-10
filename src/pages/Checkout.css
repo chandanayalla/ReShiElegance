@@ -238,3 +238,47 @@
     padding: 1rem;
   }
 }
+
+/* Mobile sticky order bar */
+.mobile-order-bar {
+  display: none;
+}
+
+@media (max-width: 992px) {
+  .checkout-container {
+    padding-bottom: 92px; /* room for sticky bar */
+  }
+
+  .mobile-order-bar {
+    display: block;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1100;
+    background: #fff;
+    border-top: 1px solid var(--border-color);
+    box-shadow: 0 -6px 18px rgba(0,0,0,0.06);
+    padding: 10px 0;
+  }
+
+  .mobile-order-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1rem;
+  }
+
+  .mobile-order-inner .mobile-total {
+    font-weight: 700;
+    color: var(--text-color);
+    font-size: 1rem;
+  }
+
+  .mobile-order-inner .btn {
+    min-width: 150px;
+  }
+}

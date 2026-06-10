@@ -10,7 +10,7 @@
 }
 
 .shop-header h1 {
-  font-size: 2.5rem;
+  font-size: clamp(1.6rem, 3.8vw, 2.5rem);
   margin-bottom: 0.5rem;
   color: var(--text-color);
 }
@@ -127,6 +127,68 @@
   padding: 1.5rem;
   border-radius: 8px;
   border: 1px solid var(--border-color);
+}
+
+/* Off-canvas filters for mobile */
+.filters-offcanvas {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 100%;
+  max-width: 420px;
+  height: 100vh;
+  transform: translateX(100%);
+  transition: transform 0.28s ease;
+  z-index: 1200;
+  display: none;
+}
+
+.filters-offcanvas.open {
+  transform: translateX(0);
+  display: block;
+}
+
+.filters-offcanvas-inner {
+  height: 100%;
+  background: #fff;
+  box-shadow: -8px 0 40px rgba(0,0,0,0.08);
+  overflow-y: auto;
+}
+
+.filters-offcanvas-backdrop {
+  position: fixed;
+  inset: 0 0 0 0;
+  background: rgba(0,0,0,0.35);
+  z-index: 1100;
+}
+
+.filters-offcanvas-header {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.filters-panel .filter-group {
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 991px) {
+  .filters-offcanvas {
+    display: block;
+  }
+
+  .sort-bar {
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .sort-bar label {
+    flex: 0 0 auto;
+    min-width: 72px;
+  }
+
+  .sort-bar .form-select {
+    flex: 1 1 auto;
+  }
 }
 
 .sort-bar label {

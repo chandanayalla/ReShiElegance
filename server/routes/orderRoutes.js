@@ -12,6 +12,20 @@ const supabase = process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_K
 
 let orders = [];
 
+const normalizeProducts = (value) => {
+  if (Array.isArray(value)) return value;
+  if (!value) return [];
+  if (typeof value === 'string') {
+    try {
+      const parsed = JSON.parse(value);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  }
+  return Array.isArray(value.items) ? value.items : [];
+};
+
 const toOrder = (order) => ({
   id: String(order.id || order._id),
   _id: String(order.id || order._id),
@@ -19,7 +33,7 @@ const toOrder = (order) => ({
   customerEmail: order.customer_email || order.customerEmail || '',
   customerPhone: order.customer_phone || order.customerPhone || '',
   address: order.address || {},
-  products: order.items || order.products || [],
+  products: normalizeProducts(order.items || order.products),
   subtotal: Number(order.subtotal || 0),
   shipping: Number(order.shipping || 0),
   tax: Number(order.tax || 0),
@@ -56,7 +70,7 @@ export const createStoreOrder = async (payload) => {
     customerEmail: payload.customerEmail,
     customerPhone: payload.customerPhone,
     address: payload.address,
-    products: payload.products || [],
+    products: normalizeProducts(payload.products),
     subtotal: Number(payload.subtotal || 0),
     shipping: Number(payload.shipping || 0),
     tax: Number(payload.tax || 0),

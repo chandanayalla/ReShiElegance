@@ -1,16 +1,17 @@
 :root {
-  --primary-color: #80202b;
-  --secondary-color: #fff1d8;
-  --accent-color: #dda95d;
-  --background-color: #fff7e8;
-  --text-color: #351017;
-  --light-gray: #f7ead2;
-  --border-color: #dec396;
-  --maroon-deep: #54111b;
-  --maroon: #80202b;
-  --ivory: #fff7e8;
-  --gold-soft: #f0c77a;
-  --gold-muted: #c5914d;
+  --primary-color: #fde7f3;
+  --primary-rgb: 253, 231, 243;
+  --secondary-color: #fde7f3;
+  --accent-color: #f2a4c5;
+  --background-color: #ffffff;
+  --text-color: #000000;
+  --light-gray: #f7f7f7;
+  --border-color: #f2a4c5;
+  --maroon-deep: #f8bfd7;
+  --maroon: #f2a4c5;
+  --ivory: #ffffff;
+  --gold-soft: #f8bfd7;
+  --gold-muted: #f2a4c5;
   --success-color: #4CAF50;
   --warning-color: #FF9800;
   --danger-color: #F44336;
@@ -28,13 +29,20 @@ html {
   scroll-behavior: smooth;
 }
 
+html,
+body,
+#root {
+  width: 100%;
+  max-width: 100%;
+}
+
 body {
   font-family: var(--body-font);
   color: var(--text-color);
   background:
-    linear-gradient(rgba(255, 247, 232, 0.96), rgba(255, 247, 232, 0.96)),
-    radial-gradient(circle at 10% 10%, rgba(128, 32, 43, 0.08), transparent 28%),
-    radial-gradient(circle at 90% 20%, rgba(221, 169, 93, 0.12), transparent 24%);
+    linear-gradient(rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.96)),
+    radial-gradient(circle at 10% 10%, rgba(var(--primary-rgb), 0.34), transparent 28%),
+    radial-gradient(circle at 90% 20%, rgba(242, 164, 197, 0.12), transparent 24%);
   line-height: 1.6;
 }
 
@@ -59,7 +67,7 @@ h1, h2, h3, h4, h5, h6 {
   background-color: var(--maroon-deep);
   border-color: var(--maroon-deep);
   color: var(--ivory);
-  box-shadow: 0 8px 18px rgba(84, 17, 27, 0.22);
+  box-shadow: 0 8px 18px rgba(248, 191, 215, 0.32);
 }
 
 .btn-outline-primary {
@@ -80,7 +88,7 @@ h1, h2, h3, h4, h5, h6 {
 .text-primary,
 .link-primary,
 .page-link {
-  color: var(--maroon) !important;
+  color: var(--text-color) !important;
 }
 
 .bg-primary,
@@ -100,7 +108,7 @@ h1, h2, h3, h4, h5, h6 {
 .btn-close:focus,
 .page-link:focus {
   border-color: var(--maroon);
-  box-shadow: 0 0 0 0.2rem rgba(128, 32, 43, 0.2);
+  box-shadow: 0 0 0 0.2rem rgba(var(--primary-rgb), 0.28);
 }
 
 a {
@@ -116,8 +124,8 @@ a:hover {
 .container-fluid {
   max-width: 1400px;
   margin: 0 auto;
-  padding-left: 1rem;
-  padding-right: 1rem;
+  padding-left: clamp(0.85rem, 2.5vw, 1.25rem);
+  padding-right: clamp(0.85rem, 2.5vw, 1.25rem);
 }
 
 img,
@@ -183,6 +191,32 @@ body {
   }
   h3 {
     font-size: 1.25rem;
+  }
+
+  .py-5 {
+    padding-top: 2.5rem !important;
+    padding-bottom: 2.5rem !important;
+  }
+
+  .my-5 {
+    margin-top: 2.5rem !important;
+    margin-bottom: 2.5rem !important;
+  }
+}
+
+@media (max-width: 576px) {
+  body {
+    font-size: 0.95rem;
+  }
+
+  .py-5 {
+    padding-top: 2rem !important;
+    padding-bottom: 2rem !important;
+  }
+
+  .my-5 {
+    margin-top: 2rem !important;
+    margin-bottom: 2rem !important;
   }
 }
 
