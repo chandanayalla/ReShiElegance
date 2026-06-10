@@ -1,16 +1,21 @@
 import React, { useEffect, useState } from 'react';
 
-const categoryOptions = ['Sarees', 'Blouses', 'Lehengas', 'Accessories', 'New Arrivals'];
-const statusOptions = ['In Stock', 'Out of Stock'];
+const categoryOptions = ['Sarees', 'Silk Sarees', 'Cotton Sarees', 'Designer Sarees', 'Party Wear Sarees', 'Kurtis', 'Dress Materials', 'Blouses', 'New Arrivals', 'Best Sellers'];
 
 const ProductForm = ({ initialValues = null, onSubmit, loading = false }) => {
   const [values, setValues] = useState({
     name: '',
     category: 'Sarees',
     price: '',
+    originalPrice: '',
     stock: '',
-    status: 'In Stock',
     description: '',
+    fabric: '',
+    work: '',
+    occasion: '',
+    colors: '',
+    isNewArrival: false,
+    isBestSeller: false,
     existingImages: [],
     newImages: [],
   });
@@ -23,9 +28,15 @@ const ProductForm = ({ initialValues = null, onSubmit, loading = false }) => {
         name: initialValues.name || '',
         category: initialValues.category || 'Sarees',
         price: initialValues.price || '',
+        originalPrice: initialValues.originalPrice || initialValues.price || '',
         stock: initialValues.stock || '',
-        status: initialValues.status || 'In Stock',
         description: initialValues.description || '',
+        fabric: initialValues.fabric || '',
+        work: initialValues.work || '',
+        occasion: initialValues.occasion || '',
+        colors: (initialValues.colors || []).join(', '),
+        isNewArrival: Boolean(initialValues.isNewArrival),
+        isBestSeller: Boolean(initialValues.isBestSeller),
         existingImages: initialValues.images || [],
         newImages: [],
       });
@@ -34,8 +45,8 @@ const ProductForm = ({ initialValues = null, onSubmit, loading = false }) => {
   }, [initialValues]);
 
   const handleChange = (event) => {
-    const { name, value } = event.target;
-    setValues((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type, checked } = event.target;
+    setValues((prev) => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
   };
 
   const handleImageChange = (event) => {
@@ -80,9 +91,15 @@ const ProductForm = ({ initialValues = null, onSubmit, loading = false }) => {
     formData.append('name', values.name);
     formData.append('category', values.category);
     formData.append('price', values.price);
+    formData.append('originalPrice', values.originalPrice || values.price);
     formData.append('stock', values.stock);
-    formData.append('status', values.status);
     formData.append('description', values.description);
+    formData.append('fabric', values.fabric);
+    formData.append('work', values.work);
+    formData.append('occasion', values.occasion);
+    formData.append('colors', values.colors);
+    formData.append('isNewArrival', String(values.isNewArrival));
+    formData.append('isBestSeller', String(values.isBestSeller));
     formData.append('existingImages', JSON.stringify(values.existingImages));
     values.newImages.forEach((file) => {
       formData.append('images', file);
@@ -131,6 +148,19 @@ const ProductForm = ({ initialValues = null, onSubmit, loading = false }) => {
         </div>
 
         <div className="col-12 col-md-4">
+          <label className="form-label">Original Price</label>
+          <input
+            type="number"
+            name="originalPrice"
+            className="form-control rounded-4"
+            value={values.originalPrice}
+            onChange={handleChange}
+            min="0"
+            step="0.01"
+          />
+        </div>
+
+        <div className="col-12 col-md-4">
           <label className="form-label">Stock Quantity</label>
           <input
             type="number"
@@ -144,14 +174,34 @@ const ProductForm = ({ initialValues = null, onSubmit, loading = false }) => {
         </div>
 
         <div className="col-12 col-md-4">
-          <label className="form-label">Status</label>
-          <select name="status" className="form-select rounded-4" value={values.status} onChange={handleChange}>
-            {statusOptions.map((option) => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
+          <label className="form-label">Fabric</label>
+          <input name="fabric" className="form-control rounded-4" value={values.fabric} onChange={handleChange} placeholder="Pure silk" />
+        </div>
+
+        <div className="col-12 col-md-4">
+          <label className="form-label">Work</label>
+          <input name="work" className="form-control rounded-4" value={values.work} onChange={handleChange} placeholder="Zari, embroidery" />
+        </div>
+
+        <div className="col-12 col-md-4">
+          <label className="form-label">Occasion</label>
+          <input name="occasion" className="form-control rounded-4" value={values.occasion} onChange={handleChange} placeholder="Wedding, festive" />
+        </div>
+
+        <div className="col-12 col-md-6">
+          <label className="form-label">Colors</label>
+          <input name="colors" className="form-control rounded-4" value={values.colors} onChange={handleChange} placeholder="Red, Gold" />
+        </div>
+
+        <div className="col-12 col-md-6 d-flex align-items-end gap-4">
+          <label className="form-check">
+            <input className="form-check-input" type="checkbox" name="isNewArrival" checked={values.isNewArrival} onChange={handleChange} />
+            <span className="form-check-label">New Arrival</span>
+          </label>
+          <label className="form-check">
+            <input className="form-check-input" type="checkbox" name="isBestSeller" checked={values.isBestSeller} onChange={handleChange} />
+            <span className="form-check-label">Best Seller</span>
+          </label>
         </div>
 
         <div className="col-12">

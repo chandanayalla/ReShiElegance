@@ -1,13 +1,16 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { CartContext } from '../context/CartContext';
 import { WishlistContext } from '../context/WishlistContext';
 import api from '../services/api';
+import fallbackImage from '../assets/main.jpeg';
+import { readArrayResponse } from '../utils/apiData';
 import './ProductDetails.css';
 
 const ProductDetails = () => {
+  const navigate = useNavigate();
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [mainImage, setMainImage] = useState('');
@@ -18,7 +21,7 @@ const ProductDetails = () => {
   const [error, setError] = useState('');
   const [relatedProducts, setRelatedProducts] = useState([]);
 
-  const { addToCart } = useContext(CartContext);
+  const { addToCart, buyNow } = useContext(CartContext);
   const { toggleWishlist, isInWishlist } = useContext(WishlistContext);
 
   useEffect(() => {
@@ -30,7 +33,7 @@ const ProductDetails = () => {
         const response = await api.get(`/products/${id}`);
         const productData = response.data;
         setProduct(productData);
-        setMainImage(productData.images?.[0] || '');
+        setMainImage(productData.images?.[0] || productData.image || '');
       } catch (err) {
         setError('Product not found.');
       } finally {
@@ -47,8 +50,9 @@ const ProductDetails = () => {
 
       try {
         const response = await api.get('/products');
+        const products = readArrayResponse(response.data);
         setRelatedProducts(
-          response.data
+          products
             .filter((p) => p.category === product.category && p.id !== product.id)
             .slice(0, 3)
         );
@@ -93,6 +97,13 @@ const ProductDetails = () => {
   const handleWishlist = () => {
     toggleWishlist(product);
   };
+  const handleBuyNow = () => {
+    buyNow(product, quantity);
+    navigate('/checkout');
+  };
+  const inWishlist = isInWishlist(product.id);
+  const images = product.images?.length ? product.images : [product.image].filter(Boolean);
+  const colors = product.colors || [];
 
   return (
     <>
@@ -116,7 +127,14 @@ const ProductDetails = () => {
               <div className="product-images">
                 {/* Main Image */}
                 <div className="main-image-container">
-                  <img src={mainImage} alt={product.name} className="main-image" />
+                  <img
+                    src={mainImage || fallbackImage}
+                    alt={product.name}
+                    className="main-image"
+                    onError={(event) => {
+                      event.currentTarget.src = fallbackImage;
+                    }}
+                  />
                   {product.discount > 0 && (
                     <span className="discount-badge">-{product.discount}%</span>
                   )}
@@ -124,13 +142,16 @@ const ProductDetails = () => {
 
                 {/* Thumbnails */}
                 <div className="image-thumbnails">
-                  {product.images.map((image, index) => (
+                  {images.map((image, index) => (
                     <img
                       key={index}
                       src={image}
                       alt={`${product.name} ${index + 1}`}
                       className={`thumbnail ${mainImage === image ? 'active' : ''}`}
                       onClick={() => setMainImage(image)}
+                      onError={(event) => {
+                        event.currentTarget.src = fallbackImage;
+                      }}
                     />
                   ))}
                 </div>
@@ -192,7 +213,7 @@ const ProductDetails = () => {
                   </div>
                   <div className="detail-item">
                     <span className="label">Available Colors:</span>
-                    <span className="value">{product.colors.join(', ')}</span>
+                    <span className="value">{colors.length ? colors.join(', ') : 'As shown'}</span>
                   </div>
                 </div>
 
@@ -221,6 +242,15 @@ const ProductDetails = () => {
                   >
                     <i className="bi bi-cart3 me-2"></i>
                     Add to Cart
+                  </button>
+
+                  <button
+                    className="btn btn-buy-now-detail btn-lg"
+                    onClick={handleBuyNow}
+                    disabled={product.stock === 0}
+                  >
+                    <i className="bi bi-lightning-charge me-2"></i>
+                    Buy Now
                   </button>
 
                   <button
@@ -302,7 +332,7 @@ const ProductDetails = () => {
                         <li>Premium {product.fabric} fabric</li>
                         <li>Exquisite {product.work}</li>
                         <li>Perfect for {product.occasion} occasions</li>
-                        <li>Beautiful color options: {product.colors.join(', ')}</li>
+                        <li>Beautiful color options: {colors.length ? colors.join(', ') : 'as shown'}</li>
                       </ul>
                     </div>
                   )}
@@ -324,7 +354,7 @@ const ProductDetails = () => {
                           </tr>
                           <tr>
                             <td>Available Colors</td>
-                            <td>{product.colors.join(', ')}</td>
+                            <td>{colors.length ? colors.join(', ') : 'As shown'}</td>
                           </tr>
                           <tr>
                             <td>Length</td>

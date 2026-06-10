@@ -6,6 +6,7 @@ import ProductCard from '../components/ProductCard';
 import Footer from '../components/Footer';
 import api from '../services/api';
 import { categories as defaultCategories } from '../data/products';
+import { readArrayResponse } from '../utils/apiData';
 import './Home.css';
 
 const Home = () => {
@@ -20,7 +21,7 @@ const Home = () => {
       setError('');
       try {
         const response = await api.get('/products');
-        setProducts(response.data || []);
+        setProducts(readArrayResponse(response.data));
       } catch (err) {
         setError('Unable to load products.');
       } finally {
@@ -114,7 +115,7 @@ const Home = () => {
 
           <div className="row g-4">
             {newArrivals.map(product => (
-              <div key={product.id} className="col-lg-4 col-md-6">
+              <div key={product.id} className="col-6 col-lg-4 col-md-6">
                 <ProductCard product={product} onAddToCart={handleAddToCart} />
               </div>
             ))}
@@ -147,7 +148,7 @@ const Home = () => {
 
           <div className="row g-4">
             {bestSellers.map(product => (
-              <div key={product.id} className="col-lg-4 col-md-6">
+              <div key={product.id} className="col-6 col-lg-4 col-md-6">
                 <ProductCard product={product} onAddToCart={handleAddToCart} />
               </div>
             ))}

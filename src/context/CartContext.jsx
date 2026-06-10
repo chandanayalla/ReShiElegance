@@ -57,6 +57,12 @@ export const CartProvider = ({ children }) => {
     localStorage.setItem('cart', JSON.stringify([]));
   }, []);
 
+  const buyNow = useCallback((product, quantity = 1) => {
+    const updated = [{ ...product, quantity }];
+    setCartItems(updated);
+    localStorage.setItem('cart', JSON.stringify(updated));
+  }, []);
+
   const getTotalItems = () => {
     return cartItems.reduce((sum, item) => sum + item.quantity, 0);
   };
@@ -71,6 +77,7 @@ export const CartProvider = ({ children }) => {
     removeFromCart,
     updateQuantity,
     clearCart,
+    buyNow,
     getTotalItems,
     getTotalPrice,
   };

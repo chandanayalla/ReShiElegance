@@ -1,12 +1,15 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import ProductCard from '../components/ProductCard';
 import Footer from '../components/Footer';
 import api from '../services/api';
+import { readArrayResponse } from '../utils/apiData';
 import './Shop.css';
 
 const Shop = () => {
-  const urlParams = new URLSearchParams(window.location.search);
+  const location = useLocation();
+  const urlParams = new URLSearchParams(location.search);
   const searchQuery = urlParams.get('search') || '';
   const categoryParam = urlParams.get('category') || '';
 
@@ -30,7 +33,7 @@ const Shop = () => {
 
       try {
         const response = await api.get('/products');
-        setProducts(response.data || []);
+        setProducts(readArrayResponse(response.data));
       } catch (err) {
         setError('Unable to load products.');
       } finally {
@@ -40,6 +43,12 @@ const Shop = () => {
 
     fetchProducts();
   }, []);
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(location.search);
+    setFilters((prev) => ({ ...prev, category: nextParams.get('category') || '' }));
+    setCurrentPage(1);
+  }, [location.search]);
 
   const itemsPerPage = 12;
 
@@ -154,7 +163,7 @@ const Shop = () => {
                 <>
                   <div className="row g-4 mb-5">
                     {paginatedProducts.map(product => (
-                      <div key={product.id} className="col-md-6 col-lg-4">
+                      <div key={product.id} className="col-6 col-md-6 col-lg-4">
                         <ProductCard product={product} />
                       </div>
                     ))}

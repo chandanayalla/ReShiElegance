@@ -1,44 +1,49 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import heroImg from '../assets/head.jpeg';
+import mainImg from '../assets/main.jpeg';
+import redOne from '../assets/red1.jpeg';
+import redTwo from '../assets/red2.jpeg';
 import './HeroSection.css';
+
+const heroPanels = [
+  { image: heroImg, label: 'Silk heirlooms' },
+  { image: redTwo, label: 'Festive drapes' },
+  { image: redOne, label: 'Bridal edits' },
+  { image: redTwo, label: 'Modern classics' },
+];
 
 const HeroSection = () => {
   return (
     <section className="hero-section">
-      <div className="container-fluid h-100">
-        <div className="hero-frame">
-          <div className="hero-card row align-items-center">
-            <div className="col-lg-6 hero-content">
-              <p className="hero-label">Women's Fashion | Saree Collection</p>
-              <h1 className="hero-title">
-                Elegance Woven<br />
-                <span>For Every Woman</span>
-              </h1>
-              <p className="hero-subtitle">
-                Timeless sarees crafted with grace, made for every special moment.
-              </p>
-              <p className="hero-description">
-                Experience the perfect blend of tradition and contemporary style. Our curated collection celebrates the elegance of Indian sarees with premium quality and exquisite designs.
-              </p>
-              <div className="hero-buttons">
-                <Link to="/shop" className="btn btn-primary btn-lg">
-                  <i className="bi bi-bag-check me-2"></i>Shop Now
-                </Link>
-                <a href="#features" className="btn btn-outline-primary btn-lg">
-                  <i className="bi bi-play-circle me-2"></i>Explore More
-                </a>
-              </div>
-            </div>
+      <div className="hero-inner">
+        <div className="hero-gallery" aria-label="ReShi Elegance featured saree collection">
+          {heroPanels.map((panel, index) => (
+            <Link to="/shop" className="hero-panel" key={panel.label}>
+              <img src={panel.image} alt={panel.label} loading={index === 0 ? 'eager' : 'lazy'} />
+              <span>{panel.label}</span>
+            </Link>
+          ))}
+          <div className="hero-monogram">
+            <span>RE</span>
+            <strong>ReShi Elegance</strong>
+          </div>
+        </div>
 
-            <div className="col-lg-6 hero-image">
-              <div className="image-card">
-                <div className="image-frame-top"></div>
-                <div className="image-frame-side"></div>
-                <img src={heroImg} alt="Woman wearing a stylish saree" loading="lazy" className="main-image" />
-                <div className="image-tag">New Arrival</div>
-              </div>
-            </div>
+        <div className="hero-copy">
+          <p className="hero-label">Women's clothing and saree atelier</p>
+          <h1>Elegance Woven For Every Celebration</h1>
+          <p>
+            Sarees, blouses, kurtis and dress materials curated with a heritage mood,
+            premium finish and ready-to-shop comfort.
+          </p>
+          <div className="hero-buttons">
+            <Link to="/shop" className="btn btn-primary btn-lg">
+              <i className="bi bi-bag-check me-2"></i>Shop Collection
+            </Link>
+            <Link to="/shop?category=New Arrivals" className="btn btn-outline-primary btn-lg">
+              New Arrivals
+            </Link>
           </div>
         </div>
       </div>

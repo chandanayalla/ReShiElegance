@@ -29,12 +29,15 @@ export const AdminAuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     setLoading(true);
-    const response = await api.post('/admin/login', { email, password });
-    const { admin: adminData, token: authToken } = response.data;
-    setAdmin(adminData);
-    setToken(authToken);
-    setLoading(false);
-    return response.data;
+    try {
+      const response = await api.post('/admin/login', { email, password });
+      const { admin: adminData, token: authToken } = response.data;
+      setAdmin(adminData);
+      setToken(authToken);
+      return response.data;
+    } finally {
+      setLoading(false);
+    }
   };
 
   const logout = () => {

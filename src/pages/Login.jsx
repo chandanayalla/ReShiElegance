@@ -14,6 +14,7 @@ const Login = () => {
   });
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const googleAuthEnabled = import.meta.env.VITE_ENABLE_GOOGLE_AUTH === 'true';
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -113,12 +114,16 @@ const Login = () => {
                 </button>
               </form>
 
-              <div className="auth-divider">OR</div>
+              {googleAuthEnabled && (
+                <>
+                  <div className="auth-divider">OR</div>
 
-              <button className="btn btn-outline-primary w-100 mb-3" type="button" onClick={handleGoogleLogin} disabled={isLoading}>
-                <i className="bi bi-google me-2"></i>
-                Continue with Google
-              </button>
+                  <button className="btn btn-outline-primary w-100 mb-3" type="button" onClick={handleGoogleLogin} disabled={isLoading}>
+                    <i className="bi bi-google me-2"></i>
+                    Continue with Google
+                  </button>
+                </>
+              )}
 
               <div className="auth-footer">
                 <p>Don't have an account? <Link to="/register">Register here</Link></p>
