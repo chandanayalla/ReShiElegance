@@ -72,83 +72,38 @@
 }
 
 .title-divider {
-  width: 60px;
-  height: 4px;
-  background: linear-gradient(90deg, var(--primary-color) 0%, #c2185b 100%);
-  margin: 0 auto;
-  border-radius: 2px;
+  width: 120px;
+  height: 6px;
+  margin: 14px auto 0;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--primary-color), var(--maroon));
+  opacity: 0.98;
 }
 
 /* Promotional Banner */
 .promo-banner {
-  background: linear-gradient(135deg, var(--primary-color) 0%, #c2185b 100%);
-  color: white;
+  background: var(--maroon-deep);
+  color: var(--ivory);
   position: relative;
   overflow: hidden;
-  margin: 3rem 0;
+  margin: 1rem 0;
+  border-top: 1px solid var(--maroon);
+  border-bottom: 1px solid var(--maroon);
 }
 
-.promo-banner::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  right: -10%;
-  width: 600px;
-  height: 600px;
-  background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 50%;
-}
+.promo-banner::before { content: ''; position: absolute; inset: 1rem; border: 1px solid rgba(var(--primary-rgb), 0.12); pointer-events: none; }
 
-.promo-banner::after {
-  content: '';
-  position: absolute;
-  bottom: -20%;
-  left: -5%;
-  width: 400px;
-  height: 400px;
-  background-color: rgba(255, 255, 255, 0.05);
-  border-radius: 50%;
-}
+.banner-content { text-align: center; position: relative; z-index: 1; padding: 2.8rem 1rem; max-width:860px; margin:0 auto; }
 
-.banner-content {
-  text-align: center;
-  position: relative;
-  z-index: 1;
-}
+.promo-banner h2 { color: var(--primary-color); font-size: 0.82rem; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; margin-bottom: 0.45rem; }
 
-.promo-banner h2 {
-  font-size: 1.2rem;
-  font-weight: 600;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  margin-bottom: 0.5rem;
-  opacity: 0.9;
-}
+.promo-banner h3 { color: var(--ivory); font-size: clamp(2rem, 4vw, 3.6rem); margin-bottom: 0.6rem; font-weight:800; text-transform:none; letter-spacing:0.02em; }
+.promo-banner h3::after { content: ''; display:block; width: 84px; height: 6px; background: linear-gradient(90deg, var(--primary-color), var(--maroon)); margin: 10px auto 0; border-radius:4px; opacity:0.95; }
 
-.promo-banner h3 {
-  font-size: 3rem;
-  margin-bottom: 1rem;
-  font-weight: 700;
-}
+.promo-banner p { color: rgba(255, 247, 232, 0.78); font-size: 1rem; margin-bottom: 1.5rem; }
 
-.promo-banner p {
-  font-size: 1.1rem;
-  margin-bottom: 2rem;
-  opacity: 0.95;
-}
-
-.promo-banner .btn {
-  background-color: white;
-  color: var(--primary-color);
-  border-color: white;
-  font-weight: 700;
-  transition: all 0.3s ease;
-}
-
-.promo-banner .btn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-}
+.promo-banner .btn { background: linear-gradient(90deg, var(--primary-color), var(--maroon)); color: var(--text-color); border: none; font-weight: 900; border-radius: 999px; padding: 0.9rem 1.6rem; box-shadow: 0 12px 28px rgba(var(--primary-rgb), 0.12); transition: transform 0.16s ease, box-shadow 0.16s ease; }
+.promo-banner .btn:hover { transform: translateY(-4px); box-shadow: 0 22px 48px rgba(var(--primary-rgb), 0.18); color: var(--ivory); }
 
 /* CTA Section */
 .cta-section {

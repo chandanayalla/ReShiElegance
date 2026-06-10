@@ -101,15 +101,15 @@ const Footer = () => {
               <ul className="contact-info">
                 <li>
                   <i className="bi bi-telephone"></i>
-                  <span>+91 98765 43210</span>
+                  <span>+917815861896</span>
                 </li>
                 <li>
                   <i className="bi bi-envelope"></i>
-                  <span>hello@reshielegance.com</span>
+                  <span>reshielegancee@gmail.com</span>
                 </li>
                 <li>
                   <i className="bi bi-geo-alt"></i>
-                  <span>New Delhi, India</span>
+                  <span>Tuni, Andhra Pradesh, India</span>
                 </li>
               </ul>
             </div>
@@ -123,9 +123,6 @@ const Footer = () => {
                 </a>
                 <a href="#instagram" title="Instagram">
                   <i className="bi bi-instagram"></i>
-                </a>
-                <a href="#twitter" title="Twitter">
-                  <i className="bi bi-twitter"></i>
                 </a>
                 <a href="#youtube" title="YouTube">
                   <i className="bi bi-youtube"></i>
