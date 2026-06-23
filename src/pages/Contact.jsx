@@ -43,15 +43,15 @@ const Contact = () => {
                   <h6 style={{ color: 'var(--primary-color)', marginBottom: '1rem' }}>Contact Information</h6>
                   <p>
                     <i className="bi bi-telephone" style={{ marginRight: '0.75rem', color: 'var(--primary-color)' }}></i>
-                    <strong>Phone:</strong> +91 98765 43210
+                    <strong>Phone:</strong> +917815861896
                   </p>
                   <p>
                     <i className="bi bi-envelope" style={{ marginRight: '0.75rem', color: 'var(--primary-color)' }}></i>
-                    <strong>Email:</strong> hello@reshielegance.com
+                    <strong>Email:</strong> reshielegancee@gmail.com
                   </p>
                   <p>
                     <i className="bi bi-geo-alt" style={{ marginRight: '0.75rem', color: 'var(--primary-color)' }}></i>
-                    <strong>Address:</strong> New Delhi, India
+                    <strong>Address:</strong> Tuni,Andhra Pradesh, India
                   </p>
                 </div>
               </div>
