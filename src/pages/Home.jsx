@@ -66,27 +66,27 @@ const Home = () => {
         <div className="container-fluid">
           <div className="row g-4">
             {[
-              {
-                icon: 'bi-truck',
-                title: 'Free Shipping',
-                description: 'On orders above ₹999'
-              },
-              {
-                icon: 'bi-shield-check',
-                title: 'Secure Payment',
-                description: 'SSL encrypted checkout'
-              },
-              {
-                icon: 'bi-arrow-counterclockwise',
-                title: 'Easy Returns',
-                description: '30-day return policy'
-              },
-              {
-                icon: 'bi-chat-dots',
-                title: 'Support 24/7',
-                description: 'Dedicated customer support'
-              },
-            ].map((feature, index) => (
+                {
+                  icon: 'bi-truck',
+                  title: 'Fast & Reliable Delivery',
+                  description: 'Trusted fast deliveries across India'
+                },
+                {
+                  icon: 'bi-gem',
+                  title: 'Premium Fabric Quality',
+                  description: 'Handpicked premium fabrics'
+                },
+                {
+                  icon: 'bi-shield-check',
+                  title: 'Secure Payment',
+                  description: 'SSL encrypted checkout'
+                },
+                {
+                  icon: 'bi-chat-dots',
+                  title: 'Support 24/7',
+                  description: 'Dedicated customer support'
+                }
+              ].map((feature, index) => (
               <div key={index} className="col-md-6 col-lg-3">
                 <div className="feature-card">
                   <div className="feature-icon">
@@ -159,7 +159,7 @@ const Home = () => {
       {/* Call to Action */}
       <section className="cta-section py-5">
         <div className="container-fluid">
-          <div className="cta-content">
+          {/* <div className="cta-content">
             <h2>Join Our Community</h2>
             <p>Be the first to know about new collections, exclusive offers, and style tips</p>
             <form className="cta-form" onSubmit={(e) => e.preventDefault()}>
@@ -170,7 +170,7 @@ const Home = () => {
               />
               <button type="submit" className="btn btn-primary">Subscribe</button>
             </form>
-          </div>
+          </div> */}
         </div>
       </section>
 

@@ -118,13 +118,13 @@ const Footer = () => {
             <div className="col-md-2 mb-4">
               <h5>Follow Us</h5>
               <div className="social-links mb-4">
-                <a href="#facebook" title="Facebook">
+                <a href="https://www.facebook.com/reshi_elegancee" title="Facebook" target="_blank" rel="noopener noreferrer">
                   <i className="bi bi-facebook"></i>
                 </a>
-                <a href="#instagram" title="Instagram">
+                <a href="https://www.instagram.com/reshi_elegancee?utm_source=qr&igsh=YjZreWpuaWdyZGJ2" title="Instagram" target="_blank" rel="noopener noreferrer">
                   <i className="bi bi-instagram"></i>
                 </a>
-                <a href="#youtube" title="YouTube">
+                <a href="https://www.youtube.com/@ReShiElegance" title="YouTube" target="_blank" rel="noopener noreferrer">
                   <i className="bi bi-youtube"></i>
                 </a>
               </div>

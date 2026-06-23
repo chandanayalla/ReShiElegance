@@ -11,19 +11,46 @@ const Contact = () => {
     message: '',
   });
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitted(true);
-    setTimeout(() => {
-      setFormData({ name: '', email: '', subject: '', message: '' });
-      setSubmitted(false);
-    }, 3000);
+    setLoading(true);
+    setError('');
+
+    try {
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const response = await fetch(`${API_URL}/api/contact/send`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setSubmitted(true);
+        setFormData({ name: '', email: '', subject: '', message: '' });
+        setTimeout(() => {
+          setSubmitted(false);
+        }, 5000);
+      } else {
+        setError(data.message || 'Failed to send message. Please try again.');
+      }
+    } catch (err) {
+      setError('An error occurred. Please try again later.');
+      console.error('Error sending contact form:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -43,7 +70,7 @@ const Contact = () => {
                   <h6 style={{ color: 'var(--primary-color)', marginBottom: '1rem' }}>Contact Information</h6>
                   <p>
                     <i className="bi bi-telephone" style={{ marginRight: '0.75rem', color: 'var(--primary-color)' }}></i>
-                    <strong>Phone:</strong> +917815861896
+                    <strong>Phone:</strong> +91 7815861896
                   </p>
                   <p>
                     <i className="bi bi-envelope" style={{ marginRight: '0.75rem', color: 'var(--primary-color)' }}></i>
@@ -52,6 +79,28 @@ const Contact = () => {
                   <p>
                     <i className="bi bi-geo-alt" style={{ marginRight: '0.75rem', color: 'var(--primary-color)' }}></i>
                     <strong>Address:</strong> Tuni,Andhra Pradesh, India
+                  </p>
+                </div>
+
+                <div style={{ marginTop: '2rem' }}>
+                  <h6 style={{ color: 'var(--primary-color)', marginBottom: '1rem' }}>Follow Us</h6>
+                  <p>
+                    <a 
+                      href="https://www.instagram.com/reshi_elegancee?utm_source=qr&igsh=YjZreWpuaWdyZGJ2" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      style={{ 
+                        color: 'var(--primary-color)', 
+                        textDecoration: 'none',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.75rem',
+                        fontSize: '1rem'
+                      }}
+                    >
+                      <i className="bi bi-instagram" style={{ fontSize: '1.25rem' }}></i>
+                      <span style={{ fontWeight: '600' }}>@reshi_elegancee</span>
+                    </a>
                   </p>
                 </div>
               </div>
@@ -65,6 +114,12 @@ const Contact = () => {
                       Thank you! We'll get back to you soon.
                     </div>
                   )}
+                  {error && (
+                    <div className="alert alert-danger" role="alert">
+                      <i className="bi bi-exclamation-circle me-2"></i>
+                      {error}
+                    </div>
+                  )}
                   <form onSubmit={handleSubmit}>
                     <div className="form-group">
                       <label className="form-label">Name</label>
@@ -75,6 +130,7 @@ const Contact = () => {
                         value={formData.name}
                         onChange={handleChange}
                         required
+                        disabled={loading}
                       />
                     </div>
                     <div className="form-group">
@@ -86,6 +142,7 @@ const Contact = () => {
                         value={formData.email}
                         onChange={handleChange}
                         required
+                        disabled={loading}
                       />
                     </div>
                     <div className="form-group">
@@ -97,6 +154,7 @@ const Contact = () => {
                         value={formData.subject}
                         onChange={handleChange}
                         required
+                        disabled={loading}
                       />
                     </div>
                     <div className="form-group">
@@ -107,10 +165,11 @@ const Contact = () => {
                         value={formData.message}
                         onChange={handleChange}
                         required
+                        disabled={loading}
                       ></textarea>
                     </div>
-                    <button type="submit" className="btn btn-primary">
-                      Send Message
+                    <button type="submit" className="btn btn-primary" disabled={loading}>
+                      {loading ? 'Sending...' : 'Send Message'}
                     </button>
                   </form>
                 </div>

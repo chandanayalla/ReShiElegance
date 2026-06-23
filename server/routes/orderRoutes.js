@@ -1,6 +1,7 @@
 import express from 'express';
 import { createClient } from '@supabase/supabase-js';
 import { requireAdmin } from './adminRoutes.js';
+import nodemailer from 'nodemailer';
 
 const router = express.Router();
 const ordersTable = process.env.SUPABASE_ORDERS_TABLE || 'orders';
@@ -113,6 +114,80 @@ router.get('/', requireAdmin, async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const order = await createStoreOrder({ ...req.body, paymentStatus: req.body.paymentStatus || 'pending' });
+
+    // Notify admin via email about the new order (best-effort)
+    (async () => {
+      try {
+        const transporter = nodemailer.createTransport({
+          service: 'gmail',
+          auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASSWORD,
+          },
+        });
+
+        const itemsHtml = (order.products || [])
+          .map((p) => `<li>${p.name || p.title || 'Product'} — Qty: ${p.quantity || p.qty || 1} — ₹${p.price || p.amount || ''}</li>`)
+          .join('');
+
+        const adminMailOptions = {
+          from: process.env.EMAIL_USER,
+          to: 'reshielegancee@gmail.com',
+          subject: `New Order Received — ${order.id}`,
+          html: `
+            <div style="font-family: Arial, sans-serif; line-height:1.4; color:#222;">
+              <h2 style="color:#b3476f">New Order Received</h2>
+              <p><strong>Order ID:</strong> ${order.id}</p>
+              <p><strong>Customer:</strong> ${order.customerName || order.customer_name || ''} (${order.customerEmail || order.customer_email || ''})</p>
+              <p><strong>Phone:</strong> ${order.customerPhone || order.customer_phone || ''}</p>
+              <h4>Shipping Address</h4>
+              <pre style="background:#f7f7f7; padding:10px; border-radius:4px">${JSON.stringify(order.address || {}, null, 2)}</pre>
+              <h4>Items</h4>
+              <ul>${itemsHtml}</ul>
+              <table style="width:100%; max-width:480px; border-collapse:collapse; margin-top:10px;">
+                <tr><td style="padding:6px"><strong>Subtotal:</strong></td><td style="padding:6px">₹${order.subtotal}</td></tr>
+                <tr><td style="padding:6px"><strong>Shipping:</strong></td><td style="padding:6px">₹${order.shipping}</td></tr>
+                <tr><td style="padding:6px"><strong>Tax:</strong></td><td style="padding:6px">₹${order.tax}</td></tr>
+                <tr style="border-top:1px solid #ddd"><td style="padding:6px"><strong>Total:</strong></td><td style="padding:6px">₹${order.total}</td></tr>
+              </table>
+              <p style="margin-top:12px">View orders in your admin panel to process this order.</p>
+            </div>
+          `,
+        };
+
+        await transporter.sendMail(adminMailOptions);
+
+        // Send confirmation to the customer (if email provided)
+        if (order.customerEmail) {
+          try {
+            const userMailOptions = {
+              from: process.env.EMAIL_USER,
+              to: order.customerEmail,
+              subject: `Order Confirmation — ${order.id}`,
+              html: `
+                <div style="font-family: Arial, sans-serif; color:#222;">
+                  <h2 style="color:#b3476f">Thank you for your order!</h2>
+                  <p>Hi ${order.customerName || 'Customer'},</p>
+                  <p>We have received your order <strong>${order.id}</strong>. Here are the details:</p>
+                  <h4>Items</h4>
+                  <ul>${itemsHtml}</ul>
+                  <p><strong>Total:</strong> ₹${order.total}</p>
+                  <p>We will notify you when your order is shipped.</p>
+                  <p>Regards,<br/>ReShi Elegance</p>
+                </div>
+              `,
+            };
+
+            await transporter.sendMail(userMailOptions);
+          } catch (userMailErr) {
+            console.error('Failed to send customer confirmation email:', userMailErr);
+          }
+        }
+      } catch (mailErr) {
+        console.error('Failed to send order notification email:', mailErr);
+      }
+    })();
+
     return res.status(201).json(order);
   } catch (error) {
     console.error('Order create error:', error);
