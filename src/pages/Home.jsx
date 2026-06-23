@@ -159,7 +159,7 @@ const Home = () => {
       {/* Call to Action */}
       <section className="cta-section py-5">
         <div className="container-fluid">
-          <div className="cta-content">
+          {/* <div className="cta-content">
             <h2>Join Our Community</h2>
             <p>Be the first to know about new collections, exclusive offers, and style tips</p>
             <form className="cta-form" onSubmit={(e) => e.preventDefault()}>
@@ -170,7 +170,7 @@ const Home = () => {
               />
               <button type="submit" className="btn btn-primary">Subscribe</button>
             </form>
-          </div>
+          </div> */}
         </div>
       </section>
 

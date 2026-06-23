@@ -10,6 +10,7 @@ const Navbar = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isCollectionsOpen, setIsCollectionsOpen] = useState(false);
   const { getTotalItems } = useContext(CartContext);
   const { user, isAuthenticated, logout } = useContext(AuthContext);
 
@@ -18,6 +19,11 @@ const Navbar = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  useEffect(() => {
+    document.body.classList.toggle('mobile-menu-open', isMenuOpen);
+    return () => document.body.classList.remove('mobile-menu-open');
+  }, [isMenuOpen]);
 
   const handleSearch = (event) => {
     event.preventDefault();
@@ -29,6 +35,7 @@ const Navbar = () => {
 
   const closeMobileMenu = () => {
     setIsMenuOpen(false);
+    setIsCollectionsOpen(false);
   };
 
   return (
@@ -36,8 +43,14 @@ const Navbar = () => {
       <nav className={`navbar navbar-expand-lg navbar-light ${isScrolled ? 'sticky-top navbar-shadow' : ''}`}>
         <div className="container-fluid">
           <div className="brand-left-tools">
-            <button className="brand-tool" type="button" aria-label="Open menu" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-              <i className="bi bi-list"></i>
+            <button
+              className="brand-tool"
+              type="button"
+              aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={isMenuOpen}
+              onClick={() => setIsMenuOpen((open) => !open)}
+            >
+              <i className={`bi ${isMenuOpen ? 'bi-x-lg' : 'bi-list'}`}></i>
             </button>
           </div>
 
@@ -49,7 +62,7 @@ const Navbar = () => {
 
           <div className={`collapse navbar-collapse ${isMenuOpen ? 'show' : ''}`} id="navbarNav">
             {/* Search Bar */}
-            <form className="search-form mx-auto" onSubmit={handleSearch}>
+            <form className="mobile-drawer-search" onSubmit={handleSearch}>
               <div className="input-group">
                 <input
                   type="text"
@@ -72,6 +85,24 @@ const Navbar = () => {
               <li className="nav-item">
                 <Link className="nav-link" to="/shop" onClick={closeMobileMenu}>Sarees</Link>
               </li>
+              <li className={`nav-item dropdown ${isCollectionsOpen ? 'show' : ''}`}>
+                <button
+                  className="nav-link dropdown-toggle nav-dropdown-button"
+                  type="button"
+                  id="collectionsDropdown"
+                  aria-expanded={isCollectionsOpen}
+                  onClick={() => setIsCollectionsOpen((open) => !open)}
+                >
+                  Collections
+                  <i className={`bi ${isCollectionsOpen ? 'bi-chevron-up' : 'bi-chevron-down'}`}></i>
+                </button>
+                <ul className={`dropdown-menu ${isCollectionsOpen ? 'show' : ''}`} aria-labelledby="collectionsDropdown">
+                  <li><Link className="dropdown-item" to="/shop?category=New Arrivals" onClick={closeMobileMenu}>New Arrivals</Link></li>
+                  <li><Link className="dropdown-item" to="/shop?category=Best Sellers" onClick={closeMobileMenu}>Best Sellers</Link></li>
+                  <li><Link className="dropdown-item" to="/shop?category=Bridal Sarees" onClick={closeMobileMenu}>Bridal Sarees</Link></li>
+                  <li><Link className="dropdown-item" to="/shop?category=Party Wear Sarees" onClick={closeMobileMenu}>Party Wear</Link></li>
+                </ul>
+              </li>
               <li className="nav-item">
                 <Link className="nav-link" to="/about" onClick={closeMobileMenu}>About Us</Link>
               </li>
@@ -89,7 +120,7 @@ const Navbar = () => {
             <button className="icon-link search-toggle" type="button" title="Search" aria-label="Search" onClick={() => setIsSearchOpen((open) => !open)}>
               <i className="bi bi-search"></i>
             </button>
-            <Link to="/wishlist" className="icon-link" title="Wishlist" aria-label="Wishlist">
+              <Link to="/wishlist" className="icon-link" title="Wishlist" aria-label="Wishlist">
               <i className="bi bi-heart"></i>
             </Link>
             {isAuthenticated ? (
@@ -133,6 +164,14 @@ const Navbar = () => {
           </form>
         </div>
       </nav>
+      {isMenuOpen && (
+        <button
+          className="mobile-menu-backdrop"
+          type="button"
+          aria-label="Close menu"
+          onClick={closeMobileMenu}
+        />
+      )}
     </>
   );
 };
