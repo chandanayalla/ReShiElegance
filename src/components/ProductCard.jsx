@@ -36,7 +36,7 @@ const ProductCard = ({ product, onAddToCart }) => {
   const inWishlist = isInWishlist(product.id);
 
   return (
-    <div className="product-card">
+    <div className={`product-card ${product.stock === 0 ? 'out-of-stock' : ''}`}>
       {/* Image Container */}
       <div className="product-image-container">
         <Link to={`/product/${product.id}`}>
@@ -54,6 +54,9 @@ const ProductCard = ({ product, onAddToCart }) => {
 
         {/* Badges */}
         <div className="product-badges">
+          {product.stock === 0 && (
+            <span className="badge badge-out-of-stock">OUT OF STOCK</span>
+          )}
           {product.discount > 0 && (
             <span className="badge badge-discount">-{product.discount}%</span>
           )}
