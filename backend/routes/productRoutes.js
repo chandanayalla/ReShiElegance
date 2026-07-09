@@ -1,7 +1,7 @@
 import express from 'express';
 import multer from 'multer';
 import { createClient } from '@supabase/supabase-js';
-import { products as seedProducts } from '../../src/data/products.js';
+import { products as seedProducts } from '../../frontend/src/data/products.js';
 
 const router = express.Router();
 const upload = multer({

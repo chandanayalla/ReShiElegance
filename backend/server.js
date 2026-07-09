@@ -10,7 +10,7 @@ import contactRoutes from './routes/contactRoutes.js';
 dotenv.config();
 
 const app = express();
-const allowedOrigins = (process.env.CLIENT_ORIGIN || 'http://localhost:5173,https://reshielegance.in,https://www.reshielegance.in')
+const allowedOrigins = (process.env.CLIENT_ORIGIN || 'http://localhost:5173,http://localhost:5174,https://reshielegance.in,https://www.reshielegance.in')
   .split(',')
   .map((origin) => origin.trim())
   .filter(Boolean);
