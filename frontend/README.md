@@ -48,50 +48,26 @@ A modern, fully responsive e-commerce website for a premium women's fashion and 
 ## 📁 Project Structure
 
 ```
-src/
-├── components/
-│   ├── Navbar.jsx
-│   ├── Navbar.css
-│   ├── Footer.jsx
-│   ├── Footer.css
-│   ├── ProductCard.jsx
-│   ├── ProductCard.css
-│   ├── HeroSection.jsx
-│   ├── HeroSection.css
-│   ├── CategorySection.jsx
-│   └── CategorySection.css
-├── pages/
-│   ├── Home.jsx
-│   ├── Home.css
-│   ├── Shop.jsx
-│   ├── Shop.css
-│   ├── ProductDetails.jsx
-│   ├── ProductDetails.css
-│   ├── Cart.jsx
-│   ├── Cart.css
-│   ├── Checkout.jsx
-│   ├── Checkout.css
-│   ├── Login.jsx
-│   ├── Register.jsx
-│   ├── Auth.css
-│   ├── Account.jsx
-│   ├── Account.css
-│   ├── Wishlist.jsx
-│   ├── Wishlist.css
-│   ├── About.jsx
-│   ├── Contact.jsx
-│   ├── Info.css
-│   ├── OrderSuccess.jsx
-│   └── OrderSuccess.css
-├── context/
-│   ├── CartContext.jsx
-│   ├── WishlistContext.jsx
-│   └── AuthContext.jsx
-├── data/
-│   └── products.js
-├── App.jsx
-├── index.css
-└── main.jsx
+frontend/
+├── src/
+│   ├── components/
+│   ├── pages/
+│   ├── context/
+│   ├── data/
+│   ├── services/
+│   └── utils/
+├── public/
+├── index.html
+├── vite.config.js
+└── package.json
+
+backend/
+├── server.js
+├── routes/
+├── src/
+├── schema.sql
+├── seed.sql
+└── package.json
 ```
 
 ## 🚀 Getting Started
@@ -104,7 +80,7 @@ src/
 
 1. **Navigate to the project directory**
    ```bash
-   cd reshi
+   cd frontend
    ```
 
 2. **Install dependencies**
@@ -119,6 +95,23 @@ src/
 
 4. **Open your browser**
    Navigate to `http://localhost:5173`
+
+### Backend
+
+1. **Navigate to the backend directory**
+   ```bash
+   cd ../backend
+   ```
+
+2. **Install backend dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Start the backend server**
+   ```bash
+   npm run dev
+   ```
 
 ### Build for Production
 ```bash
@@ -200,7 +193,7 @@ The website is fully responsive with breakpoints:
 ## 🎨 Customization
 
 ### Colors
-Edit the CSS variables in `src/index.css`:
+Edit the CSS variables in `frontend/src/index.css`:
 ```css
 :root {
   --primary-color: #E91E63;
@@ -211,10 +204,10 @@ Edit the CSS variables in `src/index.css`:
 ```
 
 ### Fonts
-Update Google Fonts link in `index.html` to use different fonts.
+Update Google Fonts link in `frontend/index.html` to use different fonts.
 
 ### Products
-Modify sample products in `src/data/products.js`:
+Modify sample products in `frontend/src/data/products.js`:
 ```javascript
 export const products = [
   {

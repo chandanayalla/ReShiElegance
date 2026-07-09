@@ -10,6 +10,7 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+.vite
 *.local
 
 # Editor directories and files
@@ -24,10 +25,10 @@ dist-ssr
 *.sw?
 
 # Environment variables
-.env
-.env.*
-!.env.example
-!.env.local.example
-server/.env
-server/.env.*
-!server/.env.example
+frontend/.env
+frontend/.env.*
+!frontend/.env.example
+!frontend/.env.local.example
+backend/.env
+backend/.env.*
+!backend/.env.example

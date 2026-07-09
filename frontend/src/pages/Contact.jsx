@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import api from '../services/api';
 import './Info.css';
 
 const Contact = () => {
@@ -25,28 +26,14 @@ const Contact = () => {
     setError('');
 
     try {
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-      const response = await fetch(`${API_URL}/api/contact/send`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setSubmitted(true);
-        setFormData({ name: '', email: '', subject: '', message: '' });
-        setTimeout(() => {
-          setSubmitted(false);
-        }, 5000);
-      } else {
-        setError(data.message || 'Failed to send message. Please try again.');
-      }
+      await api.post('/contact/send', formData);
+      setSubmitted(true);
+      setFormData({ name: '', email: '', subject: '', message: '' });
+      setTimeout(() => {
+        setSubmitted(false);
+      }, 5000);
     } catch (err) {
-      setError('An error occurred. Please try again later.');
+      setError(err?.response?.data?.message || 'An error occurred. Please try again later.');
       console.error('Error sending contact form:', err);
     } finally {
       setLoading(false);
