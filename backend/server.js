@@ -1,19 +1,29 @@
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
+import 'dotenv/config';
+
 import productRoutes from './routes/productRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
 import paymentRoutes from './routes/paymentRoutes.js';
 import contactRoutes from './routes/contactRoutes.js';
 
-dotenv.config();
-
 const app = express();
-const allowedOrigins = (process.env.CLIENT_ORIGIN || 'http://localhost:5173,http://localhost:5174,https://reshielegance.in,https://www.reshielegance.in')
-  .split(',')
-  .map((origin) => origin.trim())
-  .filter(Boolean);
+const defaultAllowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:5174',
+  'http://127.0.0.1:5173',
+  'http://127.0.0.1:5174',
+  'https://reshielegance.in',
+  'https://www.reshielegance.in',
+  'https://reshielegancee.com',
+  'https://www.reshielegancee.com',
+  'https://reshielegancee.vercel.app',
+];
+const allowedOrigins = [...new Set([
+  ...defaultAllowedOrigins,
+  ...(process.env.CLIENT_ORIGIN || '').split(',').map((origin) => origin.trim()).filter(Boolean),
+])];
 
 app.use(cors({
   origin(origin, callback) {

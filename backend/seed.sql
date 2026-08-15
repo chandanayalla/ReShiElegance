@@ -1,7 +1,8 @@
 insert into public.products (
   name, slug, category, price, original_price, discount, description, fabric, work,
   occasion, colors, stock, status, rating, reviews_count, images, is_new_arrival, is_best_seller
-) values
+)
+values
 ('Pink Banarasi Silk Saree', 'pink-banarasi-silk-saree', 'Banarasi Sarees', 8999, 12999, 30, 'Luxurious pink Banarasi silk saree with intricate gold brocade work. Perfect for weddings and special occasions.', 'Pure Silk', 'Gold Brocade', 'Wedding', array['Pink','Gold'], 15, 'In Stock', 4.8, 127, array['https://images.unsplash.com/photo-1543163521-9145f931371e?w=800'], false, true),
 ('Lavender Organza Saree', 'lavender-organza-saree', 'Cotton Sarees', 4999, 6999, 28, 'Elegant lavender organza saree with delicate embroidery and a light breathable finish.', 'Organza', 'Embroidery', 'Casual', array['Lavender'], 22, 'In Stock', 4.5, 89, array['https://images.unsplash.com/photo-1609631183071-fdfb62db3bbd?w=800'], true, false),
 ('Yellow Embroidered Saree', 'yellow-embroidered-saree', 'Designer Sarees', 6999, 9999, 30, 'Stunning yellow designer saree with hand embroidery and mirror work.', 'Cotton Silk', 'Hand Embroidery', 'Festival', array['Yellow'], 18, 'In Stock', 4.7, 102, array['https://images.unsplash.com/photo-1579958118922-842f453fbf67?w=800'], false, true),
@@ -26,4 +27,5 @@ insert into public.products (
 ('Mint Cotton Printed Saree', 'mint-cotton-printed-saree', 'Cotton Sarees', 2499, 3499, 29, 'Fresh mint cotton saree with delicate prints for relaxed daily elegance.', 'Cotton', 'Printed', 'Casual', array['Mint'], 34, 'In Stock', 4.3, 47, array['https://images.unsplash.com/photo-1577720643272-265f434bda8a?w=800'], false, false),
 ('Rust Silk Cotton Saree', 'rust-silk-cotton-saree', 'Cotton Sarees', 3899, 5499, 29, 'Rust silk cotton saree with contrast border and soft festive character.', 'Silk Cotton', 'Contrast Border', 'Festival', array['Rust','Cream'], 21, 'In Stock', 4.5, 62, array['https://images.unsplash.com/photo-1599941138922-94ee02da50d3?w=800'], true, false),
 ('Champagne Designer Saree', 'champagne-designer-saree', 'Designer Sarees', 9999, 13999, 29, 'Champagne designer saree with hand embellishment and luminous finish.', 'Silk Organza', 'Hand Embellished', 'Cocktail', array['Champagne'], 8, 'In Stock', 4.8, 101, array['https://images.unsplash.com/photo-1625895477097-9c7b2cb88e26?w=800'], true, true),
-('Magenta Festive Silk Saree', 'magenta-festive-silk-saree', 'Silk Sarees', 8199, 10999, 25, 'Magenta festive silk saree with zari accents for celebrations.', 'Silk', 'Zari Accents', 'Festival', array['Magenta','Gold'], 16, 'In Stock', 4.7, 88, array['https://images.unsplash.com/photo-1612032782955-e36a1c07b5d4?w=800'], false, true);
+('Magenta Festive Silk Saree', 'magenta-festive-silk-saree', 'Silk Sarees', 8199, 10999, 25, 'Magenta festive silk saree with zari accents for celebrations.', 'Silk', 'Zari Accents', 'Festival', array['Magenta','Gold'], 16, 'In Stock', 4.7, 88, array['https://images.unsplash.com/photo-1612032782955-e36a1c07b5d4?w=800'], false, true),
+('Printed Kota silk Saree', 'kota-doria', 'Doria silk', 7999, 3200, 5, 'Nature-themed print with elephant and peacock motifs.', 'Doria silk', 'Zari', 'Casual', array['grey','green'], 20, 'In Stock', 4.7, 88, array['https://images.unsplash.com/photo-1612032782955-e36a1c07b5d4?w=800'], true, true);

@@ -19,8 +19,12 @@ const AdminLogin = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError('');
+
+    const trimmedEmail = email.trim();
+    const trimmedPassword = password.trim();
+
     try {
-      await login(email, password);
+      await login(trimmedEmail, trimmedPassword);
       navigate('/admin/dashboard');
     } catch (err) {
       setError(err?.response?.data?.message || 'Invalid email or password.');

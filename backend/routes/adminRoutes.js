@@ -4,9 +4,12 @@ import jwt from 'jsonwebtoken';
 const router = express.Router();
 
 const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret';
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@reshi.com';
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'change-me';
+const DEFAULT_ADMIN_EMAIL = 'admin@reshi.com';
+const DEFAULT_ADMIN_PASSWORD = 'change-me';
+const ADMIN_EMAIL = String(process.env.ADMIN_EMAIL || DEFAULT_ADMIN_EMAIL).trim();
+const ADMIN_PASSWORD = String(process.env.ADMIN_PASSWORD || DEFAULT_ADMIN_PASSWORD).trim();
 
+const normalizeEmail = (value = '') => String(value).trim().toLowerCase();
 const createToken = (admin) => jwt.sign(admin, JWT_SECRET, { expiresIn: '8h' });
 
 export const requireAdmin = (req, res, next) => {
@@ -25,13 +28,17 @@ export const requireAdmin = (req, res, next) => {
 
 // Admin login
 router.post('/login', (req, res) => {
-  const { email, password } = req.body || {};
+  const email = String(req.body?.email ?? '').trim();
+  const password = String(req.body?.password ?? '').trim();
 
   if (!email || !password) {
     return res.status(400).json({ message: 'Email and password are required.' });
   }
 
-  if (email !== ADMIN_EMAIL || password !== ADMIN_PASSWORD) {
+  const emailMatches = normalizeEmail(email) === normalizeEmail(ADMIN_EMAIL);
+  const passwordMatches = password === ADMIN_PASSWORD;
+
+  if (!emailMatches || !passwordMatches) {
     return res.status(401).json({ message: 'Invalid credentials.' });
   }
 

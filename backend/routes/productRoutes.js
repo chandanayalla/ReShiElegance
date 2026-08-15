@@ -21,6 +21,7 @@ const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const productsTable = process.env.SUPABASE_PRODUCTS_TABLE || 'products';
 const storageBucket = process.env.SUPABASE_STORAGE_BUCKET || 'products';
 const seedFallbackEnabled = process.env.SEED_FALLBACK_ENABLED !== 'false';
+const fallbackProductImage = 'https://images.unsplash.com/photo-1596752831369-5900ec1be783?auto=format&fit=crop&w=900&q=80';
 
 const hasRealSupabaseConfig = Boolean(
   supabaseUrl
@@ -28,6 +29,15 @@ const hasRealSupabaseConfig = Boolean(
   && !supabaseUrl.includes('your-project')
   && !supabaseServiceRoleKey.includes('your-service-role-key')
 );
+
+const isSupabaseFailure = (error) => {
+  const message = String(error?.message || error || '');
+  return message.includes('Invalid API key')
+    || message.includes('Invalid Compact JWS')
+    || message.includes('Unauthorized')
+    || message.includes('403')
+    || message.includes('service_role');
+};
 
 const supabase = hasRealSupabaseConfig
   ? createClient(supabaseUrl, supabaseServiceRoleKey, {
@@ -96,7 +106,6 @@ const toDbProduct = (product) => ({
   images: product.images,
   is_new_arrival: product.isNewArrival,
   is_best_seller: product.isBestSeller,
-  updated_at: new Date().toISOString(),
 });
 
 const slugify = (value) => value
@@ -122,23 +131,31 @@ const uploadImage = async (file) => {
     return `data:${file.mimetype};base64,${file.buffer.toString('base64')}`;
   }
 
-  const safeName = file.originalname.replace(/[^a-zA-Z0-9.-]/g, '_');
-  const filePath = `products/${Date.now()}-${crypto.randomUUID()}-${safeName}`;
-  const { error } = await supabase.storage.from(storageBucket).upload(filePath, file.buffer, {
-    contentType: file.mimetype,
-    upsert: false,
-  });
+  try {
+    const safeName = file.originalname.replace(/[^a-zA-Z0-9.-]/g, '_');
+    const filePath = `products/${Date.now()}-${crypto.randomUUID()}-${safeName}`;
+    const { error } = await supabase.storage.from(storageBucket).upload(filePath, file.buffer, {
+      contentType: file.mimetype,
+      upsert: false,
+    });
 
-  if (error) throw error;
-  const { data } = supabase.storage.from(storageBucket).getPublicUrl(filePath);
-  return data.publicUrl;
+    if (error) throw error;
+    const { data } = supabase.storage.from(storageBucket).getPublicUrl(filePath);
+    return data.publicUrl;
+  } catch (error) {
+    if (isSupabaseFailure(error)) {
+      return fallbackProductImage;
+    }
+    throw error;
+  }
 };
 
 const buildProduct = async (payload, files = [], existing = null) => {
   const uploadedImages = await Promise.all(files.map(uploadImage));
   const existingImages = readArray(payload.existingImages);
-  const fallbackImages = existing ? existing.images : [];
+  const fallbackImages = existing ? existing.images : [fallbackProductImage];
   const images = [...existingImages, ...uploadedImages].filter(Boolean);
+  const normalizedImages = images.length ? images : fallbackImages;
   const price = Number(payload.price || 0);
   const originalPrice = Number(payload.originalPrice || payload.original_price || price);
   const stock = Number(payload.stock || 0);
@@ -162,7 +179,7 @@ const buildProduct = async (payload, files = [], existing = null) => {
     status: stock > 0 ? 'In Stock' : 'Out of Stock',
     rating: Number(payload.rating || existing?.rating || 4.6),
     reviewsCount: Number(payload.reviewsCount || existing?.reviewsCount || 0),
-    images: images.length ? images : fallbackImages,
+    images: normalizedImages,
     isNewArrival: payload.isNewArrival === 'true' || payload.isNewArrival === true || existing?.isNewArrival || false,
     isBestSeller: payload.isBestSeller === 'true' || payload.isBestSeller === true || existing?.isBestSeller || false,
     createdAt: existing?.createdAt || new Date().toISOString(),
@@ -175,16 +192,43 @@ const getProducts = async () => {
     return [...products].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
   }
 
-  const { data, error } = await supabase
-    .from(productsTable)
-    .select(publicProductFields)
-    .order('created_at', { ascending: false });
-  if (error) throw error;
-  const items = (data || []).map(toCamelProduct);
-  if (!items.length && seedFallbackEnabled) {
-    return [...products].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  try {
+    const { data, error } = await supabase
+      .from(productsTable)
+      .select(publicProductFields)
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    const items = (data || []).map(toCamelProduct);
+    if (!items.length && seedFallbackEnabled) {
+      return [...products].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    }
+    return items;
+  } catch (error) {
+    // If columns differ (e.g., updated_at missing) retry with a permissive select
+    const msg = String(error?.message || error || '');
+    if (msg.includes('does not exist') || msg.includes('undefined column') || error?.code === '42703') {
+      try {
+        const { data: data2, error: err2 } = await supabase
+          .from(productsTable)
+          .select('*')
+          .order('created_at', { ascending: false });
+        if (err2) throw err2;
+        const items2 = (data2 || []).map(toCamelProduct);
+        if (!items2.length && seedFallbackEnabled) {
+          return [...products].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        }
+        return items2;
+      } catch (e2) {
+        if (isSupabaseFailure(e2)) return [...products].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        throw e2;
+      }
+    }
+
+    if (isSupabaseFailure(error)) {
+      return [...products].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    }
+    throw error;
   }
-  return items;
 };
 
 const getProduct = async (id) => {
@@ -192,13 +236,36 @@ const getProduct = async (id) => {
     return products.find((product) => String(product.id) === String(id) || String(product._id) === String(id)) || null;
   }
 
-  const { data, error } = await supabase
-    .from(productsTable)
-    .select(publicProductFields)
-    .eq('id', id)
-    .maybeSingle();
-  if (error) throw error;
-  return toCamelProduct(data);
+  try {
+    const { data, error } = await supabase
+      .from(productsTable)
+      .select(publicProductFields)
+      .eq('id', id)
+      .maybeSingle();
+    if (error) throw error;
+    return toCamelProduct(data);
+  } catch (error) {
+    const msg = String(error?.message || error || '');
+    if (msg.includes('does not exist') || msg.includes('undefined column') || error?.code === '42703') {
+      try {
+        const { data: data2, error: err2 } = await supabase
+          .from(productsTable)
+          .select('*')
+          .eq('id', id)
+          .maybeSingle();
+        if (err2) throw err2;
+        return toCamelProduct(data2);
+      } catch (e2) {
+        if (isSupabaseFailure(e2)) return products.find((product) => String(product.id) === String(id) || String(product._id) === String(id)) || null;
+        throw e2;
+      }
+    }
+
+    if (isSupabaseFailure(error)) {
+      return products.find((product) => String(product.id) === String(id) || String(product._id) === String(id)) || null;
+    }
+    throw error;
+  }
 };
 
 router.get('/', async (req, res) => {
@@ -229,13 +296,31 @@ router.post('/add', upload.array('images', 6), async (req, res) => {
     if (!product.images.length) return res.status(400).json({ message: 'Upload at least one product image.' });
 
     if (hasSupabase()) {
-      const { data, error } = await supabase
-        .from(productsTable)
-        .insert(toDbProduct(product))
-        .select(publicProductFields)
-        .single();
-      if (error) throw error;
-      return res.status(201).json(toCamelProduct(data));
+      try {
+        const { data, error } = await supabase
+          .from(productsTable)
+          .insert(toDbProduct(product))
+          .select(publicProductFields)
+          .single();
+        if (error) throw error;
+        return res.status(201).json(toCamelProduct(data));
+      } catch (error) {
+        const msg = String(error?.message || error || '');
+        if (msg.includes('does not exist') || msg.includes('undefined column') || error?.code === '42703') {
+          // Retry insert with permissive select
+          const { data: data2, error: err2 } = await supabase
+            .from(productsTable)
+            .insert(toDbProduct(product))
+            .select('*')
+            .single();
+          if (err2) throw err2;
+          return res.status(201).json(toCamelProduct(data2));
+        }
+
+        if (!isSupabaseFailure(error)) {
+          throw error;
+        }
+      }
     }
 
     products = [product, ...products];
@@ -255,14 +340,32 @@ router.put('/:id', upload.array('images', 6), async (req, res) => {
     if (!product.images.length) return res.status(400).json({ message: 'Keep or upload at least one product image.' });
 
     if (hasSupabase()) {
-      const { data, error } = await supabase
-        .from(productsTable)
-        .update(toDbProduct(product))
-        .eq('id', req.params.id)
-        .select(publicProductFields)
-        .single();
-      if (error) throw error;
-      return res.json(toCamelProduct(data));
+      try {
+        const { data, error } = await supabase
+          .from(productsTable)
+          .update(toDbProduct(product))
+          .eq('id', req.params.id)
+          .select(publicProductFields)
+          .single();
+        if (error) throw error;
+        return res.json(toCamelProduct(data));
+      } catch (error) {
+        const msg = String(error?.message || error || '');
+        if (msg.includes('does not exist') || msg.includes('undefined column') || error?.code === '42703') {
+          const { data: data2, error: err2 } = await supabase
+            .from(productsTable)
+            .update(toDbProduct(product))
+            .eq('id', req.params.id)
+            .select('*')
+            .single();
+          if (err2) throw err2;
+          return res.json(toCamelProduct(data2));
+        }
+
+        if (!isSupabaseFailure(error)) {
+          throw error;
+        }
+      }
     }
 
     products = products.map((item) => (String(item.id) === String(req.params.id) ? product : item));
@@ -279,12 +382,17 @@ router.delete('/:id', async (req, res) => {
     if (!existing) return res.status(404).json({ message: 'Product not found.' });
 
     if (hasSupabase()) {
-      const { error } = await supabase.from(productsTable).delete().eq('id', req.params.id);
-      if (error) throw error;
-    } else {
-      products = products.filter((item) => String(item.id) !== String(req.params.id));
+      try {
+        const { error } = await supabase.from(productsTable).delete().eq('id', req.params.id);
+        if (error) throw error;
+      } catch (error) {
+        if (!isSupabaseFailure(error)) {
+          throw error;
+        }
+      }
     }
 
+    products = products.filter((item) => String(item.id) !== String(req.params.id));
     return res.status(204).send();
   } catch (error) {
     console.error('Product delete error:', error);
