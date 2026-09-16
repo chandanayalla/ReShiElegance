@@ -1,3 +1,5 @@
+import { jewelleryProducts } from './jewellery.js';
+
 const baseProducts = [
   {
     id: 1,
@@ -509,7 +511,7 @@ const additionalSarees = [
   },
 ];
 
-export const products = [...baseProducts, ...additionalSarees];
+export const products = [...baseProducts, ...additionalSarees].map((product) => ({ ...product, productType: 'clothing' })).concat(jewelleryProducts);
 
 export const categories = [
   { id: 1, name: 'Chiffon', image: 'https://images.unsplash.com/photo-1599641438318-ca6a9d330f38?w=400' },

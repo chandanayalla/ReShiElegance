@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import ProductCard from '../components/ProductCard';
 import Footer from '../components/Footer';
@@ -12,6 +12,8 @@ const Shop = () => {
   const urlParams = new URLSearchParams(location.search);
   const searchQuery = urlParams.get('search') || '';
   const categoryParam = urlParams.get('category') || '';
+  const department = urlParams.get('department') || (searchQuery ? 'all' : 'clothing');
+  const navigate = useNavigate();
 
   const [products, setProducts] = useState([]);
   const [filters, setFilters] = useState({
@@ -46,6 +48,11 @@ const Shop = () => {
   }, []);
 
   useEffect(() => {
+    const exactProduct = products.find((product) => String(product.searchId || '').toLowerCase() === searchQuery.trim().toLowerCase());
+    if (exactProduct) navigate(`/product/${exactProduct.searchId}`, { replace: true });
+  }, [products, searchQuery, navigate]);
+
+  useEffect(() => {
     const nextParams = new URLSearchParams(location.search);
     setFilters((prev) => ({ ...prev, category: nextParams.get('category') || '' }));
     setCurrentPage(1);
@@ -54,13 +61,16 @@ const Shop = () => {
   const itemsPerPage = 12;
 
   const filteredProducts = useMemo(() => {
-    let result = [...products];
+    let result = department === 'all'
+      ? [...products]
+      : products.filter((product) => (product.productType || 'clothing') === department);
 
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       result = result.filter((p) =>
         (p.name || '').toLowerCase().includes(query) ||
-        (p.description || '').toLowerCase().includes(query)
+        (p.description || '').toLowerCase().includes(query) ||
+        (p.searchId || '').toLowerCase().includes(query)
       );
     }
 
@@ -97,7 +107,7 @@ const Shop = () => {
       default:
         return result;
     }
-  }, [searchQuery, filters, sortBy, products]);
+  }, [searchQuery, filters, sortBy, products, department]);
 
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -133,7 +143,10 @@ const Shop = () => {
         <div className="container-fluid py-5">
           {/* Page Header */}
           <div className="shop-header mb-5">
-            <h1>All Sarees</h1>
+            <div className="search-department-tabs" role="tablist" aria-label="Search department">
+              {['all', 'clothing', 'jewellery'].map((tab) => <a key={tab} className={department === tab ? 'active' : ''} href={`/shop?${searchQuery ? `search=${encodeURIComponent(searchQuery)}&` : ''}department=${tab}`}>{tab === 'all' ? 'All' : tab[0].toUpperCase() + tab.slice(1)}</a>)}
+            </div>
+            <h1>{department === 'jewellery' ? 'Jewellery' : department === 'all' ? 'All Collections' : 'All Sarees'}</h1>
             <p>{filteredProducts.length} products found</p>
           </div>
 

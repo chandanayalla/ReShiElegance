@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 
-const categoryOptions = ['Sarees', 'Silk Sarees', 'Cotton Sarees', 'Designer Sarees', 'Party Wear Sarees', 'Kurtis', 'Dress Materials', 'Blouses', 'New Arrivals', 'Best Sellers'];
+const categoryOptions = ['Sarees', 'Silk Sarees', 'Cotton Sarees', 'Designer Sarees', 'Party Wear Sarees', 'Kurtis', 'Dress Materials', 'Blouses', 'earrings', 'necklaces', 'sets', 'bangles', 'black-beads', 'thali-chains', 'rings', 'bridal', 'New Arrivals', 'Best Sellers'];
 
 const ProductForm = ({ initialValues = null, onSubmit, loading = false }) => {
   const [values, setValues] = useState({
+    searchId: '',
     name: '',
+    productType: 'clothing',
     category: 'Sarees',
     price: '',
     originalPrice: '',
@@ -16,16 +18,16 @@ const ProductForm = ({ initialValues = null, onSubmit, loading = false }) => {
     colors: '',
     isNewArrival: false,
     isBestSeller: false,
-    existingImages: [],
-    newImages: [],
+    imageItems: [],
   });
-  const [newPreviews, setNewPreviews] = useState([]);
   const [imageError, setImageError] = useState('');
 
   useEffect(() => {
     if (initialValues) {
       setValues({
+        searchId: initialValues.searchId || '',
         name: initialValues.name || '',
+        productType: initialValues.productType || 'clothing',
         category: initialValues.category || 'Sarees',
         price: initialValues.price || '',
         originalPrice: initialValues.originalPrice || initialValues.price || '',
@@ -37,10 +39,8 @@ const ProductForm = ({ initialValues = null, onSubmit, loading = false }) => {
         colors: (initialValues.colors || []).join(', '),
         isNewArrival: Boolean(initialValues.isNewArrival),
         isBestSeller: Boolean(initialValues.isBestSeller),
-        existingImages: initialValues.images || [],
-        newImages: [],
+        imageItems: (initialValues.images || []).map((url) => ({ kind: 'existing', value: url })),
       });
-      setNewPreviews([]);
     }
   }, [initialValues]);
 
@@ -54,41 +54,51 @@ const ProductForm = ({ initialValues = null, onSubmit, loading = false }) => {
     if (!files.length) return;
 
     setImageError('');
-    const currentTotal = values.existingImages.length + values.newImages.length;
-    const allowed = Math.max(0, 4 - currentTotal);
+    const allowed = Math.max(0, 8 - values.imageItems.length);
     if (allowed === 0) {
-      setImageError('You can upload a maximum of 4 images per product.');
+      setImageError('You can upload a maximum of 8 images per product.');
       return;
     }
 
     const selectedFiles = files.slice(0, allowed);
     if (files.length > allowed) {
-      setImageError('Only the first 4 images are accepted.');
+      setImageError('Only the first 8 images are accepted.');
     }
 
-    setValues((prev) => ({ ...prev, newImages: [...prev.newImages, ...selectedFiles] }));
-    setNewPreviews((prev) => [...prev, ...selectedFiles.map((file) => URL.createObjectURL(file))]);
-  };
-
-  const removeExistingImage = (index) => {
     setValues((prev) => ({
       ...prev,
-      existingImages: prev.existingImages.filter((_, i) => i !== index),
+      imageItems: [...prev.imageItems, ...selectedFiles.map((file) => ({
+        kind: 'new',
+        value: file,
+        preview: URL.createObjectURL(file),
+      }))],
     }));
   };
 
-  const removeNewImage = (index) => {
-    setValues((prev) => ({
-      ...prev,
-      newImages: prev.newImages.filter((_, i) => i !== index),
-    }));
-    setNewPreviews((prev) => prev.filter((_, i) => i !== index));
+  const removeImage = (index) => {
+    setValues((prev) => ({ ...prev, imageItems: prev.imageItems.filter((_, i) => i !== index) }));
+  };
+
+  const moveImage = (index, direction) => {
+    setValues((prev) => {
+      const nextIndex = index + direction;
+      if (nextIndex < 0 || nextIndex >= prev.imageItems.length) return prev;
+      const imageItems = [...prev.imageItems];
+      [imageItems[index], imageItems[nextIndex]] = [imageItems[nextIndex], imageItems[index]];
+      return { ...prev, imageItems };
+    });
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    if (!initialValues && values.imageItems.length < 4) {
+      setImageError('Please add at least 4 product images.');
+      return;
+    }
     const formData = new FormData();
+    formData.append('searchId', values.searchId);
     formData.append('name', values.name);
+    formData.append('productType', values.productType);
     formData.append('category', values.category);
     formData.append('price', values.price);
     formData.append('originalPrice', values.originalPrice || values.price);
@@ -100,16 +110,37 @@ const ProductForm = ({ initialValues = null, onSubmit, loading = false }) => {
     formData.append('colors', values.colors);
     formData.append('isNewArrival', String(values.isNewArrival));
     formData.append('isBestSeller', String(values.isBestSeller));
-    formData.append('existingImages', JSON.stringify(values.existingImages));
-    values.newImages.forEach((file) => {
-      formData.append('images', file);
+    const existingImages = values.imageItems.filter((item) => item.kind === 'existing').map((item) => item.value);
+    const imageOrder = [];
+    let existingIndex = 0;
+    let newIndex = 0;
+    values.imageItems.forEach((item) => {
+      if (item.kind === 'existing') imageOrder.push({ type: 'existing', index: existingIndex++ });
+      else imageOrder.push({ type: 'new', index: newIndex++ });
     });
+    formData.append('existingImages', JSON.stringify(existingImages));
+    formData.append('imageOrder', JSON.stringify(imageOrder));
+    values.imageItems.filter((item) => item.kind === 'new').forEach((item) => formData.append('images', item.value));
     onSubmit(formData);
   };
 
   return (
     <form className="admin-card p-4" onSubmit={handleSubmit}>
       <div className="row g-3">
+        <div className="col-12 col-md-6">
+          <label className="form-label">Product Search ID</label>
+          <input type="text" className="form-control rounded-4" value={values.searchId || 'Generated when saved'} readOnly />
+          <small className="text-muted">Assigned permanently by the system.</small>
+        </div>
+
+        <div className="col-12 col-md-6">
+          <label className="form-label">Department</label>
+          <select name="productType" className="form-select rounded-4" value={values.productType} onChange={handleChange}>
+            <option value="clothing">Clothing</option>
+            <option value="jewellery">Jewellery</option>
+          </select>
+        </div>
+
         <div className="col-12 col-md-6">
           <label className="form-label">Product Name</label>
           <input
@@ -218,6 +249,7 @@ const ProductForm = ({ initialValues = null, onSubmit, loading = false }) => {
 
         <div className="col-12">
           <label className="form-label">Product Images</label>
+          <p className="text-muted mb-2">Add at least 4 images. You can keep up to 8, and the first image is the primary image.</p>
           <input
             type="file"
             className="form-control rounded-4"
@@ -225,38 +257,31 @@ const ProductForm = ({ initialValues = null, onSubmit, loading = false }) => {
             multiple
             onChange={handleImageChange}
           />
-          <small className="text-muted">You can upload up to 4 images total.</small>
+          <small className="text-muted">Use the arrows below to preserve the customer-facing image order.</small>
           {imageError && <div className="text-danger mt-2">{imageError}</div>}
         </div>
 
-        {values.existingImages.length > 0 && (
+        {values.imageItems.length > 0 && (
           <div className="col-12">
             <div className="image-preview-grid">
-              {values.existingImages.map((image, index) => (
-                <div className="image-preview-card" key={image + index}>
-                  <img src={image} alt={`Product ${index + 1}`} />
-                  <button type="button" className="btn btn-sm btn-soft-danger" onClick={() => removeExistingImage(index)}>
+              {values.imageItems.map((item, index) => (
+                <div className="image-preview-card" key={`${item.kind}-${item.value?.name || item.value}-${index}`}>
+                  <img src={item.kind === 'existing' ? item.value : item.preview} alt={`Product ${index + 1}`} />
+                  <div className="d-flex gap-1 justify-content-center flex-wrap">
+                    <button type="button" className="btn btn-sm btn-outline-secondary" onClick={() => moveImage(index, -1)} disabled={index === 0} aria-label="Move image left">←</button>
+                    <button type="button" className="btn btn-sm btn-outline-secondary" onClick={() => moveImage(index, 1)} disabled={index === values.imageItems.length - 1} aria-label="Move image right">→</button>
+                    <button type="button" className="btn btn-sm btn-soft-danger" onClick={() => removeImage(index)}>
                     Remove
-                  </button>
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
         )}
 
-        {newPreviews.length > 0 && (
-          <div className="col-12">
-            <div className="image-preview-grid">
-              {newPreviews.map((preview, index) => (
-                <div className="image-preview-card" key={preview + index}>
-                  <img src={preview} alt={`Upload ${index + 1}`} />
-                  <button type="button" className="btn btn-sm btn-soft-danger" onClick={() => removeNewImage(index)}>
-                    Remove
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
+        {initialValues && values.imageItems.length < 4 && (
+          <div className="col-12"><div className="alert alert-warning mb-0">This existing product has fewer than 4 images. Add more images when convenient; it remains available to customers.</div></div>
         )}
 
         <div className="col-12 d-flex gap-3 flex-wrap mt-3">

@@ -4,6 +4,23 @@
   background: var(--ivory);
 }
 
+.department-choice { position: relative; overflow: hidden; background: #fff7fa; }
+.department-choice::before { content: ''; position: absolute; width: 260px; height: 260px; top: 30px; right: -90px; border: 1px solid rgba(200,155,60,.2); border-radius: 50%; box-shadow: 0 0 0 20px rgba(200,155,60,.06), 0 0 0 40px rgba(232,154,183,.08); }
+.department-grid { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem; max-width: 1160px; margin: auto; }
+.department-card { min-height: 360px; display: flex; align-items: flex-end; padding: clamp(1.5rem, 4vw, 2.8rem); color: #fff; text-decoration: none; border-radius: 16px; overflow: hidden; position: relative; background-size: cover; background-position: center; box-shadow: 0 14px 34px rgba(89, 28, 47, .14); transition: transform .25s ease, box-shadow .25s ease; }
+.department-card:hover { color: #fff; transform: translateY(-6px); box-shadow: 0 20px 42px rgba(89, 28, 47, .2); }
+.department-card::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(47, 18, 31, .8), rgba(47, 18, 31, .08)); }
+.department-card::before { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(47, 18, 31, .78), rgba(47, 18, 31, .05)); }
+.department-card > div { position: relative; z-index: 2; }
+.department-card .eyebrow { color: #f8dce6; margin-bottom: .35rem; }
+.department-card h3 { font-family: Georgia, 'Times New Roman', serif; font-size: 2rem; margin: 0 0 .35rem; }
+.department-card p:not(.eyebrow) { margin-bottom: 1.2rem; }
+.department-card span { display: inline-block; background: #b83362; padding: .72rem 1.1rem; border-radius: 6px; text-transform: uppercase; font-size: .7rem; font-weight: 700; letter-spacing: .04em; transition: background .2s ease; }
+.department-card:hover span { background: #c94f7c; }
+.department-clothing { background-image: url('https://images.unsplash.com/photo-1596752831369-5900ec1be783?auto=format&fit=crop&w=1000&q=85'); }
+.department-jewellery { background-image: url('https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=1000&q=85'); }
+@media (max-width: 640px) { .department-grid { grid-template-columns: 1fr; } .department-card { min-height: 280px; } }
+
 .features-section { padding: 3rem 0; border-bottom: 1px solid rgba(242, 164, 197, 0.32); }
 
 .feature-card { text-align: center; padding: 1.5rem 1rem; background-color: transparent; border: 1px solid rgba(242, 164, 197, 0.34); min-height: 100%; }

@@ -9,6 +9,7 @@ const ProductTable = ({ products = [], onDelete }) => {
           <tr>
             <th>Image</th>
             <th>Name</th>
+            <th>Product ID</th>
             <th>Category</th>
             <th>Stock</th>
             <th>Status</th>
@@ -18,7 +19,7 @@ const ProductTable = ({ products = [], onDelete }) => {
         <tbody>
           {products.length === 0 ? (
             <tr>
-              <td colSpan="6" className="text-center text-muted py-4">
+              <td colSpan="7" className="text-center text-muted py-4">
                 No products available yet.
               </td>
             </tr>
@@ -35,6 +36,7 @@ const ProductTable = ({ products = [], onDelete }) => {
                     />
                   </td>
                   <td>{product.name}</td>
+                  <td>{product.searchId || 'Pending migration'}</td>
                   <td>{product.category}</td>
                   <td>{product.stock}</td>
                   <td>

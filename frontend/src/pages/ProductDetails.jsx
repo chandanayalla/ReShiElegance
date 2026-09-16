@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -7,6 +7,7 @@ import { WishlistContext } from '../context/WishlistContext';
 import api from '../services/api';
 import fallbackImage from '../assets/main.jpeg';
 import { readArrayResponse } from '../utils/apiData';
+import WhatsAppEnquiryButton from '../components/WhatsAppEnquiryButton';
 import './ProductDetails.css';
 
 const ProductDetails = () => {
@@ -20,6 +21,8 @@ const ProductDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [relatedProducts, setRelatedProducts] = useState([]);
+  const [isImageOpen, setIsImageOpen] = useState(false);
+  const touchStartX = useRef(0);
 
   const { addToCart, buyNow } = useContext(CartContext);
   const { toggleWishlist, isInWishlist } = useContext(WishlistContext);
@@ -127,14 +130,33 @@ const ProductDetails = () => {
               <div className="product-images">
                 {/* Main Image */}
                 <div className="main-image-container">
-                  <img
+                  <button
+                    type="button"
+                    className="main-image-button"
+                    onClick={() => setIsImageOpen(true)}
+                    onTouchStart={(event) => { touchStartX.current = event.changedTouches[0].screenX; }}
+                    onTouchEnd={(event) => {
+                      const distance = event.changedTouches[0].screenX - touchStartX.current;
+                      if (Math.abs(distance) < 40 || images.length < 2) return;
+                      const currentIndex = images.indexOf(mainImage);
+                      const nextIndex = distance < 0
+                        ? (currentIndex + 1) % images.length
+                        : (currentIndex - 1 + images.length) % images.length;
+                      setMainImage(images[nextIndex]);
+                    }}
+                    aria-label="Open product image"
+                  >
+                    <img
                     src={mainImage || fallbackImage}
                     alt={product.name}
                     className="main-image"
                     onError={(event) => {
                       event.currentTarget.src = fallbackImage;
                     }}
-                  />
+                    />
+                  </button>
+                  {images.length > 1 && <button type="button" className="gallery-arrow gallery-prev" onClick={() => setMainImage(images[(images.indexOf(mainImage) - 1 + images.length) % images.length])} aria-label="Previous image">‹</button>}
+                  {images.length > 1 && <button type="button" className="gallery-arrow gallery-next" onClick={() => setMainImage(images[(images.indexOf(mainImage) + 1) % images.length])} aria-label="Next image">›</button>}
                   {product.discount > 0 && (
                     <span className="discount-badge">-{product.discount}%</span>
                   )}
@@ -164,6 +186,7 @@ const ProductDetails = () => {
                 {/* Category and Title */}
                 <p className="product-category">{product.category}</p>
                 <h1 className="product-title">{product.name}</h1>
+                {product.searchId && <p className="product-search-id">Product ID: {product.searchId}</p>}
 
                 {/* Rating */}
                 <div className="product-rating mb-3">
@@ -260,6 +283,8 @@ const ProductDetails = () => {
                     <i className={`bi bi-heart${inWishlist ? '-fill' : ''}`}></i>
                     {inWishlist ? 'Remove' : 'Add to'} Wishlist
                   </button>
+
+                  <WhatsAppEnquiryButton product={product} />
                 </div>
 
                 {/* Features */}
@@ -385,6 +410,12 @@ const ProductDetails = () => {
       </div>
 
       <Footer />
+      {isImageOpen && (
+        <div className="image-lightbox" role="dialog" aria-modal="true" onClick={() => setIsImageOpen(false)}>
+          <button type="button" className="image-lightbox-close" onClick={() => setIsImageOpen(false)} aria-label="Close image">×</button>
+          <img src={mainImage || fallbackImage} alt={product.name} onClick={(event) => event.stopPropagation()} />
+        </div>
+      )}
     </>
   );
 };

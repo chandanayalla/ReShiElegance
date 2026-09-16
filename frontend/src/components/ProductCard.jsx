@@ -39,7 +39,7 @@ const ProductCard = ({ product, onAddToCart }) => {
     <div className={`product-card ${product.stock === 0 ? 'out-of-stock' : ''}`}>
       {/* Image Container */}
       <div className="product-image-container">
-        <Link to={`/product/${product.id}`}>
+        <Link to={`/product/${product.searchId || product.id}`}>
           <div className="image-hover">
             <img
               src={product.images?.[0] || product.image || fallbackImage}
@@ -84,7 +84,7 @@ const ProductCard = ({ product, onAddToCart }) => {
         <p className="product-category">{product.category}</p>
 
         {/* Name */}
-        <Link to={`/product/${product.id}`}>
+        <Link to={`/product/${product.searchId || product.id}`}>
           <h5 className="product-name">{product.name}</h5>
         </Link>
 
@@ -132,7 +132,7 @@ const ProductCard = ({ product, onAddToCart }) => {
         </button>
 
         {/* Quick View Link */}
-        <Link to={`/product/${product.id}`} className="quick-view">
+        <Link to={`/product/${product.searchId || product.id}`} className="quick-view">
           <i className="bi bi-eye me-1"></i>Quick View
         </Link>
       </div>

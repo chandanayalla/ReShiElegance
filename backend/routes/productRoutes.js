@@ -12,6 +12,7 @@ const upload = multer({
 let products = seedProducts.map((product) => ({
   ...product,
   id: String(product.id),
+  searchId: product.searchId || `RE-${product.productType === 'jewellery' ? 'JW' : 'CL'}-${String(product.id).slice(-3).padStart(3, '0')}`,
   createdAt: product.createdAt || new Date().toISOString(),
   updatedAt: product.updatedAt || new Date().toISOString(),
 }));
@@ -48,7 +49,7 @@ const supabase = hasRealSupabaseConfig
 const hasSupabase = () => Boolean(supabase);
 
 const publicProductFields = `
-  id,name,slug,category,price,original_price,discount,description,fabric,work,
+  id,search_id,name,slug,product_type,category,price,original_price,discount,description,fabric,work,
   occasion,colors,stock,status,rating,reviews_count,images,is_new_arrival,
   is_best_seller,created_at,updated_at
 `;
@@ -63,9 +64,11 @@ const toCamelProduct = (product) => {
   return {
     id: String(product.id ?? product._id),
     _id: String(product.id ?? product._id),
+    searchId: product.search_id || product.searchId || '',
     name: product.name || '',
     slug: product.slug || '',
     category: product.category || 'Sarees',
+    productType: product.product_type || product.productType || 'clothing',
     price,
     originalPrice,
     discount: Number(product.discount || 0),
@@ -88,9 +91,11 @@ const toCamelProduct = (product) => {
 };
 
 const toDbProduct = (product) => ({
+  search_id: product.searchId,
   name: product.name,
   slug: product.slug,
   category: product.category,
+  product_type: product.productType || 'clothing',
   price: product.price,
   original_price: product.originalPrice,
   discount: product.discount,
@@ -150,11 +155,43 @@ const uploadImage = async (file) => {
   }
 };
 
+const getNextFallbackSearchId = (productType) => {
+  const prefix = productType === 'jewellery' ? 'RE-JW-' : 'RE-CL-';
+  const highest = products.reduce((current, product) => {
+    const match = String(product.searchId || '').match(new RegExp(`^${prefix}(\\d+)$`, 'i'));
+    return match ? Math.max(current, Number(match[1])) : current;
+  }, 0);
+  return `${prefix}${String(highest + 1).padStart(3, '0')}`;
+};
+
+const allocateSearchId = async (productType) => {
+  if (!hasSupabase()) return getNextFallbackSearchId(productType);
+
+  try {
+    const { data, error } = await supabase.rpc('allocate_product_search_id', { p_product_type: productType });
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    const prefix = productType === 'jewellery' ? 'RE-JW-' : 'RE-CL-';
+    const { data, error: queryError } = await supabase
+      .from(productsTable)
+      .select('search_id')
+      .like('search_id', `${prefix}%`);
+    if (queryError) throw queryError;
+    const highest = (data || []).reduce((current, item) => Math.max(current, Number(String(item.search_id || '').slice(prefix.length)) || 0), 0);
+    return `${prefix}${String(highest + 1).padStart(3, '0')}`;
+  }
+};
+
 const buildProduct = async (payload, files = [], existing = null) => {
   const uploadedImages = await Promise.all(files.map(uploadImage));
   const existingImages = readArray(payload.existingImages);
   const fallbackImages = existing ? existing.images : [fallbackProductImage];
-  const images = [...existingImages, ...uploadedImages].filter(Boolean);
+  const imageOrder = readArray(payload.imageOrder);
+  const orderedImages = imageOrder.length
+    ? imageOrder.map((item) => item.type === 'existing' ? existingImages[item.index] : uploadedImages[item.index]).filter(Boolean)
+    : [...existingImages, ...uploadedImages];
+  const images = orderedImages.filter(Boolean);
   const normalizedImages = images.length ? images : fallbackImages;
   const price = Number(payload.price || 0);
   const originalPrice = Number(payload.originalPrice || payload.original_price || price);
@@ -164,9 +201,11 @@ const buildProduct = async (payload, files = [], existing = null) => {
   return {
     id: productId,
     _id: productId,
+    searchId: existing?.searchId || await allocateSearchId(payload.productType || existing?.productType || 'clothing'),
     name: payload.name?.trim() || existing?.name || 'Untitled product',
     slug: payload.slug?.trim() || slugify(payload.name || existing?.name || 'product'),
     category: payload.category || existing?.category || 'Sarees',
+    productType: payload.productType || existing?.productType || 'clothing',
     price,
     originalPrice,
     discount: originalPrice > price ? Math.round(((originalPrice - price) / originalPrice) * 100) : Number(payload.discount || 0),
@@ -233,14 +272,15 @@ const getProducts = async () => {
 
 const getProduct = async (id) => {
   if (!hasSupabase()) {
-    return products.find((product) => String(product.id) === String(id) || String(product._id) === String(id)) || null;
+    return products.find((product) => String(product.id) === String(id) || String(product._id) === String(id) || String(product.searchId).toLowerCase() === String(id).toLowerCase()) || null;
   }
 
   try {
+    const isSearchId = /^RE-(CL|JW)-\d+$/i.test(String(id));
     const { data, error } = await supabase
       .from(productsTable)
       .select(publicProductFields)
-      .eq('id', id)
+      .eq(isSearchId ? 'search_id' : 'id', id)
       .maybeSingle();
     if (error) throw error;
     return toCamelProduct(data);
@@ -256,13 +296,13 @@ const getProduct = async (id) => {
         if (err2) throw err2;
         return toCamelProduct(data2);
       } catch (e2) {
-        if (isSupabaseFailure(e2)) return products.find((product) => String(product.id) === String(id) || String(product._id) === String(id)) || null;
+        if (isSupabaseFailure(e2)) return products.find((product) => String(product.id) === String(id) || String(product._id) === String(id) || String(product.searchId).toLowerCase() === String(id).toLowerCase()) || null;
         throw e2;
       }
     }
 
     if (isSupabaseFailure(error)) {
-      return products.find((product) => String(product.id) === String(id) || String(product._id) === String(id)) || null;
+      return products.find((product) => String(product.id) === String(id) || String(product._id) === String(id) || String(product.searchId).toLowerCase() === String(id).toLowerCase()) || null;
     }
     throw error;
   }
@@ -289,11 +329,12 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-router.post('/add', upload.array('images', 6), async (req, res) => {
+router.post('/add', upload.array('images', 8), async (req, res) => {
   try {
     const files = req.files?.length ? req.files : req.file ? [req.file] : [];
     const product = await buildProduct(req.body, files);
-    if (!product.images.length) return res.status(400).json({ message: 'Upload at least one product image.' });
+    if (product.images.length < 4) return res.status(400).json({ message: 'Please add at least 4 product images.' });
+    if (product.images.length > 8) return res.status(400).json({ message: 'You can add up to 8 product images.' });
 
     if (hasSupabase()) {
       try {
@@ -331,13 +372,14 @@ router.post('/add', upload.array('images', 6), async (req, res) => {
   }
 });
 
-router.put('/:id', upload.array('images', 6), async (req, res) => {
+router.put('/:id', upload.array('images', 8), async (req, res) => {
   try {
     const existing = await getProduct(req.params.id);
     if (!existing) return res.status(404).json({ message: 'Product not found.' });
 
     const product = await buildProduct(req.body, req.files || [], existing);
     if (!product.images.length) return res.status(400).json({ message: 'Keep or upload at least one product image.' });
+    if (product.images.length > 8) return res.status(400).json({ message: 'You can add up to 8 product images.' });
 
     if (hasSupabase()) {
       try {

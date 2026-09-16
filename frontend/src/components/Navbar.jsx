@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { CartContext } from '../context/CartContext';
 import { AuthContext } from '../context/AuthContext';
 import logo from '../assets/main.jpeg';
@@ -11,6 +11,7 @@ const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isScrolled, setIsScrolled] = useState(false);
   const [isCollectionsOpen, setIsCollectionsOpen] = useState(false);
+  const location = useLocation();
   const { getTotalItems } = useContext(CartContext);
   const { user, isAuthenticated, logout } = useContext(AuthContext);
 
@@ -40,7 +41,7 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className={`navbar navbar-expand-lg navbar-light ${isScrolled ? 'sticky-top navbar-shadow' : ''}`}>
+      <nav className={`navbar navbar-expand-lg navbar-light ${location.pathname === '/' ? 'home-navbar' : ''} ${isScrolled ? 'sticky-top navbar-shadow' : ''}`}>
         <div className="container-fluid">
           <div className="brand-left-tools">
             <button
@@ -67,7 +68,7 @@ const Navbar = () => {
                 <input
                   type="text"
                   className="form-control"
-                  placeholder="Search for sarees..."
+                  placeholder="Search products or enter Product ID..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
@@ -83,7 +84,10 @@ const Navbar = () => {
                 <Link className="nav-link" to="/" onClick={closeMobileMenu}>Home</Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link" to="/shop" onClick={closeMobileMenu}>Sarees</Link>
+                <Link className="nav-link" to="/clothing" onClick={closeMobileMenu}>Clothing</Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/jewellery" onClick={closeMobileMenu}>Jewellery</Link>
               </li>
               <li className={`nav-item dropdown ${isCollectionsOpen ? 'show' : ''}`}>
                 <button
@@ -97,7 +101,6 @@ const Navbar = () => {
                   <i className={`bi ${isCollectionsOpen ? 'bi-chevron-up' : 'bi-chevron-down'}`}></i>
                 </button>
                 <ul className={`dropdown-menu ${isCollectionsOpen ? 'show' : ''}`} aria-labelledby="collectionsDropdown">
-                  <li><Link className="dropdown-item" to="/shop?category=New Arrivals" onClick={closeMobileMenu}>New Arrivals</Link></li>
                   <li><Link className="dropdown-item" to="/shop?category=Best Sellers" onClick={closeMobileMenu}>Best Sellers</Link></li>
                   <li><Link className="dropdown-item" to="/shop?category=Bridal Sarees" onClick={closeMobileMenu}>Bridal Sarees</Link></li>
                   <li><Link className="dropdown-item" to="/shop?category=Party Wear Sarees" onClick={closeMobileMenu}>Party Wear</Link></li>
@@ -153,7 +156,7 @@ const Navbar = () => {
               <input
                 type="text"
                 className="form-control"
-                placeholder="Search sarees..."
+                placeholder="Search products or enter Product ID..."
                 value={searchQuery}
                 onChange={(event) => setSearchQuery(event.target.value)}
               />

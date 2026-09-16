@@ -9,6 +9,7 @@ const EditProduct = () => {
   const [product, setProduct] = useState(null);
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const loadProduct = async () => {
@@ -29,12 +30,14 @@ const EditProduct = () => {
   const handleSave = async (formData) => {
     try {
       setSaving(true);
+      setError('');
       await api.put(`/products/${id}`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       navigate('/admin/products');
     } catch (error) {
       console.error('Update product error:', error);
+      setError(error?.response?.data?.message || 'Unable to update product. Please try again.');
     } finally {
       setSaving(false);
     }
@@ -50,7 +53,10 @@ const EditProduct = () => {
       {loading ? (
         <div className="admin-card p-4 text-center">Loading product details...</div>
       ) : (
-        <ProductForm initialValues={product} onSubmit={handleSave} loading={saving} />
+        <>
+          {error && <div className="alert alert-danger">{error}</div>}
+          <ProductForm initialValues={product} onSubmit={handleSave} loading={saving} />
+        </>
       )}
     </AdminLayout>
   );

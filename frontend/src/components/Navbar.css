@@ -468,6 +468,20 @@ body.mobile-menu-open {
   }
 }
 
+@media (max-width: 991px) {
+  .home-navbar .container-fluid { min-height: 54px; grid-template-columns: auto minmax(0, 1fr) auto; column-gap: .35rem; }
+  .home-navbar .brand-left-tools { display: none; }
+  .home-navbar .navbar-brand { grid-column: 1; justify-self: start; }
+  .home-navbar .brand-image { width: 44px; height: 44px; }
+  .home-navbar .navbar-collapse { grid-column: 2; position: static; width: auto; height: auto; display: flex !important; flex-direction: row; padding: 0; margin: 0; background: transparent; box-shadow: none; overflow: visible; transform: none; }
+  .home-navbar .mobile-drawer-search, .home-navbar .navbar-nav .dropdown, .home-navbar .navbar-nav .nav-item:nth-child(5), .home-navbar .navbar-nav .nav-item:nth-child(6), .home-navbar .navbar-nav .nav-item:nth-child(7) { display: none; }
+  .home-navbar .navbar-nav { display: flex; width: auto; gap: .65rem; }
+  .home-navbar .nav-link { min-height: 0; width: auto; padding: .25rem 0 !important; border-radius: 0; background: transparent; font-size: .58rem; letter-spacing: 0; white-space: nowrap; }
+  .home-navbar .navbar-icons { grid-column: 3; gap: 0; }
+  .home-navbar .navbar-icons .icon-link { width: 30px; height: 30px; flex-basis: 30px; font-size: .9rem; }
+  .home-navbar #site-search { display: none; }
+}
+
 @media (max-width: 560px) {
   .navbar .container-fluid {
     min-height: 54px;

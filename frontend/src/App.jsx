@@ -7,6 +7,7 @@ import { AdminAuthProvider } from './context/AdminAuthContext';
 
 // Pages
 import Home from './pages/Home';
+import ChooseWorld from './pages/ChooseWorld';
 import Shop from './pages/Shop';
 import ProductDetails from './pages/ProductDetails';
 import Cart from './pages/Cart';
@@ -20,6 +21,8 @@ import Contact from './pages/Contact';
 import OrderSuccess from './pages/OrderSuccess';
 import ProductList from './pages/ProductList';
 import AuthCallback from './pages/AuthCallback';
+import JewelleryHome from './pages/JewelleryHome';
+import JewelleryShop from './pages/JewelleryShop';
 
 // Admin
 import AdminLogin from './pages/admin/AdminLogin';
@@ -40,7 +43,11 @@ function App() {
             <AdminAuthProvider>
               <Routes>
               <Route path="/" element={<Home />} />
+              <Route path="/choose" element={<ChooseWorld />} />
               <Route path="/shop" element={<Shop />} />
+              <Route path="/clothing" element={<Navigate to="/shop" replace />} />
+              <Route path="/jewellery" element={<JewelleryHome />} />
+              <Route path="/jewellery/:category" element={<JewelleryShop />} />
               <Route path="/product/:id" element={<ProductDetails />} />
               <Route path="/cart" element={<Cart />} />
               <Route path="/checkout" element={<Checkout />} />

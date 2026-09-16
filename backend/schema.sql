@@ -2,9 +2,11 @@ create extension if not exists "pgcrypto";
 
 create table if not exists public.products (
   id uuid primary key default gen_random_uuid(),
+  search_id text,
   name text not null,
   slug text not null,
   category text not null default 'Sarees',
+  product_type text not null default 'clothing',
   price numeric(10,2) not null default 0,
   original_price numeric(10,2) not null default 0,
   discount integer not null default 0,
@@ -23,6 +25,10 @@ create table if not exists public.products (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+alter table public.products add column if not exists product_type text not null default 'clothing';
+alter table public.products add column if not exists search_id text;
+create unique index if not exists products_search_id_unique_idx on public.products(search_id) where search_id is not null;
 
 create table if not exists public.orders (
   id uuid primary key default gen_random_uuid(),
@@ -79,6 +85,7 @@ create table if not exists public.banners (
 );
 
 create index if not exists products_category_idx on public.products(category);
+create index if not exists products_product_type_idx on public.products(product_type);
 create index if not exists products_created_at_idx on public.products(created_at desc);
 create index if not exists orders_status_idx on public.orders(status);
 create index if not exists orders_created_at_idx on public.orders(created_at desc);
