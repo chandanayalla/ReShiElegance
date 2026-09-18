@@ -1,7 +1,7 @@
 .whatsapp-button {
   position: fixed;
-  right: 20px;
-  bottom: 20px;
+  right: calc(20px + env(safe-area-inset-right));
+  bottom: calc(20px + env(safe-area-inset-bottom));
   width: 56px;
   height: 56px;
   background: #25D366;
@@ -18,4 +18,18 @@
 .whatsapp-button:hover {
   transform: translateY(-2px);
   transition: transform 120ms ease-in-out;
+}
+
+@media (max-width: 576px) {
+  .whatsapp-button {
+    right: 16px;
+    bottom: 16px;
+    width: 52px;
+    height: 52px;
+  }
+
+  .whatsapp-button svg {
+    width: 18px;
+    height: 18px;
+  }
 }

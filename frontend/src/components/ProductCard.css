@@ -271,13 +271,28 @@
 
 @media (max-width: 576px) {
   .product-info {
-    padding: 0.7rem;
+    padding: 0.65rem 0.55rem 0.75rem;
   }
 
   .product-category {
     font-size: 0.56rem;
     letter-spacing: 0.08em;
   }
+
+  .product-card { border-radius: 8px; }
+  .product-image-container { aspect-ratio: 4 / 4.8; }
+  .product-badges { top: 6px; left: 6px; gap: 3px; }
+  .badge { padding: .24rem .38rem; font-size: .5rem; }
+  .wishlist-btn { top: 6px; right: 6px; width: 30px; height: 30px; font-size: .85rem; }
+  .product-name { font-size: .78rem; min-height: 2rem; margin-bottom: .4rem; }
+  .product-rating { gap: .25rem; margin-bottom: .42rem; }
+  .stars { font-size: .55rem; }
+  .rating-text { font-size: .58rem; }
+  .product-price { margin-bottom: .55rem; }
+  .current-price { font-size: .88rem; }
+  .original-price, .discount-text { font-size: .6rem; }
+  .btn-add-cart, .btn-buy-now { padding: .5rem .35rem; font-size: .6rem; letter-spacing: .02em; }
+  .quick-view { display: none; }
 
   .product-name {
     font-size: 0.78rem;

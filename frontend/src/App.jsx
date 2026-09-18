@@ -23,6 +23,7 @@ import ProductList from './pages/ProductList';
 import AuthCallback from './pages/AuthCallback';
 import JewelleryHome from './pages/JewelleryHome';
 import JewelleryShop from './pages/JewelleryShop';
+import ClothingHome from './pages/ClothingHome';
 
 // Admin
 import AdminLogin from './pages/admin/AdminLogin';
@@ -45,7 +46,7 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/choose" element={<ChooseWorld />} />
               <Route path="/shop" element={<Shop />} />
-              <Route path="/clothing" element={<Navigate to="/shop" replace />} />
+              <Route path="/clothing" element={<ClothingHome />} />
               <Route path="/jewellery" element={<JewelleryHome />} />
               <Route path="/jewellery/:category" element={<JewelleryShop />} />
               <Route path="/product/:id" element={<ProductDetails />} />

@@ -101,7 +101,7 @@ const Footer = () => {
               <ul className="contact-info">
                 <li>
                   <i className="bi bi-telephone"></i>
-                  <span>+917815861896</span>
+                  <span>+91 7815861896</span>
                 </li>
                 <li>
                   <i className="bi bi-envelope"></i>

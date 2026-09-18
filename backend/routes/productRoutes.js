@@ -51,7 +51,7 @@ const hasSupabase = () => Boolean(supabase);
 const publicProductFields = `
   id,search_id,name,slug,product_type,category,price,original_price,discount,description,fabric,work,
   occasion,colors,stock,status,rating,reviews_count,images,is_new_arrival,
-  is_best_seller,created_at,updated_at
+  is_best_seller,created_at
 `;
 
 const toCamelProduct = (product) => {

@@ -4,7 +4,8 @@ import Navbar from '../components/Navbar';
 import ProductCard from '../components/ProductCard';
 import Footer from '../components/Footer';
 import api from '../services/api';
-import { readArrayResponse } from '../utils/apiData';
+import { findProductByIdentifier, readArrayResponse } from '../utils/apiData';
+import { products as catalogProducts } from '../data/products';
 import './Shop.css';
 
 const Shop = () => {
@@ -15,7 +16,7 @@ const Shop = () => {
   const department = urlParams.get('department') || (searchQuery ? 'all' : 'clothing');
   const navigate = useNavigate();
 
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState(catalogProducts);
   const [filters, setFilters] = useState({
     category: categoryParam || '',
     priceRange: [0, 20000],
@@ -36,9 +37,10 @@ const Shop = () => {
 
       try {
         const response = await api.get('/products');
-        setProducts(readArrayResponse(response.data));
+        const remoteProducts = readArrayResponse(response.data);
+        setProducts(remoteProducts.length ? remoteProducts : catalogProducts);
       } catch (err) {
-        setError('Unable to load products.');
+        setProducts(catalogProducts);
       } finally {
         setLoading(false);
       }
@@ -48,8 +50,8 @@ const Shop = () => {
   }, []);
 
   useEffect(() => {
-    const exactProduct = products.find((product) => String(product.searchId || '').toLowerCase() === searchQuery.trim().toLowerCase());
-    if (exactProduct) navigate(`/product/${exactProduct.searchId}`, { replace: true });
+    const exactProduct = findProductByIdentifier(products, searchQuery.trim());
+    if (exactProduct) navigate(`/product/${exactProduct.searchId || exactProduct.id}`, { replace: true });
   }, [products, searchQuery, navigate]);
 
   useEffect(() => {
@@ -70,6 +72,7 @@ const Shop = () => {
       result = result.filter((p) =>
         (p.name || '').toLowerCase().includes(query) ||
         (p.description || '').toLowerCase().includes(query) ||
+        String(p.id || '').toLowerCase().includes(query) ||
         (p.searchId || '').toLowerCase().includes(query)
       );
     }

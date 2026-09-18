@@ -6,7 +6,8 @@ import { CartContext } from '../context/CartContext';
 import { WishlistContext } from '../context/WishlistContext';
 import api from '../services/api';
 import fallbackImage from '../assets/main.jpeg';
-import { readArrayResponse } from '../utils/apiData';
+import { findProductByIdentifier, readArrayResponse } from '../utils/apiData';
+import { products as catalogProducts } from '../data/products';
 import WhatsAppEnquiryButton from '../components/WhatsAppEnquiryButton';
 import './ProductDetails.css';
 
@@ -34,11 +35,23 @@ const ProductDetails = () => {
 
       try {
         const response = await api.get(`/products/${id}`);
-        const productData = response.data;
+        const productData = response.data?.product || response.data?.data || response.data || findProductByIdentifier(catalogProducts, id);
+        if (!productData) throw new Error('Product not found');
         setProduct(productData);
         setMainImage(productData.images?.[0] || productData.image || '');
       } catch (err) {
-        setError('Product not found.');
+        try {
+          const response = await api.get('/products');
+          const liveProducts = readArrayResponse(response.data);
+          const liveProduct = findProductByIdentifier(liveProducts, id);
+          const catalogProduct = findProductByIdentifier(catalogProducts, id);
+          const productData = liveProduct || catalogProduct;
+          if (!productData) throw new Error('Product not found');
+          setProduct(productData);
+          setMainImage(productData.images?.[0] || productData.image || '');
+        } catch (fallbackError) {
+          setError('Product not found.');
+        }
       } finally {
         setLoading(false);
       }
@@ -53,7 +66,7 @@ const ProductDetails = () => {
 
       try {
         const response = await api.get('/products');
-        const products = readArrayResponse(response.data);
+        const products = readArrayResponse(response.data).length ? readArrayResponse(response.data) : catalogProducts;
         setRelatedProducts(
           products
             .filter((p) => p.category === product.category && p.id !== product.id)

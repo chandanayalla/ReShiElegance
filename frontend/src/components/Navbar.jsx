@@ -10,7 +10,6 @@ const Navbar = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isCollectionsOpen, setIsCollectionsOpen] = useState(false);
   const location = useLocation();
   const { getTotalItems } = useContext(CartContext);
   const { user, isAuthenticated, logout } = useContext(AuthContext);
@@ -36,7 +35,6 @@ const Navbar = () => {
 
   const closeMobileMenu = () => {
     setIsMenuOpen(false);
-    setIsCollectionsOpen(false);
   };
 
   return (
@@ -88,23 +86,6 @@ const Navbar = () => {
               </li>
               <li className="nav-item">
                 <Link className="nav-link" to="/jewellery" onClick={closeMobileMenu}>Jewellery</Link>
-              </li>
-              <li className={`nav-item dropdown ${isCollectionsOpen ? 'show' : ''}`}>
-                <button
-                  className="nav-link dropdown-toggle nav-dropdown-button"
-                  type="button"
-                  id="collectionsDropdown"
-                  aria-expanded={isCollectionsOpen}
-                  onClick={() => setIsCollectionsOpen((open) => !open)}
-                >
-                  Collections
-                  <i className={`bi ${isCollectionsOpen ? 'bi-chevron-up' : 'bi-chevron-down'}`}></i>
-                </button>
-                <ul className={`dropdown-menu ${isCollectionsOpen ? 'show' : ''}`} aria-labelledby="collectionsDropdown">
-                  <li><Link className="dropdown-item" to="/shop?category=Best Sellers" onClick={closeMobileMenu}>Best Sellers</Link></li>
-                  <li><Link className="dropdown-item" to="/shop?category=Bridal Sarees" onClick={closeMobileMenu}>Bridal Sarees</Link></li>
-                  <li><Link className="dropdown-item" to="/shop?category=Party Wear Sarees" onClick={closeMobileMenu}>Party Wear</Link></li>
-                </ul>
               </li>
               <li className="nav-item">
                 <Link className="nav-link" to="/about" onClick={closeMobileMenu}>About Us</Link>
@@ -166,6 +147,13 @@ const Navbar = () => {
             </div>
           </form>
         </div>
+      </nav>
+      <nav className="mobile-bottom-nav" aria-label="Quick navigation">
+        <Link to="/" className={location.pathname === '/' ? 'active' : ''}><i className="bi bi-house"></i><span>Home</span></Link>
+        <Link to="/choose" className={location.pathname === '/choose' ? 'active' : ''}><i className="bi bi-grid"></i><span>Categories</span></Link>
+        <Link to="/wishlist" className={location.pathname === '/wishlist' ? 'active' : ''}><i className="bi bi-heart"></i><span>Wishlist</span></Link>
+        <Link to="/cart" className={location.pathname === '/cart' ? 'active' : ''}><i className="bi bi-bag"></i><span>Cart</span></Link>
+        <Link to={isAuthenticated ? '/account' : '/login'} className={location.pathname === '/account' ? 'active' : ''}><i className="bi bi-person"></i><span>Profile</span></Link>
       </nav>
       {isMenuOpen && (
         <button

@@ -3,10 +3,11 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import api from '../services/api';
 import { readArrayResponse } from '../utils/apiData';
+import { products as catalogProducts } from '../data/products';
 import './Shop.css';
 
 const ProductList = () => {
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState(catalogProducts);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -17,9 +18,10 @@ const ProductList = () => {
 
       try {
         const response = await api.get('/products');
-        setProducts(readArrayResponse(response.data));
+        const remoteProducts = readArrayResponse(response.data);
+        setProducts(remoteProducts.length ? remoteProducts : catalogProducts);
       } catch (err) {
-        setError('Unable to load products. Please try again later.');
+        setProducts(catalogProducts);
       } finally {
         setLoading(false);
       }
