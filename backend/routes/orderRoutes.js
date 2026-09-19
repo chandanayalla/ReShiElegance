@@ -36,9 +36,9 @@ const toOrder = (order) => ({
   address: order.address || {},
   products: normalizeProducts(order.items || order.products),
   subtotal: Number(order.subtotal || 0),
-  shipping: Number(order.shipping || 0),
-  tax: Number(order.tax || 0),
-  total: Number(order.total || 0),
+  shipping: 0,
+  tax: 0,
+  total: Number(order.total || order.subtotal || 0),
   status: order.status || 'Pending',
   paymentStatus: order.payment_status || order.paymentStatus || 'pending',
   razorpayOrderId: order.razorpay_order_id || order.razorpayOrderId || '',
@@ -53,8 +53,8 @@ const toDbOrder = (order) => ({
   address: order.address,
   items: order.products,
   subtotal: order.subtotal,
-  shipping: order.shipping,
-  tax: order.tax,
+  shipping: 0,
+  tax: 0,
   total: order.total,
   status: order.status,
   payment_status: order.paymentStatus,
@@ -64,6 +64,7 @@ const toDbOrder = (order) => ({
 
 export const createStoreOrder = async (payload) => {
   const orderId = crypto.randomUUID();
+  const subtotal = Number(payload.subtotal || 0);
   const order = {
     id: orderId,
     _id: orderId,
@@ -72,10 +73,10 @@ export const createStoreOrder = async (payload) => {
     customerPhone: payload.customerPhone,
     address: payload.address,
     products: normalizeProducts(payload.products),
-    subtotal: Number(payload.subtotal || 0),
-    shipping: Number(payload.shipping || 0),
-    tax: Number(payload.tax || 0),
-    total: Number(payload.total || 0),
+    subtotal,
+    shipping: 0,
+    tax: 0,
+    total: subtotal,
     status: 'Pending',
     paymentStatus: payload.paymentStatus || 'paid',
     razorpayOrderId: payload.razorpayOrderId || '',
@@ -145,9 +146,6 @@ router.post('/', async (req, res) => {
               <h4>Items</h4>
               <ul>${itemsHtml}</ul>
               <table style="width:100%; max-width:480px; border-collapse:collapse; margin-top:10px;">
-                <tr><td style="padding:6px"><strong>Subtotal:</strong></td><td style="padding:6px">₹${order.subtotal}</td></tr>
-                <tr><td style="padding:6px"><strong>Shipping:</strong></td><td style="padding:6px">₹${order.shipping}</td></tr>
-                <tr><td style="padding:6px"><strong>Tax:</strong></td><td style="padding:6px">₹${order.tax}</td></tr>
                 <tr style="border-top:1px solid #ddd"><td style="padding:6px"><strong>Total:</strong></td><td style="padding:6px">₹${order.total}</td></tr>
               </table>
               <p style="margin-top:12px">View orders in your admin panel to process this order.</p>

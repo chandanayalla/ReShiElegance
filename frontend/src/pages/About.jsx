@@ -30,8 +30,7 @@ const About = () => {
               <li>Premium quality fabrics and authentic designs</li>
               <li>Direct partnership with skilled artisans</li>
               <li>Fair trade practices</li>
-              <li>Free shipping on orders above ₹999</li>
-              <li>30-day easy return policy</li>
+              <li>Free shipping on every order</li>
               <li>24/7 customer support</li>
             </ul>
           </div>

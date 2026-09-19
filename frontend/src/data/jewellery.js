@@ -15,7 +15,7 @@ export const jewelleryProducts = [
     stock: 24,
     rating: 4.8,
     reviewsCount: 12,
-    images: ['https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=900&q=85'],
+    images: ['https://assets0.mirraw.com/images/14095102/image_zoom.jpeg?1781124580'],
     isNewArrival: true,
     isBestSeller: true,
   },
@@ -35,7 +35,7 @@ export const jewelleryProducts = [
     stock: 18,
     rating: 4.7,
     reviewsCount: 10,
-    images: ['https://images.unsplash.com/photo-1635767798638-3e25273a8236?auto=format&fit=crop&w=900&q=85'],
+    images: ['https://ishhaara.com/cdn/shop/files/ishhaara-kundan-peacock-drop-earrings-with-ruby-red-beads-5858943660.jpg?v=1785160699'],
     isNewArrival: true,
   },
   {
@@ -54,7 +54,7 @@ export const jewelleryProducts = [
     stock: 11,
     rating: 4.9,
     reviewsCount: 18,
-    images: ['https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=900&q=85'],
+    images: ['https://d25g9z9s77rn4i.cloudfront.net/uploads/product/1235/1781260005_5063ff9e8eab993e2eba.webp'],
     isBestSeller: true,
   },
   {
@@ -91,7 +91,7 @@ export const jewelleryProducts = [
     stock: 7,
     rating: 4.9,
     reviewsCount: 21,
-    images: ['https://images.unsplash.com/photo-1611652022419-a9419f74343d?auto=format&fit=crop&w=900&q=85'],
+    images: ['https://rukminim2.flixcart.com/image/480/640/xif0q/jewellery-set/y/4/l/na-na-1-ad-neck-126-rujve-jewellery-original-imahbpqhhgwvkdvq.jpeg?q=90'],
     isNewArrival: true,
     isBestSeller: true,
   },
@@ -111,7 +111,7 @@ export const jewelleryProducts = [
     stock: 20,
     rating: 4.5,
     reviewsCount: 8,
-    images: ['https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=900&q=85'],
+    images: ['https://www.jewelpalace.in/cdn/shop/files/104_1024x1024.jpg?v=1782889458'],
   },
   {
     id: 107,
@@ -129,7 +129,7 @@ export const jewelleryProducts = [
     stock: 16,
     rating: 4.6,
     reviewsCount: 7,
-    images: ['https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=900&q=85'],
+    images: ['https://atjewels.in/cdn/shop/products/jhgvjdjhftgfvtt1.jpg?v=1633342034'],
   },
   {
     id: 109,
@@ -148,7 +148,7 @@ export const jewelleryProducts = [
     stock: 14,
     rating: 4.8,
     reviewsCount: 11,
-    images: ['https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=900&q=85'],
+    images: ['https://m.media-amazon.com/images/I/71YLhU-j07L._AC_UY1100_.jpg'],
     isBestSeller: true,
   },
   {
@@ -168,7 +168,7 @@ export const jewelleryProducts = [
     stock: 19,
     rating: 4.6,
     reviewsCount: 8,
-    images: ['https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=900&q=85'],
+    images: ['https://mooneye.in/cdn/shop/files/111.jpg?v=1775902660'],
   },
   {
     id: 111,
@@ -187,7 +187,7 @@ export const jewelleryProducts = [
     stock: 10,
     rating: 4.9,
     reviewsCount: 13,
-    images: ['https://images.unsplash.com/photo-1611652022419-a9419f74343d?auto=format&fit=crop&w=900&q=85'],
+    images: ['https://vendisilver.com/cdn/shop/files/Golden_Temple_Lakshmi_Mugappu_925_Sterling_Silver_Thali_Chain_for_Women.jpg?v=1775130095'],
     isNewArrival: true,
   },
   {
@@ -207,7 +207,7 @@ export const jewelleryProducts = [
     stock: 6,
     rating: 4.9,
     reviewsCount: 16,
-    images: ['https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=900&q=85'],
+    images: ['https://www.chidambaramgoldcovering.com/image/cache/catalog/ChidambaramGoldCovering/mogappu/mch584-latest-traditional-lakshmi-design-full-white-stone-side-pendant-mugappu-chain-daily-use-350-1-850x1000.jpg'],
     isBestSeller: true,
   },
   {
@@ -226,7 +226,7 @@ export const jewelleryProducts = [
     stock: 5,
     rating: 5,
     reviewsCount: 14,
-    images: ['https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=900&q=85'],
+    images: ['https://cdn.joyalukkas.in/media/catalog/product/d/s/dsdn00012136.jpg?tr=w-360'],
     isNewArrival: true,
   },
 ];
@@ -239,5 +239,5 @@ export const jewelleryCategories = [
   { slug: 'black-beads', name: 'Black Beads', icon: '●', image: jewelleryProducts[8].images[0] },
   { slug: 'thali-chains', name: 'Thali Chains', icon: '♢', image: jewelleryProducts[10].images[0] },
   { slug: 'rings', name: 'Rings', icon: '○', image: jewelleryProducts[6].images[0] },
-  { slug: 'bridal', name: 'Bridal Jewellery', icon: '♢', image: jewelleryProducts[7].images[0] },
+  { slug: 'bridal', name: 'Bridal Jewellery', icon: '♢', image: jewelleryProducts[11].images[0] },
 ];

@@ -333,7 +333,7 @@ router.post('/add', upload.array('images', 8), async (req, res) => {
   try {
     const files = req.files?.length ? req.files : req.file ? [req.file] : [];
     const product = await buildProduct(req.body, files);
-    if (product.images.length < 4) return res.status(400).json({ message: 'Please add at least 4 product images.' });
+    if (!product.images.length) return res.status(400).json({ message: 'Please add at least one product image.' });
     if (product.images.length > 8) return res.status(400).json({ message: 'You can add up to 8 product images.' });
 
     if (hasSupabase()) {

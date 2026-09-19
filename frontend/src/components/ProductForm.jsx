@@ -76,7 +76,13 @@ const ProductForm = ({ initialValues = null, onSubmit, loading = false }) => {
   };
 
   const removeImage = (index) => {
-    setValues((prev) => ({ ...prev, imageItems: prev.imageItems.filter((_, i) => i !== index) }));
+    setValues((prev) => {
+      if (prev.imageItems.length <= 1) {
+        setImageError('Keep at least one product image.');
+        return prev;
+      }
+      return { ...prev, imageItems: prev.imageItems.filter((_, i) => i !== index) };
+    });
   };
 
   const moveImage = (index, direction) => {
@@ -91,8 +97,8 @@ const ProductForm = ({ initialValues = null, onSubmit, loading = false }) => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    if (!initialValues && values.imageItems.length < 4) {
-      setImageError('Please add at least 4 product images.');
+    if (!values.imageItems.length) {
+      setImageError('Please add at least one product image.');
       return;
     }
     const formData = new FormData();
@@ -249,7 +255,7 @@ const ProductForm = ({ initialValues = null, onSubmit, loading = false }) => {
 
         <div className="col-12">
           <label className="form-label">Product Images</label>
-          <p className="text-muted mb-2">Add at least 4 images. You can keep up to 8, and the first image is the primary image.</p>
+          <p className="text-muted mb-2">Add at least 1 image. You can keep up to 8, and the first image is the primary image.</p>
           <input
             type="file"
             className="form-control rounded-4"
@@ -280,8 +286,8 @@ const ProductForm = ({ initialValues = null, onSubmit, loading = false }) => {
           </div>
         )}
 
-        {initialValues && values.imageItems.length < 4 && (
-          <div className="col-12"><div className="alert alert-warning mb-0">This existing product has fewer than 4 images. Add more images when convenient; it remains available to customers.</div></div>
+        {initialValues && values.imageItems.length < 1 && (
+          <div className="col-12"><div className="alert alert-warning mb-0">This product needs at least one image before it can be saved.</div></div>
         )}
 
         <div className="col-12 d-flex gap-3 flex-wrap mt-3">

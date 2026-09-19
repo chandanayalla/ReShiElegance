@@ -306,14 +306,7 @@ const ProductDetails = () => {
                     <i className="bi bi-truck"></i>
                     <div>
                       <h6>Free Shipping</h6>
-                      <p>On orders above ₹999</p>
-                    </div>
-                  </div>
-                  <div className="feature">
-                    <i className="bi bi-arrow-counterclockwise"></i>
-                    <div>
-                      <h6>Easy Returns</h6>
-                      <p>30-day return policy</p>
+                      <p>On every order</p>
                     </div>
                   </div>
                   <div className="feature">

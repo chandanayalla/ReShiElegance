@@ -6,10 +6,10 @@ import ProductCard from '../components/ProductCard';
 import api from '../services/api';
 import { readArrayResponse } from '../utils/apiData';
 import { jewelleryCategories, jewelleryProducts } from '../data/jewellery';
-import { products as catalogProducts } from '../data/products';
 import './Jewellery.css';
 
 const heroImage = jewelleryProducts[0].images[0];
+const jewelleryHeroImage = new URL('../assets/jewelleryhero.png', import.meta.url).href;
 
 const JewelleryHome = () => {
   const location = useLocation();
@@ -32,8 +32,6 @@ const JewelleryHome = () => {
   const newArrivals = filteredProducts.filter((product) => product.isNewArrival).slice(0, 4);
   const bestSellers = filteredProducts.filter((product) => product.isBestSeller).slice(0, 4);
   const fallbackArrivals = newArrivals.length ? newArrivals : filteredProducts.slice(0, 4);
-  const clothingProduct = catalogProducts.find((product) => product.productType === 'clothing' && product.isBestSeller) || catalogProducts[0];
-  const jewelleryPair = products.find((product) => product.category === 'sets') || products[0];
   const occasionCards = [
     { name: 'Everyday Elegance', value: 'Everyday', image: products.find((product) => product.occasion === 'Everyday')?.images[0] },
     { name: 'Festive Collection', value: 'Festive', image: products.find((product) => product.occasion === 'Festive')?.images[0] },
@@ -55,13 +53,14 @@ const JewelleryHome = () => {
       <Navbar />
       <main className="jewellery-page">
         <section className="jewellery-hero">
-          <img src={heroImage} alt="Traditional green and gold jhumka earrings" />
-          <div className="jewellery-hero-copy">
-            <p className="eyebrow">THE JEWELLERY EDIT</p>
-            <h1>Jewellery That Completes You</h1>
-            <p>Timeless designs for every occasion and every story.</p>
-            <Link to="/jewellery/earrings" className="btn jewellery-primary-btn">Shop Jewellery <span>→</span></Link>
-          </div>
+          <img src={jewelleryHeroImage} alt="Reshi Elegance jewellery collection" />
+          <Link to="/jewellery/necklaces" className="jewellery-hero-hotspot necklaces-hotspot" aria-label="Explore necklaces" />
+          <Link to="/jewellery/bangles" className="jewellery-hero-hotspot bangles-hotspot" aria-label="Explore bangles" />
+          <Link to="/jewellery/earrings" className="jewellery-hero-hotspot earrings-hotspot" aria-label="Explore earrings" />
+          <Link to="/jewellery/black-beads" className="jewellery-hero-hotspot black-beads-hotspot" aria-label="Explore black beads" />
+          <Link to="/jewellery/thali-chains" className="jewellery-hero-hotspot thali-chains-hotspot" aria-label="Explore thali chains" />
+          <Link to="/jewellery/rings" className="jewellery-hero-hotspot rings-hotspot" aria-label="Explore rings" />
+          <Link to="/jewellery" className="jewellery-hero-hotspot jewellery-shop-hotspot" aria-label="Shop jewellery" />
         </section>
 
         <section className="jewellery-benefits" aria-label="Jewellery benefits">
@@ -87,7 +86,7 @@ const JewelleryHome = () => {
 
         <section className="jewellery-section jewellery-occasions">
           <div className="jewellery-section-heading"><p className="eyebrow">MADE FOR YOUR MOMENT</p><h2>Shop By Occasion</h2><p>Find a little sparkle for every chapter</p></div>
-          <div className="occasion-grid">{occasionCards.map((occasion) => <Link to={`/jewellery?occasion=${occasion.value.toLowerCase()}`} className="occasion-card" key={occasion.value} style={{ backgroundImage: `url(${occasion.image || heroImage})` }}><span>{occasion.name}</span></Link>)}</div>
+          <div className="occasion-grid">{occasionCards.map((occasion) => <Link to={`/jewellery/shop?occasion=${encodeURIComponent(occasion.value)}`} className="occasion-card" key={occasion.value} style={{ backgroundImage: `url(${occasion.image || heroImage})` }}><span>{occasion.name}</span></Link>)}</div>
         </section>
 
         <section className="jewellery-section jewellery-arrivals">
@@ -102,15 +101,10 @@ const JewelleryHome = () => {
 
         <section className="jewellery-section">
           <div className="jewellery-section-heading"><p className="eyebrow">EXPLORE THE MOOD</p><h2>Trending Collections</h2><p>Curated details for your signature style</p></div>
-          <div className="trend-grid">{trendCards.map(([slug, name, image]) => <Link to={`/jewellery?collection=${slug}`} className="trend-card" key={slug}><img src={image || heroImage} alt={name} loading="lazy" /><div><h3>{name}</h3><span>Explore →</span></div></Link>)}</div>
+          <div className="trend-grid">{trendCards.map(([slug, name, image]) => <Link to={`/jewellery/shop?collection=${encodeURIComponent(slug)}`} className="trend-card" key={slug}><img src={image || heroImage} alt={name} loading="lazy" /><div><h3>{name}</h3><span>Explore →</span></div></Link>)}</div>
         </section>
 
-        <section className="jewellery-section complete-look">
-          <div className="jewellery-section-heading"><p className="eyebrow">STYLE IT TOGETHER</p><h2>Complete Your Look</h2><p>Pair heritage clothing with a little sparkle</p></div>
-          <div className="complete-look-grid"><Link to={`/product/${clothingProduct.id}`} className="look-product"><img src={clothingProduct.images?.[0] || clothingProduct.image} alt={clothingProduct.name} /><h3>{clothingProduct.name}</h3><span>Shop Clothing →</span></Link><div className="look-plus">+</div><Link to={`/product/${jewelleryPair.id}`} className="look-product"><img src={jewelleryPair.images?.[0]} alt={jewelleryPair.name} /><h3>{jewelleryPair.name}</h3><span>Shop Jewellery →</span></Link></div>
-        </section>
-
-        <section className="jewellery-promo"><div><p className="eyebrow">A LITTLE MORE MAGIC</p><h2>Celebrate Every Moment With Sparkle</h2><Link to="/jewellery" className="btn jewellery-primary-btn">Shop Now <span>→</span></Link></div></section>
+        <section className="jewellery-promo"><div><p className="eyebrow">A LITTLE MORE MAGIC</p><h2>Celebrate Every Moment With Sparkle</h2><Link to="/jewellery/shop" className="btn jewellery-primary-btn">Shop Now <span>→</span></Link></div></section>
       </main>
       <Footer />
     </>

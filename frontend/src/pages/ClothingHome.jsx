@@ -6,10 +6,11 @@ import ProductCard from '../components/ProductCard';
 import api from '../services/api';
 import { readArrayResponse } from '../utils/apiData';
 import { products as catalogProducts } from '../data/products';
+import clothingHeroImage from '../assets/clothinghero.png';
 import './Clothing.css';
 
 const clothingCatalog = catalogProducts.filter((product) => product.productType === 'clothing');
-const heroImage = clothingCatalog[0]?.images?.[0];
+const heroImage = clothingHeroImage || clothingCatalog[0]?.images?.[0];
 
 const ClothingHome = () => {
   const [products, setProducts] = useState(clothingCatalog);
@@ -37,18 +38,12 @@ const ClothingHome = () => {
     <>
       <Navbar />
       <main className="clothing-page">
-        <section className="clothing-hero">
-          <img src={heroImage} alt="Elegant saree from the ReShi clothing collection" />
-          <div className="clothing-hero-copy">
-            <p className="eyebrow">THE CLOTHING EDIT</p>
-            <h1>Tradition, Woven Beautifully</h1>
-            <p>Timeless sarees and occasion-ready pieces made for your story.</p>
-            <Link to="/shop?department=clothing" className="btn clothing-primary-btn">Shop Sarees <span>→</span></Link>
-          </div>
+        <section className="clothing-hero-only">
+          <img src={heroImage} alt="" className="clothing-hero-image" />
         </section>
 
         <section className="clothing-benefits" aria-label="Clothing benefits">
-          <span>✦ Handpicked Fabrics</span><span>♢ Quality Craftsmanship</span><span>✧ Easy Returns</span><span>♕ Made For Every Occasion</span>
+          <span>✦ Handpicked Fabrics</span><span>♢ Quality Craftsmanship</span><span>✧ Free Shipping</span><span>♕ Made For Every Occasion</span>
         </section>
 
         <section className="clothing-section">

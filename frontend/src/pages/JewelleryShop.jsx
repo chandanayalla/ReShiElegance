@@ -14,7 +14,9 @@ const JewelleryShop = () => {
   const { category } = useParams();
   const [products, setProducts] = useState(jewelleryProducts);
   const [sort, setSort] = useState('featured');
-  const queryOccasion = new URLSearchParams(window.location.search).get('occasion') || '';
+  const query = new URLSearchParams(window.location.search);
+  const queryOccasion = query.get('occasion') || '';
+  const selectedCollection = query.get('collection') || '';
   const [occasion, setOccasion] = useState(queryOccasion);
 
   useEffect(() => {
@@ -25,11 +27,15 @@ const JewelleryShop = () => {
   }, []);
 
   const filteredProducts = useMemo(() => {
-    const result = products.filter((product) => (!category || product.category === category) && (!occasion || product.occasion === occasion));
+    const result = products.filter((product) => (
+      (!category || category === 'shop' || product.category === category)
+      && (!occasion || product.occasion?.toLowerCase() === occasion.toLowerCase())
+      && (!selectedCollection || product.collection?.toLowerCase() === selectedCollection.toLowerCase())
+    ));
     return result.sort((a, b) => sort === 'price-low' ? a.price - b.price : sort === 'price-high' ? b.price - a.price : 0);
-  }, [category, occasion, products, sort]);
+  }, [category, occasion, products, selectedCollection, sort]);
 
-  const heading = category ? titles[category] || 'Jewellery' : 'Jewellery Collection';
+  const heading = category && category !== 'shop' ? titles[category] || 'Jewellery' : selectedCollection || occasion || 'Jewellery Collection';
 
   return (
     <>
