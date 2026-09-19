@@ -62,6 +62,69 @@ const toDbOrder = (order) => ({
   razorpay_payment_id: order.razorpayPaymentId,
 });
 
+const escapeHtml = (value = '') => String(value)
+  .replaceAll('&', '&amp;')
+  .replaceAll('<', '&lt;')
+  .replaceAll('>', '&gt;')
+  .replaceAll('"', '&quot;')
+  .replaceAll("'", '&#039;');
+
+export const sendOrderEmails = async (order) => {
+  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
+    console.error('Order email not sent: EMAIL_USER and EMAIL_PASSWORD are required.');
+    return;
+  }
+
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASSWORD,
+    },
+  });
+
+  const itemsHtml = (order.products || []).map((product) => {
+    const image = product.images?.[0] || product.image || product.imageUrl || '';
+    const imageHtml = image
+      ? `<img src="${escapeHtml(image)}" alt="${escapeHtml(product.name || product.title || 'Product')}" style="width:90px;height:90px;object-fit:cover;border-radius:6px;display:block;" />`
+      : '<span>No image available</span>';
+    return `<tr>
+      <td style="padding:8px;border-bottom:1px solid #eee;">${imageHtml}</td>
+      <td style="padding:8px;border-bottom:1px solid #eee;"><strong>${escapeHtml(product.name || product.title || 'Product')}</strong><br/>Qty: ${product.quantity || product.qty || 1}<br/>Price: ₹${product.price || product.amount || ''}</td>
+    </tr>`;
+  }).join('');
+
+  const adminMailOptions = {
+    from: process.env.EMAIL_USER,
+    to: 'reshielegancee@gmail.com',
+    subject: `New Order Received - ${order.id}`,
+    html: `
+      <div style="font-family:Arial,sans-serif;line-height:1.4;color:#222;">
+        <h2 style="color:#b3476f">New Order Received</h2>
+        <p><strong>Order ID:</strong> ${escapeHtml(order.id)}</p>
+        <p><strong>Customer:</strong> ${escapeHtml(order.customerName)} (${escapeHtml(order.customerEmail)})</p>
+        <p><strong>Phone:</strong> ${escapeHtml(order.customerPhone)}</p>
+        <h4>Shipping Address</h4>
+        <pre style="background:#f7f7f7;padding:10px;border-radius:4px">${escapeHtml(JSON.stringify(order.address || {}, null, 2))}</pre>
+        <h4>Products</h4>
+        <table style="border-collapse:collapse;width:100%;max-width:600px;">${itemsHtml}</table>
+        <p><strong>Total:</strong> ₹${order.total}</p>
+      </div>
+    `,
+  };
+
+  await transporter.sendMail(adminMailOptions);
+
+  if (order.customerEmail) {
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: order.customerEmail,
+      subject: `Order Confirmation - ${order.id}`,
+      html: `<div style="font-family:Arial,sans-serif;color:#222;"><h2 style="color:#b3476f">Thank you for your order!</h2><p>We received your order <strong>${escapeHtml(order.id)}</strong>.</p><table style="border-collapse:collapse;width:100%;max-width:600px;">${itemsHtml}</table><p><strong>Total:</strong> ₹${order.total}</p><p>Regards,<br/>ReShi Elegance</p></div>`,
+    });
+  }
+};
+
 export const createStoreOrder = async (payload) => {
   const orderId = crypto.randomUUID();
   const subtotal = Number(payload.subtotal || 0);
@@ -115,76 +178,7 @@ router.get('/', requireAdmin, async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const order = await createStoreOrder({ ...req.body, paymentStatus: req.body.paymentStatus || 'pending' });
-
-    // Notify admin via email about the new order (best-effort)
-    (async () => {
-      try {
-        const transporter = nodemailer.createTransport({
-          service: 'gmail',
-          auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASSWORD,
-          },
-        });
-
-        const itemsHtml = (order.products || [])
-          .map((p) => `<li>${p.name || p.title || 'Product'} — Qty: ${p.quantity || p.qty || 1} — ₹${p.price || p.amount || ''}</li>`)
-          .join('');
-
-        const adminMailOptions = {
-          from: process.env.EMAIL_USER,
-          to: 'reshielegancee@gmail.com',
-          subject: `New Order Received — ${order.id}`,
-          html: `
-            <div style="font-family: Arial, sans-serif; line-height:1.4; color:#222;">
-              <h2 style="color:#b3476f">New Order Received</h2>
-              <p><strong>Order ID:</strong> ${order.id}</p>
-              <p><strong>Customer:</strong> ${order.customerName || order.customer_name || ''} (${order.customerEmail || order.customer_email || ''})</p>
-              <p><strong>Phone:</strong> ${order.customerPhone || order.customer_phone || ''}</p>
-              <h4>Shipping Address</h4>
-              <pre style="background:#f7f7f7; padding:10px; border-radius:4px">${JSON.stringify(order.address || {}, null, 2)}</pre>
-              <h4>Items</h4>
-              <ul>${itemsHtml}</ul>
-              <table style="width:100%; max-width:480px; border-collapse:collapse; margin-top:10px;">
-                <tr style="border-top:1px solid #ddd"><td style="padding:6px"><strong>Total:</strong></td><td style="padding:6px">₹${order.total}</td></tr>
-              </table>
-              <p style="margin-top:12px">View orders in your admin panel to process this order.</p>
-            </div>
-          `,
-        };
-
-        await transporter.sendMail(adminMailOptions);
-
-        // Send confirmation to the customer (if email provided)
-        if (order.customerEmail) {
-          try {
-            const userMailOptions = {
-              from: process.env.EMAIL_USER,
-              to: order.customerEmail,
-              subject: `Order Confirmation — ${order.id}`,
-              html: `
-                <div style="font-family: Arial, sans-serif; color:#222;">
-                  <h2 style="color:#b3476f">Thank you for your order!</h2>
-                  <p>Hi ${order.customerName || 'Customer'},</p>
-                  <p>We have received your order <strong>${order.id}</strong>. Here are the details:</p>
-                  <h4>Items</h4>
-                  <ul>${itemsHtml}</ul>
-                  <p><strong>Total:</strong> ₹${order.total}</p>
-                  <p>We will notify you when your order is shipped.</p>
-                  <p>Regards,<br/>ReShi Elegance</p>
-                </div>
-              `,
-            };
-
-            await transporter.sendMail(userMailOptions);
-          } catch (userMailErr) {
-            console.error('Failed to send customer confirmation email:', userMailErr);
-          }
-        }
-      } catch (mailErr) {
-        console.error('Failed to send order notification email:', mailErr);
-      }
-    })();
+    void sendOrderEmails(order).catch((mailError) => console.error('Failed to send order notification email:', mailError));
 
     return res.status(201).json(order);
   } catch (error) {

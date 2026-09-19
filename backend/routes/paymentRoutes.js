@@ -1,7 +1,7 @@
 import express from 'express';
 import crypto from 'crypto';
 import { createClient } from '@supabase/supabase-js';
-import { createStoreOrder } from './orderRoutes.js';
+import { createStoreOrder, sendOrderEmails } from './orderRoutes.js';
 
 const router = express.Router();
 const paymentsTable = process.env.SUPABASE_PAYMENTS_TABLE || 'payments';
@@ -119,6 +119,7 @@ router.post('/razorpay/verify', async (req, res) => {
       razorpayOrderId,
       razorpayPaymentId,
     });
+    void sendOrderEmails(savedOrder).catch((mailError) => console.error('Failed to send paid order email:', mailError));
     await savePayment({
       order: savedOrder,
       razorpayOrderId,

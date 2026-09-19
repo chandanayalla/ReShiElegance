@@ -24,6 +24,7 @@ const Checkout = () => {
     country: 'India',
   });
   const [isProcessing, setIsProcessing] = useState(false);
+  const [paymentStatus, setPaymentStatus] = useState('');
   const [error, setError] = useState('');
 
   const subtotal = getTotalPrice();
@@ -73,11 +74,13 @@ const Checkout = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setPaymentStatus('');
     if (paymentMethod === 'cod') {
       setError('Cash on delivery is not applicable for your order.');
       return;
     }
     setIsProcessing(true);
+    setPaymentStatus('Opening secure payment checkout...');
 
     try {
       const orderPayload = buildOrderPayload();
@@ -99,27 +102,41 @@ const Checkout = () => {
         },
         theme: { color: '#8f2346' },
         handler: async (response) => {
-          await api.post('/payments/razorpay/verify', {
-            ...response,
-            order: orderPayload,
-          });
-          clearCart();
-          navigate('/order-success');
+          setIsProcessing(true);
+          setPaymentStatus('Payment received. Confirming your order...');
+          try {
+            const { data } = await api.post('/payments/razorpay/verify', {
+              ...response,
+              order: orderPayload,
+            });
+            if (!data?.verified) throw new Error('Payment verification failed.');
+            setPaymentStatus('Payment successful. Your order is confirmed.');
+            clearCart();
+            navigate('/order-success');
+          } catch (verificationError) {
+            setError(verificationError?.response?.data?.message || verificationError.message || 'Payment was received, but order confirmation failed. Please contact support before trying again.');
+            setPaymentStatus('Payment received, but confirmation is still pending.');
+            setIsProcessing(false);
+          }
         },
         modal: {
-          ondismiss: () => setIsProcessing(false),
+          ondismiss: () => {
+            setIsProcessing(false);
+            setPaymentStatus('Payment was cancelled or closed.');
+          },
         },
       };
 
       const checkout = new window.Razorpay(options);
       checkout.on('payment.failed', (response) => {
         setError(response.error?.description || 'Payment failed. Please try again.');
+        setPaymentStatus('Payment failed.');
         setIsProcessing(false);
       });
       checkout.open();
-      setIsProcessing(false);
     } catch (err) {
       setError(err?.response?.data?.message || err.message || 'Checkout failed. Please try again.');
+      setPaymentStatus('Unable to start payment.');
       setIsProcessing(false);
     }
   };
@@ -137,6 +154,7 @@ const Checkout = () => {
             <div className="col-lg-8 mb-4">
               <form id="checkoutForm" onSubmit={handleSubmit}>
                 {error && <div className="alert alert-danger">{error}</div>}
+                {paymentStatus && <div className="alert alert-info" role="status">{paymentStatus}</div>}
                 {/* Billing Information */}
                 <div className="checkout-section">
                   <h4>Billing Information</h4>
@@ -181,7 +199,15 @@ const Checkout = () => {
                         className="form-control"
                         name="phone"
                         value={formData.phone}
-                        onChange={handleInputChange}
+                        onChange={(event) => setFormData((prev) => ({
+                          ...prev,
+                          phone: event.target.value.replace(/\D/g, '').slice(0, 10),
+                        }))}
+                        inputMode="numeric"
+                        pattern="[0-9]{10}"
+                        maxLength="10"
+                        minLength="10"
+                        placeholder="10-digit mobile number"
                         required
                       />
                     </div>

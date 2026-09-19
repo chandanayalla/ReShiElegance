@@ -19,7 +19,7 @@ const Wishlist = () => {
               <i className="bi bi-heart"></i>
               <h2>Your Wishlist is Empty</h2>
               <p>Save your favorite sarees for later!</p>
-              <Link to="/shop" className="btn btn-primary btn-lg">
+              <Link to="/jewellery" className="btn btn-primary btn-lg">
                 Start Shopping
               </Link>
             </div>
