@@ -27,9 +27,7 @@ const Checkout = () => {
   const [error, setError] = useState('');
 
   const subtotal = getTotalPrice();
-  const shipping = subtotal > 999 ? 0 : 100;
-  const tax = subtotal * 0.05;
-  const total = subtotal + shipping + tax;
+  const total = subtotal;
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -67,25 +65,22 @@ const Checkout = () => {
       image: item.images?.[0] || item.image || '',
     })),
     subtotal,
-    shipping,
-    tax,
+    shipping: 0,
+    tax: 0,
     total,
   });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    if (paymentMethod === 'cod') {
+      setError('Cash on delivery is not applicable for your order.');
+      return;
+    }
     setIsProcessing(true);
 
     try {
       const orderPayload = buildOrderPayload();
-
-      if (paymentMethod === 'cod') {
-        await api.post('/orders', { ...orderPayload, paymentStatus: 'cod' });
-        clearCart();
-        navigate('/order-success');
-        return;
-      }
 
       await loadRazorpay();
       const { data: razorpayOrder } = await api.post('/payments/razorpay/order', { amount: total });
@@ -252,7 +247,11 @@ const Checkout = () => {
                           name="paymentMethod"
                           value={method.id}
                           checked={paymentMethod === method.id}
-                          onChange={(e) => setPaymentMethod(e.target.value)}
+                          onChange={(e) => {
+                            const selectedMethod = e.target.value;
+                            setPaymentMethod(selectedMethod);
+                            setError(selectedMethod === 'cod' ? 'Cash on delivery is not applicable for your order.' : '');
+                          }}
                         />
                         <label htmlFor={method.id}>
                           <i className={`bi ${method.icon}`}></i>
@@ -275,7 +274,7 @@ const Checkout = () => {
                       Processing...
                     </>
                   ) : (
-                    paymentMethod === 'razorpay' ? 'Pay with Razorpay' : 'Place COD Order'
+                    paymentMethod === 'razorpay' ? 'Pay with Razorpay' : 'Cash on delivery unavailable'
                   )}
                 </button>
               </form>
@@ -304,15 +303,6 @@ const Checkout = () => {
                   <span>Subtotal</span>
                   <span>₹{subtotal.toLocaleString()}</span>
                 </div>
-                <div className="summary-row">
-                  <span>Shipping</span>
-                  <span>{shipping === 0 ? 'FREE' : `₹${shipping}`}</span>
-                </div>
-                <div className="summary-row">
-                  <span>Tax (5%)</span>
-                  <span>₹{tax.toFixed(2)}</span>
-                </div>
-
                 <div className="summary-divider"></div>
 
                 <div className="summary-total">

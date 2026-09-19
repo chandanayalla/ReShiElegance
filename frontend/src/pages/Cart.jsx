@@ -10,9 +10,7 @@ const Cart = () => {
   const { cartItems, removeFromCart, updateQuantity, getTotalPrice } = useContext(CartContext);
 
   const subtotal = getTotalPrice();
-  const shipping = subtotal > 999 ? 0 : 100;
-  const tax = subtotal * 0.05;
-  const total = subtotal + shipping + tax;
+  const total = subtotal;
 
   if (cartItems.length === 0) {
     return (
@@ -105,18 +103,6 @@ const Cart = () => {
                 <div className="summary-row">
                   <span>Subtotal ({cartItems.length} items)</span>
                   <span>₹{subtotal.toLocaleString()}</span>
-                </div>
-
-                <div className="summary-row">
-                  <span>Shipping</span>
-                  <span className={shipping === 0 ? 'free' : ''}>
-                    {shipping === 0 ? 'FREE' : `₹${shipping}`}
-                  </span>
-                </div>
-
-                <div className="summary-row">
-                  <span>Tax (5%)</span>
-                  <span>₹{tax.toFixed(2)}</span>
                 </div>
 
                 <div className="promo-code">
