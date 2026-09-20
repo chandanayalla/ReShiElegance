@@ -17,6 +17,7 @@ const formatAddress = (address) => {
 const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   const loadOrders = async () => {
     try {
@@ -24,6 +25,7 @@ const Orders = () => {
       setOrders(response.data || []);
     } catch (error) {
       console.error('Order load error:', error);
+      setError(error?.response?.data?.message || 'Unable to load orders. Please refresh or sign in again.');
     } finally {
       setLoading(false);
     }
@@ -51,6 +53,8 @@ const Orders = () => {
 
       {loading ? (
         <div className="admin-card p-4 text-center">Loading orders...</div>
+      ) : error ? (
+        <div className="admin-card p-4 text-center text-danger">{error}</div>
       ) : (
         <div className="admin-card p-4 table-responsive">
           <table className="table table-borderless align-middle mb-0">
@@ -59,6 +63,7 @@ const Orders = () => {
                 <th>Order ID</th>
                 <th>Customer</th>
                 <th>Phone</th>
+                <th>Email</th>
                 <th>Products</th>
                 <th>Total</th>
                 <th>Address</th>

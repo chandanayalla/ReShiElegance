@@ -4,24 +4,36 @@ import api from '../../services/api';
 
 const getProductNames = (products) => {
   if (!Array.isArray(products)) return '';
-  return products.map((item) => item?.name).filter(Boolean).join(', ');
+  return products.map((item) => `${item?.name || 'Product'} x${item?.quantity || item?.qty || 1}`).join(', ');
 };
 
 const Dashboard = () => {
   const [products, setProducts] = useState([]);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   const loadData = async () => {
-    try {
-      const [productResponse, orderResponse] = await Promise.all([api.get('/products'), api.get('/orders')]);
-      setProducts(productResponse.data || []);
-      setOrders(orderResponse.data || []);
-    } catch (error) {
-      console.error('Dashboard loading error:', error);
-    } finally {
-      setLoading(false);
+    const [productResult, orderResult] = await Promise.allSettled([
+      api.get('/products'),
+      api.get('/orders'),
+    ]);
+
+    if (productResult.status === 'fulfilled') {
+      setProducts(productResult.value.data || []);
+    } else {
+      console.error('Dashboard products loading error:', productResult.reason);
+      setError(productResult.reason?.response?.data?.message || 'Unable to load products.');
     }
+
+    if (orderResult.status === 'fulfilled') {
+      setOrders(orderResult.value.data || []);
+    } else {
+      console.error('Dashboard orders loading error:', orderResult.reason);
+      setError(orderResult.reason?.response?.data?.message || 'Unable to load orders. Please refresh or sign in again.');
+    }
+
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -57,6 +69,8 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+
+      {error && <div className="alert alert-danger" role="alert">{error}</div>}
 
       <div className="admin-card p-4">
         <div className="d-flex align-items-center justify-content-between mb-3">
