@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import AdminLayout from './AdminLayout';
 import api from '../../services/api';
 
-const statusOptions = ['Pending', 'Confirmed', 'Packed', 'Shipped', 'Delivered', 'Cancelled'];
+const statusOptions = ['Confirmed', 'Processing', 'Shipped', 'Out for Delivery', 'Delivered', 'Cancelled'];
 
 const getProductNames = (products) => {
   if (!Array.isArray(products)) return '';
@@ -71,7 +71,7 @@ const Orders = () => {
             <tbody>
               {orders.length === 0 ? (
                 <tr>
-                  <td colSpan="10" className="text-center py-4 text-muted">
+                  <td colSpan="11" className="text-center py-4 text-muted">
                     No orders have been placed yet.
                   </td>
                 </tr>
@@ -81,6 +81,7 @@ const Orders = () => {
                     <td>{String(order.id || order._id).slice(-8).toUpperCase()}</td>
                     <td>{order.customerName}</td>
                     <td>{order.customerPhone}</td>
+                    <td>{order.customerEmail}</td>
                     <td>{getProductNames(order.products)}</td>
                     <td>₹{Number(order.total || 0).toLocaleString('en-IN')}</td>
                     <td>{formatAddress(order.address)}</td>

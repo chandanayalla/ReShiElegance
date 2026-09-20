@@ -112,6 +112,7 @@ const Checkout = () => {
             if (!data?.verified) throw new Error('Payment verification failed.');
             setPaymentStatus('Payment successful. Your order is confirmed.');
             clearCart();
+            sessionStorage.setItem('reshiLastOrder', JSON.stringify(data.order));
             navigate('/order-success', { state: { order: data.order } });
           } catch (verificationError) {
             setError(verificationError?.response?.data?.message || verificationError.message || 'Payment was received, but order confirmation failed. Please contact support before trying again.');

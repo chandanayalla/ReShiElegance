@@ -115,18 +115,24 @@ router.post('/razorpay/verify', async (req, res) => {
   try {
     const savedOrder = await createStoreOrder({
       ...order,
-      paymentStatus: 'paid',
+      paymentStatus: 'Paid',
       razorpayOrderId,
       razorpayPaymentId,
     });
-    void sendOrderEmails(savedOrder).catch((mailError) => console.error('Failed to send paid order email:', mailError));
-    await savePayment({
-      order: savedOrder,
-      razorpayOrderId,
-      razorpayPaymentId,
-      razorpaySignature,
-      status: 'paid',
-    });
+    if (!savedOrder.alreadyExists && savedOrder.paymentStatus === 'Paid' && savedOrder.status === 'Confirmed') {
+      void sendOrderEmails(savedOrder).catch((mailError) => console.error('Failed to send paid order email:', mailError));
+    }
+    try {
+      await savePayment({
+        order: savedOrder,
+        razorpayOrderId,
+        razorpayPaymentId,
+        razorpaySignature,
+        status: 'paid',
+      });
+    } catch (paymentLogError) {
+      console.error('Payment log could not be saved; order remains confirmed:', paymentLogError);
+    }
 
     return res.json({ verified: true, order: savedOrder });
   } catch (error) {

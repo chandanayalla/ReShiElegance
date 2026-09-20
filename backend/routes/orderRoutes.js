@@ -35,39 +35,51 @@ const normalizeProducts = (value) => {
   return Array.isArray(value.items) ? value.items : [];
 };
 
+const parseAddress = (value) => {
+  if (!value) return {};
+  if (typeof value === 'object') return value;
+  try {
+    return JSON.parse(value);
+  } catch {
+    return { line1: String(value) };
+  }
+};
+
+const createOrderId = (razorpayOrderId) => {
+  const digest = crypto.createHash('sha256').update(String(razorpayOrderId)).digest('hex').slice(0, 8).toUpperCase();
+  return `RE${digest}`;
+};
+
 const toOrder = (order) => ({
-  id: String(order.id || order._id),
-  _id: String(order.id || order._id),
+  id: String(order.order_id || order.id || order._id),
+  _id: String(order.order_id || order.id || order._id),
+  databaseId: order.id ? String(order.id) : '',
   customerName: order.customer_name || order.customerName || '',
-  customerEmail: order.customer_email || order.customerEmail || '',
-  customerPhone: order.customer_phone || order.customerPhone || '',
-  address: order.address || {},
+  customerEmail: order.email || order.customer_email || order.customerEmail || '',
+  customerPhone: order.phone || order.customer_phone || order.customerPhone || '',
+  address: parseAddress(order.address),
   products: normalizeProducts(order.items || order.products),
-  subtotal: Number(order.subtotal || 0),
+  subtotal: Number(order.subtotal || order.total_amount || 0),
   shipping: 0,
   tax: 0,
-  total: Number(order.total || order.subtotal || 0),
-  status: order.status || 'Pending',
-  paymentStatus: order.payment_status || order.paymentStatus || 'pending',
-  razorpayOrderId: order.razorpay_order_id || order.razorpayOrderId || '',
-  razorpayPaymentId: order.razorpay_payment_id || order.razorpayPaymentId || '',
+  total: Number(order.total_amount || order.total || order.subtotal || 0),
+  status: order.order_status || order.status || 'Pending',
+  paymentStatus: order.payment_status || order.paymentStatus || 'Pending',
+  razorpayOrderId: order.razorpay_order_id || '',
+  razorpayPaymentId: order.razorpay_payment_id || '',
   createdAt: order.created_at || order.createdAt || new Date().toISOString(),
 });
 
 const toDbOrder = (order) => ({
+  order_id: order.id,
   customer_name: order.customerName,
-  customer_email: order.customerEmail,
-  customer_phone: order.customerPhone,
-  address: order.address,
+  phone: order.customerPhone,
+  email: order.customerEmail || null,
+  address: JSON.stringify(order.address || {}),
   items: order.products,
-  subtotal: order.subtotal,
-  shipping: 0,
-  tax: 0,
-  total: order.total,
-  status: order.status,
+  total_amount: order.total,
   payment_status: order.paymentStatus,
-  razorpay_order_id: order.razorpayOrderId,
-  razorpay_payment_id: order.razorpayPaymentId,
+  order_status: order.status,
 });
 
 const escapeHtml = (value = '') => String(value)
@@ -105,7 +117,7 @@ export const sendOrderEmails = async (order) => {
   const adminMailOptions = {
     from: process.env.EMAIL_USER,
     to: orderNotificationEmail,
-    subject: `New Order Received - ${order.id}`,
+    subject: `New ReshiElegance Order - ${order.id}`,
     html: `
       <div style="font-family:Arial,sans-serif;line-height:1.4;color:#222;">
         <h2 style="color:#b3476f">New Order Received</h2>
@@ -117,7 +129,7 @@ export const sendOrderEmails = async (order) => {
         <h4>Products</h4>
         <table style="border-collapse:collapse;width:100%;max-width:600px;">${itemsHtml}</table>
         <p><strong>Total:</strong> ₹${order.total}</p>
-        <p><strong>Payment:</strong> ${escapeHtml(order.paymentStatus === 'paid' ? 'Successful' : order.paymentStatus)}</p>
+        <p><strong>Payment Status:</strong> ${escapeHtml(String(order.paymentStatus).toLowerCase() === 'paid' ? 'Paid' : order.paymentStatus)}</p>
         <p><strong>Order status:</strong> ${escapeHtml(order.status)}</p>
       </div>
     `,
@@ -136,7 +148,7 @@ export const sendOrderEmails = async (order) => {
 };
 
 export const createStoreOrder = async (payload) => {
-  const orderId = crypto.randomUUID();
+  const orderId = payload.orderId || createOrderId(payload.razorpayOrderId || crypto.randomUUID());
   const subtotal = Number(payload.subtotal || 0);
   const order = {
     id: orderId,
@@ -150,25 +162,33 @@ export const createStoreOrder = async (payload) => {
     shipping: 0,
     tax: 0,
     total: subtotal,
-    status: payload.status || (payload.paymentStatus === 'paid' ? 'Confirmed' : 'Pending'),
-    paymentStatus: payload.paymentStatus || 'paid',
+    status: payload.status || (String(payload.paymentStatus || '').toLowerCase() === 'paid' ? 'Confirmed' : 'Pending'),
+    paymentStatus: payload.paymentStatus || 'Paid',
     razorpayOrderId: payload.razorpayOrderId || '',
     razorpayPaymentId: payload.razorpayPaymentId || '',
     createdAt: new Date().toISOString(),
   };
 
   if (supabase) {
+    const { data: existing, error: lookupError } = await supabase
+      .from(ordersTable)
+      .select('*')
+      .eq('order_id', order.id)
+      .maybeSingle();
+    if (lookupError) throw lookupError;
+    if (existing) return { ...toOrder(existing), alreadyExists: true };
+
     const { data, error } = await supabase
       .from(ordersTable)
       .insert(toDbOrder(order))
       .select('*')
       .single();
     if (error) throw error;
-    return toOrder(data);
+    return { ...toOrder(data), alreadyExists: false };
   }
 
   orders = [order, ...orders];
-  return order;
+  return { ...order, alreadyExists: false };
 };
 
 router.get('/', requireAdmin, async (req, res) => {
@@ -187,7 +207,7 @@ router.get('/', requireAdmin, async (req, res) => {
 
 router.post('/', async (req, res) => {
   try {
-    const order = await createStoreOrder({ ...req.body, paymentStatus: req.body.paymentStatus || 'pending' });
+    const order = await createStoreOrder({ ...req.body, paymentStatus: req.body.paymentStatus || 'Pending' });
     void sendOrderEmails(order).catch((mailError) => console.error('Failed to send order notification email:', mailError));
 
     return res.status(201).json(order);
@@ -198,13 +218,13 @@ router.post('/', async (req, res) => {
 });
 
 router.put('/:id/status', requireAdmin, async (req, res) => {
-  const allowed = ['Pending', 'Confirmed', 'Packed', 'Shipped', 'Delivered', 'Cancelled'];
+  const allowed = ['Confirmed', 'Processing', 'Shipped', 'Out for Delivery', 'Delivered', 'Cancelled'];
   const status = req.body.status;
   if (!allowed.includes(status)) return res.status(400).json({ message: 'Invalid order status.' });
 
   try {
     if (supabase) {
-      const { data, error } = await supabase.from(ordersTable).update({ status }).eq('id', req.params.id).select('*').single();
+      const { data, error } = await supabase.from(ordersTable).update({ order_status: status }).eq('order_id', req.params.id).select('*').single();
       if (error) throw error;
       return res.json(toOrder(data));
     }
