@@ -2,11 +2,16 @@ import React, { useEffect, useState } from 'react';
 import AdminLayout from './AdminLayout';
 import api from '../../services/api';
 
-const statusOptions = ['Pending', 'Packed', 'Shipped', 'Delivered', 'Cancelled'];
+const statusOptions = ['Pending', 'Confirmed', 'Packed', 'Shipped', 'Delivered', 'Cancelled'];
 
 const getProductNames = (products) => {
   if (!Array.isArray(products)) return '';
-  return products.map((item) => item?.name).filter(Boolean).join(', ');
+  return products.map((item) => `${item?.name || 'Product'} x${item?.quantity || item?.qty || 1}`).join(', ');
+};
+
+const formatAddress = (address) => {
+  if (!address) return '';
+  return [address.line1, address.city, address.state, address.zipCode, address.country].filter(Boolean).join(', ');
 };
 
 const Orders = () => {
@@ -53,15 +58,20 @@ const Orders = () => {
               <tr>
                 <th>Order ID</th>
                 <th>Customer</th>
+                <th>Phone</th>
                 <th>Products</th>
+                <th>Total</th>
+                <th>Address</th>
+                <th>Payment</th>
                 <th>Status</th>
+                <th>Order Date</th>
                 <th className="text-end">Update</th>
               </tr>
             </thead>
             <tbody>
               {orders.length === 0 ? (
                 <tr>
-                  <td colSpan="5" className="text-center py-4 text-muted">
+                  <td colSpan="10" className="text-center py-4 text-muted">
                     No orders have been placed yet.
                   </td>
                 </tr>
@@ -70,8 +80,13 @@ const Orders = () => {
                   <tr key={order.id || order._id}>
                     <td>{String(order.id || order._id).slice(-8).toUpperCase()}</td>
                     <td>{order.customerName}</td>
+                    <td>{order.customerPhone}</td>
                     <td>{getProductNames(order.products)}</td>
+                    <td>₹{Number(order.total || 0).toLocaleString('en-IN')}</td>
+                    <td>{formatAddress(order.address)}</td>
+                    <td>{order.paymentStatus === 'paid' ? 'Successful' : order.paymentStatus}</td>
                     <td>{order.status}</td>
+                    <td>{order.createdAt ? new Date(order.createdAt).toLocaleString('en-IN') : '-'}</td>
                     <td className="text-end">
                       <select
                         className="form-select rounded-pill w-auto d-inline-block me-2"

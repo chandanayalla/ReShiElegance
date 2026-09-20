@@ -53,4 +53,6 @@ app.get('/', (req, res) => {
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Supabase orders: ${process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY ? 'configured' : 'not configured'}`);
+  console.log(`Order email: ${process.env.EMAIL_USER && process.env.EMAIL_PASSWORD ? 'configured' : 'not configured'}`);
 });

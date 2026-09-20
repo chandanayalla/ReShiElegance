@@ -1,11 +1,19 @@
 import express from 'express';
+import crypto from 'crypto';
 import { createClient } from '@supabase/supabase-js';
 import { requireAdmin } from './adminRoutes.js';
 import nodemailer from 'nodemailer';
 
 const router = express.Router();
 const ordersTable = process.env.SUPABASE_ORDERS_TABLE || 'orders';
-const supabase = process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY
+const orderNotificationEmail = process.env.ORDER_NOTIFICATION_EMAIL || 'reshielagancee@gmail.com';
+const hasSupabaseConfig = Boolean(
+  process.env.SUPABASE_URL
+  && process.env.SUPABASE_SERVICE_ROLE_KEY
+  && !process.env.SUPABASE_URL.includes('your-project')
+  && !process.env.SUPABASE_SERVICE_ROLE_KEY.includes('your-service-role-key')
+);
+const supabase = hasSupabaseConfig
   ? createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY, {
       auth: { persistSession: false, autoRefreshToken: false },
     })
@@ -96,7 +104,7 @@ export const sendOrderEmails = async (order) => {
 
   const adminMailOptions = {
     from: process.env.EMAIL_USER,
-    to: 'reshielegancee@gmail.com',
+    to: orderNotificationEmail,
     subject: `New Order Received - ${order.id}`,
     html: `
       <div style="font-family:Arial,sans-serif;line-height:1.4;color:#222;">
@@ -109,6 +117,8 @@ export const sendOrderEmails = async (order) => {
         <h4>Products</h4>
         <table style="border-collapse:collapse;width:100%;max-width:600px;">${itemsHtml}</table>
         <p><strong>Total:</strong> ₹${order.total}</p>
+        <p><strong>Payment:</strong> ${escapeHtml(order.paymentStatus === 'paid' ? 'Successful' : order.paymentStatus)}</p>
+        <p><strong>Order status:</strong> ${escapeHtml(order.status)}</p>
       </div>
     `,
   };
@@ -140,7 +150,7 @@ export const createStoreOrder = async (payload) => {
     shipping: 0,
     tax: 0,
     total: subtotal,
-    status: 'Pending',
+    status: payload.status || (payload.paymentStatus === 'paid' ? 'Confirmed' : 'Pending'),
     paymentStatus: payload.paymentStatus || 'paid',
     razorpayOrderId: payload.razorpayOrderId || '',
     razorpayPaymentId: payload.razorpayPaymentId || '',
@@ -188,7 +198,7 @@ router.post('/', async (req, res) => {
 });
 
 router.put('/:id/status', requireAdmin, async (req, res) => {
-  const allowed = ['Pending', 'Packed', 'Shipped', 'Delivered', 'Cancelled'];
+  const allowed = ['Pending', 'Confirmed', 'Packed', 'Shipped', 'Delivered', 'Cancelled'];
   const status = req.body.status;
   if (!allowed.includes(status)) return res.status(400).json({ message: 'Invalid order status.' });
 
