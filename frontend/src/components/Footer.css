@@ -1,6 +1,6 @@
 .footer {
   background-color: var(--maroon-deep);
-  color: var(--ivory);
+  color: #FFFFFF;
   margin-top: 0;
 }
 
@@ -47,6 +47,7 @@
 
 .footer-main {
   background-color: var(--maroon-deep);
+  color: #FFFFFF;
 }
 
 .footer-brand .brand-logo {
@@ -67,19 +68,19 @@
 .footer-brand .brand-name {
   font-family: var(--heading-font);
   font-size: 1.55rem;
-  color: var(--text-color);
+  color: #FFFFFF;
   text-transform: uppercase;
 }
 
 .footer-brand .brand-tagline {
-  color: rgba(0, 0, 0, 0.68);
+  color: #F5F5F5;
   font-size: 0.72rem;
   letter-spacing: 0.18em;
   text-transform: uppercase;
 }
 
 .footer-brand .tagline {
-  color: var(--text-color);
+  color: #FFFFFF;
   font-weight: 700;
   margin-bottom: 1rem;
 }
@@ -87,14 +88,14 @@
 .footer-brand p,
 .footer-main p,
 .contact-info span {
-  color: rgba(0, 0, 0, 0.72);
+  color: #F5F5F5;
   font-size: 0.92rem;
   line-height: 1.65;
 }
 
 .footer-main h5,
 .footer-main h6 {
-  color: var(--text-color);
+  color: #FFFFFF;
   margin-bottom: 1rem;
   font-weight: 800;
   letter-spacing: 0.08em;
@@ -115,18 +116,18 @@
 
 .footer-links a,
 .contact-info a {
-  color: rgba(0, 0, 0, 0.72);
+  color: #FFFFFF;
   text-decoration: none;
   font-weight: 600;
 }
 
 .footer-links a:hover,
 .contact-info a:hover {
-  color: var(--maroon);
+  color: #F5F5F5;
 }
 
 .contact-info i {
-  color: var(--maroon);
+  color: #FFFFFF;
   margin-right: 0.55rem;
 }
 
@@ -138,24 +139,24 @@
 .social-links a {
   width: 38px;
   height: 38px;
-  border: 1px solid rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.45);
   border-radius: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--text-color);
+  color: #FFFFFF;
 }
 
 .social-links a:hover {
   background-color: var(--primary-color);
-  color: var(--text-color);
+  color: #FFFFFF;
 }
 
 .payment-methods {
   display: flex;
   gap: 0.75rem;
   align-items: center;
-  color: var(--text-color);
+  color: #FFFFFF;
 }
 
 .footer-main hr {
@@ -163,7 +164,17 @@
 }
 
 .footer-main a {
-  color: var(--text-color);
+  color: #FFFFFF;
+}
+
+.footer-main,
+.footer-main * {
+  color: #FFFFFF;
+}
+
+.footer-main .footer-brand p,
+.footer-main .footer-brand .brand-tagline {
+  color: #F5F5F5;
 }
 
 @media (max-width: 768px) {

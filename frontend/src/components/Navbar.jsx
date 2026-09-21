@@ -12,7 +12,7 @@ const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
   const { getTotalItems } = useContext(CartContext);
-  const { user, isAuthenticated, logout } = useContext(AuthContext);
+  const { isAuthenticated } = useContext(AuthContext);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
@@ -24,6 +24,10 @@ const Navbar = () => {
     document.body.classList.toggle('mobile-menu-open', isMenuOpen);
     return () => document.body.classList.remove('mobile-menu-open');
   }, [isMenuOpen]);
+
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [location.pathname, location.search]);
 
   const handleSearch = (event) => {
     event.preventDefault();
@@ -39,7 +43,7 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className={`navbar navbar-expand-lg navbar-light ${location.pathname === '/' ? 'home-navbar' : ''} ${isScrolled ? 'sticky-top navbar-shadow' : ''}`}>
+      <nav className={`navbar navbar-expand-lg navbar-light ${location.pathname === '/' ? 'home-navbar' : ''} ${isScrolled ? 'sticky-top navbar-shadow' : ''} ${isMenuOpen ? 'menu-open' : ''}`}>
         <div className="container-fluid">
           <div className="brand-left-tools">
             <button
@@ -107,25 +111,14 @@ const Navbar = () => {
               <Link to="/wishlist" className="icon-link" title="Wishlist" aria-label="Wishlist">
               <i className="bi bi-heart"></i>
             </Link>
-            {isAuthenticated ? (
-              <div className="dropdown">
-                <a href="#" className="icon-link dropdown-toggle" id="accountDropdown" data-bs-toggle="dropdown" aria-label="Account">
-                  <i className="bi bi-person-circle"></i>
-                </a>
-                <ul className="dropdown-menu dropdown-menu-end">
-                  <li><span className="dropdown-item-text">{user?.name}</span></li>
-                  <li><hr className="dropdown-divider" /></li>
-                  <li><Link className="dropdown-item" to="/account">My Account</Link></li>
-                  <li><Link className="dropdown-item" to="/orders">My Orders</Link></li>
-                  <li><hr className="dropdown-divider" /></li>
-                  <li><a className="dropdown-item" href="#" onClick={logout}>Logout</a></li>
-                </ul>
-              </div>
-            ) : (
-              <Link to="/login" className="icon-link" title="Account" aria-label="Account">
-                <i className="bi bi-person-circle"></i>
-              </Link>
-            )}
+            <Link
+              to={isAuthenticated ? '/account' : '/login'}
+              className="icon-link"
+              title={isAuthenticated ? 'Account' : 'Login'}
+              aria-label={isAuthenticated ? 'Account' : 'Login'}
+            >
+              <i className="bi bi-person-circle"></i>
+            </Link>
             <Link to="/cart" className="icon-link cart-icon" title="Cart" aria-label="Cart">
               <i className="bi bi-bag"></i>
               {getTotalItems() > 0 && <span className="cart-badge">{getTotalItems()}</span>}

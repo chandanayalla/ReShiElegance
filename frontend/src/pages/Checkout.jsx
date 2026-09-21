@@ -5,6 +5,7 @@ import Footer from '../components/Footer';
 import { CartContext } from '../context/CartContext';
 import { AuthContext } from '../context/AuthContext';
 import api from '../services/api';
+import fallbackImage from '../assets/main.jpeg';
 import './Checkout.css';
 
 const Checkout = () => {
@@ -151,6 +152,57 @@ const Checkout = () => {
           <h1 className="mb-4">Checkout</h1>
 
           <div className="row">
+            {/* Order Summary */}
+            <div className="col-12 mb-4">
+              <div className="order-summary">
+                <h4>Order Summary</h4>
+
+                <div className="summary-items">
+                  {cartItems.map(item => (
+                    <div key={item.id} className="summary-item">
+                      <div className="summary-item-product">
+                        <img
+                          src={item.images?.[0] || item.image || fallbackImage}
+                          alt={item.name}
+                          className="summary-item-image"
+                          onError={(event) => {
+                            event.currentTarget.src = fallbackImage;
+                          }}
+                        />
+                        <div className="item-info">
+                          <h6>{item.name}</h6>
+                          <span>Qty: {item.quantity}</span>
+                        </div>
+                      </div>
+                      <span>₹{(item.price * item.quantity).toLocaleString()}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="summary-divider"></div>
+
+                <div className="summary-row">
+                  <span>Subtotal</span>
+                  <span>₹{subtotal.toLocaleString()}</span>
+                </div>
+                <div className="summary-row">
+                  <span>Shipping</span>
+                  <span>₹0</span>
+                </div>
+                <div className="summary-divider"></div>
+
+                <div className="summary-total">
+                  <span>Total</span>
+                  <span>₹{total.toFixed(2)}</span>
+                </div>
+
+                <div className="security-badge">
+                  <i className="bi bi-shield-check"></i>
+                  <span>Secure & Encrypted</span>
+                </div>
+              </div>
+            </div>
+
             {/* Checkout Form */}
             <div className="col-lg-8 mb-4">
               <form id="checkoutForm" onSubmit={handleSubmit}>
@@ -307,42 +359,6 @@ const Checkout = () => {
               </form>
             </div>
 
-            {/* Order Summary */}
-            <div className="col-lg-4">
-              <div className="order-summary">
-                <h4>Order Summary</h4>
-
-                <div className="summary-items">
-                  {cartItems.map(item => (
-                    <div key={item.id} className="summary-item">
-                      <div className="item-info">
-                        <h6>{item.name}</h6>
-                        <span>Qty: {item.quantity}</span>
-                      </div>
-                      <span>₹{(item.price * item.quantity).toLocaleString()}</span>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="summary-divider"></div>
-
-                <div className="summary-row">
-                  <span>Subtotal</span>
-                  <span>₹{subtotal.toLocaleString()}</span>
-                </div>
-                <div className="summary-divider"></div>
-
-                <div className="summary-total">
-                  <span>Total</span>
-                  <span>₹{total.toFixed(2)}</span>
-                </div>
-
-                <div className="security-badge">
-                  <i className="bi bi-shield-check"></i>
-                  <span>Secure & Encrypted</span>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>

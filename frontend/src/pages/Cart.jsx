@@ -3,11 +3,13 @@ import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { CartContext } from '../context/CartContext';
+import { AuthContext } from '../context/AuthContext';
 import fallbackImage from '../assets/main.jpeg';
 import './Cart.css';
 
 const Cart = () => {
-  const { cartItems, removeFromCart, updateQuantity, getTotalPrice } = useContext(CartContext);
+  const { cartItems, removeFromCart, updateQuantity, getTotalPrice, syncError } = useContext(CartContext);
+  const { isAuthenticated } = useContext(AuthContext);
 
   const subtotal = getTotalPrice();
   const total = subtotal;
@@ -18,6 +20,7 @@ const Cart = () => {
         <Navbar />
         <div className="cart-container empty-cart">
           <div className="container-fluid py-5">
+            {syncError && <div className="alert alert-warning" role="alert">{syncError}</div>}
             <div className="text-center">
               <i className="bi bi-cart-x"></i>
               <h2>Your Cart is Empty</h2>
@@ -40,6 +43,12 @@ const Cart = () => {
       <div className="cart-container">
         <div className="container-fluid py-5">
           <h1 className="mb-4">Shopping Cart</h1>
+          {!isAuthenticated && (
+            <div className="alert alert-info" role="status">
+              <Link to="/login">Log in</Link> or <Link to="/register">sign up</Link> to save this cart across devices.
+            </div>
+          )}
+          {syncError && <div className="alert alert-warning" role="alert">{syncError}</div>}
 
           <div className="row">
             {/* Cart Items */}

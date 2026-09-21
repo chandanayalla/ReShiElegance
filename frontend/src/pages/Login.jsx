@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { AuthContext } from '../context/AuthContext';
@@ -7,6 +7,7 @@ import './Auth.css';
 
 const Login = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { login, loginWithGoogle } = useContext(AuthContext);
   const [formData, setFormData] = useState({
     email: '',
@@ -33,7 +34,7 @@ const Login = () => {
     setIsLoading(true);
     try {
       await login(formData.email, formData.password);
-      navigate('/');
+      navigate(location.state?.returnTo || '/', { replace: true });
     } catch (err) {
       setError(err?.message || 'Invalid email or password');
     } finally {

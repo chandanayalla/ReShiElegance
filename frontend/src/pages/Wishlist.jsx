@@ -7,7 +7,7 @@ import { WishlistContext } from '../context/WishlistContext';
 import './Wishlist.css';
 
 const Wishlist = () => {
-  const { wishlistItems, removeFromWishlist } = useContext(WishlistContext);
+  const { wishlistItems, removeFromWishlist, syncError, statusMessage } = useContext(WishlistContext);
 
   if (wishlistItems.length === 0) {
     return (
@@ -15,6 +15,9 @@ const Wishlist = () => {
         <Navbar />
         <div className="wishlist-container empty-wishlist">
           <div className="container-fluid py-5">
+            {(syncError || statusMessage) && (
+              <div className="alert alert-warning" role="alert">{syncError || statusMessage}</div>
+            )}
             <div className="text-center">
               <i className="bi bi-heart"></i>
               <h2>Your Wishlist is Empty</h2>
@@ -37,6 +40,9 @@ const Wishlist = () => {
       <div className="wishlist-container">
         <div className="container-fluid py-5">
           <h1 className="mb-4">My Wishlist</h1>
+          {(syncError || statusMessage) && (
+            <div className="alert alert-warning" role="alert">{syncError || statusMessage}</div>
+          )}
           <p className="wishlist-count">{wishlistItems.length} items in your wishlist</p>
 
           <div className="row g-4">

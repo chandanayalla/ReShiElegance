@@ -34,10 +34,12 @@ import EditProduct from './pages/admin/EditProduct';
 import Orders from './pages/admin/Orders';
 import AdminProtectedRoute from './components/AdminProtectedRoute';
 import WhatsAppButton from './components/WhatsAppButton';
+import ScrollToTop from './components/ScrollToTop';
 
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <AuthProvider>
         <WishlistProvider>
           <CartProvider>

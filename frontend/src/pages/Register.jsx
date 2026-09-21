@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { AuthContext } from '../context/AuthContext';
@@ -7,6 +7,7 @@ import './Auth.css';
 
 const Register = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { register, loginWithGoogle } = useContext(AuthContext);
   const [formData, setFormData] = useState({
     name: '',
@@ -45,7 +46,7 @@ const Register = () => {
     setIsLoading(true);
     try {
       await register(formData.email, formData.password, formData.name);
-      navigate('/');
+      navigate(location.state?.returnTo || '/', { replace: true });
     } catch (err) {
       setError(err?.message || 'Registration failed');
     } finally {

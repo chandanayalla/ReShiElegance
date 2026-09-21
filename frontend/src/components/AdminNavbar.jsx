@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AdminAuthContext } from '../context/AdminAuthContext';
 
-const AdminNavbar = () => {
+const AdminNavbar = ({ onMenuToggle = () => {} }) => {
   const { admin, logout } = useContext(AdminAuthContext);
   const navigate = useNavigate();
 
@@ -13,6 +13,9 @@ const AdminNavbar = () => {
 
   return (
     <div className="admin-navbar d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between mb-4">
+      <button type="button" className="admin-menu-toggle" aria-label="Open admin menu" onClick={onMenuToggle}>
+        <i className="bi bi-list"></i>
+      </button>
       <div>
         <h5 className="mb-1">Welcome back, {admin?.name || 'Admin'}</h5>
         <p className="text-muted mb-0">Manage products, orders, and inventory for ReShi Elegance.</p>

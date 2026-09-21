@@ -1,18 +1,35 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { CartContext } from '../context/CartContext';
 import { WishlistContext } from '../context/WishlistContext';
+import { AuthContext } from '../context/AuthContext';
+import LoginRequiredPrompt from './LoginRequiredPrompt';
 import fallbackImage from '../assets/main.jpeg';
 import './ProductCard.css';
 
 const ProductCard = ({ product, onAddToCart }) => {
   const navigate = useNavigate();
-  const { addToCart, buyNow } = useContext(CartContext);
-  const { toggleWishlist, isInWishlist } = useContext(WishlistContext);
+  const { addToCart, buyNow, syncError: cartSyncError } = useContext(CartContext);
+  const { toggleWishlist, isInWishlist, syncError, statusMessage } = useContext(WishlistContext);
+  const { isAuthenticated } = useContext(AuthContext);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
+  const [loginPrompt, setLoginPrompt] = useState('');
+
+  useEffect(() => {
+    const message = cartSyncError || syncError || statusMessage;
+    if (!message) return undefined;
+    setToastMessage(message);
+    setShowToast(true);
+    const timeout = setTimeout(() => setShowToast(false), 3500);
+    return () => clearTimeout(timeout);
+  }, [cartSyncError, statusMessage, syncError]);
 
   const handleAddToCart = () => {
+    if (!isAuthenticated) {
+      setLoginPrompt('Please login to add products to your cart.');
+      return;
+    }
     addToCart(product, 1);
     setToastMessage('Added to cart!');
     setShowToast(true);
@@ -21,14 +38,22 @@ const ProductCard = ({ product, onAddToCart }) => {
   };
 
   const handleWishlist = () => {
+    if (!isAuthenticated) {
+      setLoginPrompt('Please login to save products to your wishlist.');
+      return;
+    }
     toggleWishlist(product);
-    const inWishlist = isInWishlist(product.id);
-    setToastMessage(inWishlist ? 'Removed from wishlist' : 'Added to wishlist!');
+    const wasInWishlist = isInWishlist(product.id);
+    setToastMessage(wasInWishlist ? 'Removed from wishlist' : 'Added to wishlist!');
     setShowToast(true);
     setTimeout(() => setShowToast(false), 2000);
   };
 
   const handleBuyNow = () => {
+    if (!isAuthenticated) {
+      setLoginPrompt('Please login to add products to your cart.');
+      return;
+    }
     buyNow(product, 1);
     navigate('/checkout');
   };
@@ -143,6 +168,7 @@ const ProductCard = ({ product, onAddToCart }) => {
           {toastMessage}
         </div>
       )}
+      {loginPrompt && <LoginRequiredPrompt message={loginPrompt} onClose={() => setLoginPrompt('')} />}
     </div>
   );
 };

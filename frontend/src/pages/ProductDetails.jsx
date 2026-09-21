@@ -4,11 +4,13 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { CartContext } from '../context/CartContext';
 import { WishlistContext } from '../context/WishlistContext';
+import { AuthContext } from '../context/AuthContext';
 import api from '../services/api';
 import fallbackImage from '../assets/main.jpeg';
 import { findProductByIdentifier, readArrayResponse } from '../utils/apiData';
 import { products as catalogProducts } from '../data/products';
 import WhatsAppEnquiryButton from '../components/WhatsAppEnquiryButton';
+import LoginRequiredPrompt from '../components/LoginRequiredPrompt';
 import './ProductDetails.css';
 
 const ProductDetails = () => {
@@ -18,6 +20,8 @@ const ProductDetails = () => {
   const [mainImage, setMainImage] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [showNotification, setShowNotification] = useState(false);
+  const [notificationMessage, setNotificationMessage] = useState('Added to cart successfully!');
+  const [loginPrompt, setLoginPrompt] = useState('');
   const [activeTab, setActiveTab] = useState('description');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -25,8 +29,18 @@ const ProductDetails = () => {
   const [isImageOpen, setIsImageOpen] = useState(false);
   const touchStartX = useRef(0);
 
-  const { addToCart, buyNow } = useContext(CartContext);
-  const { toggleWishlist, isInWishlist } = useContext(WishlistContext);
+  const { addToCart, buyNow, syncError: cartSyncError } = useContext(CartContext);
+  const { isAuthenticated } = useContext(AuthContext);
+  const { toggleWishlist, isInWishlist, syncError: wishlistSyncError, statusMessage: wishlistStatusMessage } = useContext(WishlistContext);
+
+  useEffect(() => {
+    const message = cartSyncError || wishlistSyncError || wishlistStatusMessage;
+    if (!message) return undefined;
+    setNotificationMessage(message);
+    setShowNotification(true);
+    const timeout = setTimeout(() => setShowNotification(false), 3500);
+    return () => clearTimeout(timeout);
+  }, [cartSyncError, wishlistStatusMessage, wishlistSyncError]);
 
   useEffect(() => {
     const loadProduct = async () => {
@@ -105,15 +119,27 @@ const ProductDetails = () => {
   }
 
   const handleAddToCart = () => {
+    if (!isAuthenticated) {
+      setLoginPrompt('Please login to add products to your cart.');
+      return;
+    }
     addToCart(product, quantity);
     setShowNotification(true);
     setTimeout(() => setShowNotification(false), 3000);
   };
 
   const handleWishlist = () => {
+    if (!isAuthenticated) {
+      setLoginPrompt('Please login to save products to your wishlist.');
+      return;
+    }
     toggleWishlist(product);
   };
   const handleBuyNow = () => {
+    if (!isAuthenticated) {
+      setLoginPrompt('Please login to add products to your cart.');
+      return;
+    }
     buyNow(product, quantity);
     navigate('/checkout');
   };
@@ -322,7 +348,7 @@ const ProductDetails = () => {
                 {showNotification && (
                   <div className="alert alert-success alert-dismissible">
                     <i className="bi bi-check-circle me-2"></i>
-                    Added to cart successfully!
+                    {notificationMessage}
                   </div>
                 )}
               </div>
@@ -416,6 +442,7 @@ const ProductDetails = () => {
       </div>
 
       <Footer />
+      {loginPrompt && <LoginRequiredPrompt message={loginPrompt} onClose={() => setLoginPrompt('')} />}
       {isImageOpen && (
         <div className="image-lightbox" role="dialog" aria-modal="true" onClick={() => setIsImageOpen(false)}>
           <button type="button" className="image-lightbox-close" onClick={() => setIsImageOpen(false)} aria-label="Close image">×</button>

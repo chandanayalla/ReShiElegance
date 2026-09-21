@@ -1,0 +1,28 @@
+.login-required-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgba(35, 12, 18, 0.48);
+}
+
+.login-required-dialog {
+  width: min(100%, 420px);
+  padding: 2rem;
+  background: var(--ivory, #fffaf2);
+  border: 1px solid var(--gold-muted, #c8a46a);
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(35, 12, 18, 0.3);
+}
+
+.login-required-dialog h2 {
+  margin: 0 2rem 0.75rem 0;
+  color: var(--maroon-deep, #5b1725);
+}
+
+.login-required-dialog p {
+  margin-bottom: 1.5rem;
+  color: var(--text-color, #3d2529);
+}

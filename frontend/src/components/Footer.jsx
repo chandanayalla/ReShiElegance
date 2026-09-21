@@ -66,8 +66,8 @@ const Footer = () => {
                     <span className="brand-tagline">Elegance</span>
                   </div>
                 </div>
-                <p className="tagline">"Grace in every weave, elegance in every drape."</p>
-                <p>Experience the timeless beauty of traditional sarees crafted with premium quality and modern designs.</p>
+                <p className="tagline">"Grace in every detail, elegance in every choice."</p>
+                <p>Discover timeless sarees and exquisite jewellery, thoughtfully curated to celebrate your unique style and elegance.</p>
               </div>
             </div>
 
@@ -76,7 +76,8 @@ const Footer = () => {
               <h5>Quick Links</h5>
               <ul className="footer-links">
                 <li><Link to="/">Home</Link></li>
-                <li><Link to="/shop">Shop</Link></li>
+                <li><Link to="/clothing">Clothing</Link></li>
+                <li><Link to="/jewellery">Jewellery</Link></li>
                 <li><Link to="/about">About Us</Link></li>
                 <li><Link to="/contact">Contact</Link></li>
                 <li><a href="#faq">FAQ</a></li>
@@ -88,8 +89,8 @@ const Footer = () => {
               <h5>Customer Service</h5>
               <ul className="footer-links">
                 <li><a href="#shipping">Shipping Info</a></li>
-                <li><a href="#returns">Returns</a></li>
-                <li><a href="#faq">FAQ</a></li>
+                <li><a href="#returns">Returns &amp; Exchanges</a></li>
+                <li><a href="#faq">FAQs</a></li>
                 <li><Link to="/contact">Contact Us</Link></li>
                 <li><a href="#privacy">Privacy Policy</a></li>
               </ul>
