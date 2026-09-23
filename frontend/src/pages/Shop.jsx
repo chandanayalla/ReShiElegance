@@ -150,7 +150,11 @@ const Shop = () => {
               {['all', 'clothing', 'jewellery'].map((tab) => <a key={tab} className={department === tab ? 'active' : ''} href={`/shop?${searchQuery ? `search=${encodeURIComponent(searchQuery)}&` : ''}department=${tab}`}>{tab === 'all' ? 'All' : tab[0].toUpperCase() + tab.slice(1)}</a>)}
             </div>
             <h1>{department === 'jewellery' ? 'Jewellery' : department === 'all' ? 'All Collections' : 'All Sarees'}</h1>
-            <p>{filteredProducts.length} products found</p>
+            <p>{filteredProducts.length} pieces found</p>
+            <div className="catalog-category-chips" aria-label="Browse categories">
+              <a className={!filters.category ? 'active' : ''} href={`/shop?department=${department}`}>All pieces</a>
+              {uniqueCategories.slice(0, 6).map((category) => <a key={category} className={filters.category === category ? 'active' : ''} href={`/shop?department=${department}&category=${encodeURIComponent(category)}`}>{category}</a>)}
+            </div>
           </div>
 
           <div className="row">
@@ -158,10 +162,11 @@ const Shop = () => {
             <div className="col-12">
               {/* Sort Bar */}
               <div className="sort-bar mb-4">
-                <div className="d-flex d-lg-none align-items-center">
-                  <button className="btn btn-outline-primary me-2" onClick={() => setShowFilters(true)}>Filters</button>
+                <div className="sort-filter-action">
+                  <button className="btn btn-outline-primary" onClick={() => setShowFilters(true)}><i className="bi bi-sliders2"></i> Filters</button>
                 </div>
-                <label htmlFor="sort-select">Sort by:</label>
+                <span className="sort-count">Showing {paginatedProducts.length} of {filteredProducts.length}</span>
+                <label htmlFor="sort-select">Sort by</label>
                 <select
                   id="sort-select"
                   className="form-select"
@@ -240,7 +245,7 @@ const Shop = () => {
               {/* Products Grid */}
               {paginatedProducts.length > 0 ? (
                 <>
-                  <div className="row g-4 mb-5">
+                  <div className="row g-4 mb-5 shop-product-grid">
                     {paginatedProducts.map(product => (
                       <div key={product.id} className="col-6 col-md-6 col-lg-4">
                         <ProductCard product={product} />

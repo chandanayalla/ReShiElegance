@@ -137,6 +137,10 @@ const ProductCard = ({ product, onAddToCart }) => {
           )}
         </div>
 
+        <p className={`product-availability ${product.stock > 0 ? 'in-stock' : 'out-stock'}`}>
+          <i className="bi bi-circle-fill"></i> {product.stock > 0 ? 'In stock' : 'Currently unavailable'}
+        </p>
+
         {/* Add to Cart Button */}
         <button
           className="btn btn-primary btn-add-cart w-100"

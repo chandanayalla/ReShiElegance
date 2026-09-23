@@ -1,22 +1,23 @@
 :root {
-  --primary-color: #8f1744;
-  --primary-rgb: 143, 23, 68;
-  --secondary-color: #f8dfe6;
-  --accent-color: #d6a557;
-  --background-color: #ffffff;
-  --text-color: #321f24;
-  --light-gray: #fbf7f4;
-  --border-color: #e6cbd4;
-  --maroon-deep: #6d1235;
-  --maroon: #8f1744;
-  --ivory: #fffaf6;
-  --gold-soft: #ead09a;
-  --gold-muted: #c9a765;
+  --primary-color: #8b4c5d;
+  --primary-rgb: 139, 76, 93;
+  --secondary-color: #ead9d9;
+  --accent-color: #b9965b;
+  --background-color: #fffdfb;
+  --text-color: #30272a;
+  --light-gray: #f7f2ef;
+  --border-color: #e4d8d2;
+  --maroon-deep: #633845;
+  --maroon: #8b4c5d;
+  --ivory: #fffaf7;
+  --gold-soft: #eadbb8;
+  --gold-muted: #b9965b;
+  --muted-text: #786b68;
   --success-color: #4CAF50;
   --warning-color: #FF9800;
   --danger-color: #F44336;
-  --heading-font: Georgia, 'Times New Roman', serif;
-  --body-font: 'Trebuchet MS', Arial, sans-serif;
+  --heading-font: 'Playfair Display', Georgia, serif;
+  --body-font: 'Poppins', 'Trebuchet MS', sans-serif;
 }
 
 * {
@@ -39,10 +40,7 @@ body,
 body {
   font-family: var(--body-font);
   color: var(--text-color);
-  background:
-    linear-gradient(rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.96)),
-    radial-gradient(circle at 10% 10%, rgba(var(--primary-rgb), 0.34), transparent 28%),
-    radial-gradient(circle at 90% 20%, rgba(242, 164, 197, 0.12), transparent 24%);
+  background: var(--background-color);
   line-height: 1.6;
 }
 
