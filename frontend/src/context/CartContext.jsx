@@ -1,7 +1,7 @@
 import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { AuthContext } from './AuthContext';
 import { supabase } from '../services/supabase';
-import { fetchProductsByIds, mergeCartItems, readStoredItems, resolveStoredProducts, sameProductId } from '../utils/customerItems';
+import { fetchProductsByIds, mergeCartItems, readStoredItems, resolveStoredProducts, sameCartItem } from '../utils/customerItems';
 
 export const CartContext = createContext();
 
@@ -23,7 +23,7 @@ export const CartProvider = ({ children }) => {
 
   const saveCart = useCallback(async (userId, items) => {
     if (!supabase) throw new Error('Supabase is not configured.');
-    const rows = items.map((item) => ({ user_id: userId, product_id: item.id, quantity: item.quantity }));
+    const rows = items.map((item) => ({ user_id: userId, product_id: item.id, selected_size: item.selectedSize || null, quantity: item.quantity }));
 
     if (!rows.length) {
       const { error } = await supabase.from('customer_cart_items').delete().eq('user_id', userId);
@@ -31,9 +31,9 @@ export const CartProvider = ({ children }) => {
       return;
     }
 
-    const { error } = await supabase
-      .from('customer_cart_items')
-      .upsert(rows, { onConflict: 'user_id,product_id' });
+    const { error: deleteError } = await supabase.from('customer_cart_items').delete().eq('user_id', userId);
+    if (deleteError) throw deleteError;
+    const { error } = await supabase.from('customer_cart_items').insert(rows);
     if (error) throw error;
   }, []);
 
@@ -61,7 +61,7 @@ export const CartProvider = ({ children }) => {
         if (!supabase) throw new Error('Supabase is not configured.');
         const { data: rows, error } = await supabase
           .from('customer_cart_items')
-          .select('product_id, quantity')
+          .select('product_id, selected_size, quantity')
           .eq('user_id', user.id);
         if (error) throw error;
 
@@ -71,6 +71,7 @@ export const CartProvider = ({ children }) => {
         const productsById = new Map(products.map((product) => [String(product.id), product]));
         const remoteItems = remoteRows.map((row) => ({
           ...(productsById.get(String(row.product_id)) || { id: row.product_id }),
+          selectedSize: row.selected_size || undefined,
           quantity: row.quantity,
         }));
         const mergedItems = mergeCartItems(resolvedLocalItems, remoteItems);
@@ -105,58 +106,31 @@ export const CartProvider = ({ children }) => {
   const addToCart = useCallback((product, quantity = 1) => {
     if (!user) return;
     updateCartState((prev) => {
-      const existingItem = prev.find(item => sameProductId(item.id, product.id));
+      const existingItem = prev.find(item => sameCartItem(item, product));
       if (existingItem) {
         return prev.map(item =>
-          sameProductId(item.id, product.id)
+          sameCartItem(item, product)
             ? { ...item, quantity: item.quantity + quantity }
             : item
         );
       }
       return [...prev, { ...product, quantity }];
-    }, async (items) => {
-      if (!supabase) throw new Error('Supabase is not configured.');
-      const item = items.find((entry) => sameProductId(entry.id, product.id));
-      const { error } = await supabase.from('customer_cart_items').upsert(
-        { user_id: user.id, product_id: product.id, quantity: item.quantity },
-        { onConflict: 'user_id,product_id' }
-      );
-      if (error) throw error;
-    });
+    }, (items) => saveCart(user.id, items));
   }, [updateCartState, user]);
 
-  const removeFromCart = useCallback((productId) => {
+  const removeFromCart = useCallback((productId, selectedSize = '') => {
     updateCartState(
-      (prev) => prev.filter(item => !sameProductId(item.id, productId)),
-      async () => {
-        if (!supabase) throw new Error('Supabase is not configured.');
-        const { error } = await supabase.from('customer_cart_items')
-          .delete().eq('user_id', user.id).eq('product_id', productId);
-        if (error) throw error;
-      }
+      (prev) => prev.filter(item => !sameCartItem(item, { id: productId, selectedSize })),
+      (items) => saveCart(user.id, items)
     );
-  }, [updateCartState, user]);
+  }, [saveCart, updateCartState, user]);
 
-  const updateQuantity = useCallback((productId, quantity) => {
+  const updateQuantity = useCallback((productId, quantity, selectedSize = '') => {
     updateCartState((prev) => quantity <= 0
-      ? prev.filter(item => !sameProductId(item.id, productId))
-      : prev.map(item => sameProductId(item.id, productId) ? { ...item, quantity } : item),
-    async (items) => {
-      if (!supabase) throw new Error('Supabase is not configured.');
-      if (quantity <= 0) {
-        const { error } = await supabase.from('customer_cart_items')
-          .delete().eq('user_id', user.id).eq('product_id', productId);
-        if (error) throw error;
-        return;
-      }
-      const item = items.find((entry) => sameProductId(entry.id, productId));
-      const { error } = await supabase.from('customer_cart_items').upsert(
-        { user_id: user.id, product_id: productId, quantity: item.quantity },
-        { onConflict: 'user_id,product_id' }
-      );
-      if (error) throw error;
-    });
-  }, [updateCartState, user]);
+      ? prev.filter(item => !sameCartItem(item, { id: productId, selectedSize }))
+      : prev.map(item => sameCartItem(item, { id: productId, selectedSize }) ? { ...item, quantity } : item),
+    (items) => saveCart(user.id, items));
+  }, [saveCart, updateCartState, user]);
 
   const clearCart = useCallback(() => {
     setCartItems([]);
@@ -173,17 +147,8 @@ export const CartProvider = ({ children }) => {
   const buyNow = useCallback((product, quantity = 1) => {
     if (!user) return;
     const updated = [{ ...product, quantity }];
-    updateCartState(() => [{ ...product, quantity }], async () => {
-      if (!supabase) throw new Error('Supabase is not configured.');
-      const { error: deleteError } = await supabase.from('customer_cart_items').delete().eq('user_id', user.id);
-      if (deleteError) throw deleteError;
-      const { error } = await supabase.from('customer_cart_items').upsert(
-        { user_id: user.id, product_id: product.id, quantity },
-        { onConflict: 'user_id,product_id' }
-      );
-      if (error) throw error;
-    });
-  }, [updateCartState, user]);
+    updateCartState(() => [{ ...product, quantity }], (items) => saveCart(user.id, items));
+  }, [saveCart, updateCartState, user]);
 
   const getTotalItems = () => {
     return cartItems.reduce((sum, item) => sum + item.quantity, 0);

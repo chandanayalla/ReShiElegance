@@ -3,6 +3,8 @@ import crypto from 'crypto';
 import { createClient } from '@supabase/supabase-js';
 import { requireAdmin } from './adminRoutes.js';
 import nodemailer from 'nodemailer';
+import { products as catalogProducts } from '../../frontend/src/data/products.js';
+import { getProduct } from './productRoutes.js';
 
 const router = express.Router();
 const ordersTable = process.env.SUPABASE_ORDERS_TABLE || 'orders';
@@ -18,6 +20,7 @@ const supabase = hasSupabaseConfig
       auth: { persistSession: false, autoRefreshToken: false },
     })
   : null;
+const bangleSizes = ['2.2', '2.4', '2.6', '2.8'];
 
 let orders = [];
 
@@ -33,6 +36,51 @@ const normalizeProducts = (value) => {
     }
   }
   return Array.isArray(value.items) ? value.items : [];
+};
+
+const validateOrderProducts = async (products) => {
+  const ids = products.map((product) => product.id).filter(Boolean);
+  if (!ids.length) return;
+
+  let productsById;
+  if (supabase) {
+    const { data, error } = await supabase.from('products').select('id,product_type,category,available_sizes').in('id', ids);
+    if (error) throw error;
+    productsById = new Map((data || []).map((product) => [String(product.id), product]));
+  } else {
+    productsById = new Map(catalogProducts.map((product) => [String(product.id), {
+      id: product.id,
+      product_type: product.productType,
+      category: product.category,
+      available_sizes: product.availableSizes,
+    }]));
+    const storedProducts = await Promise.all(ids.map((id) => getProduct(id)));
+    storedProducts.filter(Boolean).forEach((product) => productsById.set(String(product.id), {
+      id: product.id,
+      product_type: product.productType,
+      category: product.category,
+      available_sizes: product.availableSizes,
+    }));
+  }
+  products.forEach((product) => {
+    const stored = productsById.get(String(product.id));
+    if (!stored && String(product?.productType || '').toLowerCase() === 'jewellery'
+      && String(product?.category || '').toLowerCase() === 'bangles') {
+      const error = new Error(`Unable to verify bangle product ${product.name || product.id}.`);
+      error.statusCode = 400;
+      throw error;
+    }
+    const isBangle = stored?.product_type === 'jewellery' && String(stored.category || '').toLowerCase() === 'bangles';
+    if (!isBangle) return;
+    const availableSizes = Array.isArray(stored?.available_sizes)
+      ? stored.available_sizes.map(String).filter((size) => bangleSizes.includes(size))
+      : [];
+    if (!bangleSizes.includes(String(product.selectedSize || '')) || !availableSizes.includes(String(product.selectedSize))) {
+      const error = new Error(`Bangle size is unavailable for ${product.name || 'this product'}.`);
+      error.statusCode = 400;
+      throw error;
+    }
+  });
 };
 
 const parseAddress = (value) => {
@@ -110,7 +158,7 @@ export const sendOrderEmails = async (order) => {
       : '<span>No image available</span>';
     return `<tr>
       <td style="padding:8px;border-bottom:1px solid #eee;">${imageHtml}</td>
-      <td style="padding:8px;border-bottom:1px solid #eee;"><strong>${escapeHtml(product.name || product.title || 'Product')}</strong><br/>Qty: ${product.quantity || product.qty || 1}<br/>Price: ₹${product.price || product.amount || ''}</td>
+      <td style="padding:8px;border-bottom:1px solid #eee;"><strong>${escapeHtml(product.name || product.title || 'Product')}</strong>${product.selectedSize ? `<br/>Size: ${escapeHtml(product.selectedSize)}` : ''}<br/>Qty: ${product.quantity || product.qty || 1}<br/>Price: ₹${product.price || product.amount || ''}</td>
     </tr>`;
   }).join('');
 
@@ -169,6 +217,8 @@ export const createStoreOrder = async (payload) => {
     createdAt: new Date().toISOString(),
   };
 
+  await validateOrderProducts(order.products);
+
   if (supabase) {
     const { data: existing, error: lookupError } = await supabase
       .from(ordersTable)
@@ -213,7 +263,7 @@ router.post('/', async (req, res) => {
     return res.status(201).json(order);
   } catch (error) {
     console.error('Order create error:', error);
-    return res.status(500).json({ message: 'Unable to create order.' });
+    return res.status(error.statusCode || 500).json({ message: error.statusCode ? error.message : 'Unable to create order.' });
   }
 });
 

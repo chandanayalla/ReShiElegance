@@ -62,8 +62,11 @@ const Checkout = () => {
     products: cartItems.map((item) => ({
       id: item.id,
       name: item.name,
+      productType: item.productType,
+      category: item.category,
       price: Number(item.price || 0),
       quantity: item.quantity,
+      selectedSize: item.selectedSize,
       image: item.images?.[0] || item.image || '',
     })),
     subtotal,
@@ -159,7 +162,7 @@ const Checkout = () => {
 
                 <div className="summary-items">
                   {cartItems.map(item => (
-                    <div key={item.id} className="summary-item">
+                    <div key={`${item.id}-${item.selectedSize || 'standard'}`} className="summary-item">
                       <div className="summary-item-product">
                         <img
                           src={item.images?.[0] || item.image || fallbackImage}
@@ -171,6 +174,7 @@ const Checkout = () => {
                         />
                         <div className="item-info">
                           <h6>{item.name}</h6>
+                          {item.selectedSize && <span>Size: {item.selectedSize}</span>}
                           <span>Qty: {item.quantity}</span>
                         </div>
                       </div>

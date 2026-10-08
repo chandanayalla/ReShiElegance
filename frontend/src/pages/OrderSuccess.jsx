@@ -108,6 +108,7 @@ const OrderSuccess = () => {
                       {image ? <img src={image} alt="" className="item-image" /> : <div className="item-image item-image-placeholder"><i className="bi bi-bag-heart" /></div>}
                       <div className="item-copy">
                         <strong>{item.name || item.title || 'Product'}</strong>
+                        {item.selectedSize && <span>Size: {item.selectedSize}</span>}
                         <span>Quantity × {quantity}</span>
                       </div>
                       <span className="item-total">{formatCurrency(Number(item.price || item.amount || 0) * quantity)}</span>

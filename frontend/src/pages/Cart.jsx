@@ -55,7 +55,7 @@ const Cart = () => {
             <div className="col-lg-8 mb-4">
               <div className="cart-items-section">
                 {cartItems.map(item => (
-                  <div key={item.id} className="cart-item">
+                  <div key={`${item.id}-${item.selectedSize || 'standard'}`} className="cart-item">
                     <div className="item-image">
                       <img
                         src={item.images?.[0] || item.image || fallbackImage}
@@ -69,21 +69,22 @@ const Cart = () => {
                     <div className="item-details">
                       <h5>{item.name}</h5>
                       <p className="category">{item.category}</p>
+                      {item.selectedSize && <p className="category">Size: {item.selectedSize}</p>}
                       <p className="price">₹{Number(item.price || 0).toLocaleString()}</p>
                     </div>
 
                     <div className="item-quantity">
-                      <button onClick={() => updateQuantity(item.id, item.quantity - 1)}>
+                      <button onClick={() => updateQuantity(item.id, item.quantity - 1, item.selectedSize)}>
                         <i className="bi bi-dash"></i>
                       </button>
                       <input
                         type="number"
                         value={item.quantity}
                         onChange={(e) =>
-                          updateQuantity(item.id, parseInt(e.target.value) || 1)
+                          updateQuantity(item.id, parseInt(e.target.value) || 1, item.selectedSize)
                         }
                       />
-                      <button onClick={() => updateQuantity(item.id, item.quantity + 1)}>
+                      <button onClick={() => updateQuantity(item.id, item.quantity + 1, item.selectedSize)}>
                         <i className="bi bi-plus"></i>
                       </button>
                     </div>
@@ -94,7 +95,7 @@ const Cart = () => {
 
                     <button
                       className="btn-remove"
-                      onClick={() => removeFromCart(item.id)}
+                      onClick={() => removeFromCart(item.id, item.selectedSize)}
                       title="Remove"
                     >
                       <i className="bi bi-trash"></i>

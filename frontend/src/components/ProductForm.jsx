@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 const categoryOptions = ['Sarees', 'Silk Sarees', 'Cotton Sarees', 'Designer Sarees', 'Party Wear Sarees', 'Kurtis', 'Dress Materials', 'Blouses', 'earrings', 'necklaces', 'sets', 'bangles', 'black-beads', 'thali-chains', 'rings', 'bridal', 'New Arrivals', 'Best Sellers'];
+const bangleSizes = ['2.2', '2.4', '2.6', '2.8'];
 
 const ProductForm = ({ initialValues = null, onSubmit, loading = false }) => {
   const [values, setValues] = useState({
@@ -16,6 +17,7 @@ const ProductForm = ({ initialValues = null, onSubmit, loading = false }) => {
     work: '',
     occasion: '',
     colors: '',
+    availableSizes: [],
     isNewArrival: false,
     isBestSeller: false,
     imageItems: [],
@@ -37,6 +39,7 @@ const ProductForm = ({ initialValues = null, onSubmit, loading = false }) => {
         work: initialValues.work || '',
         occasion: initialValues.occasion || '',
         colors: (initialValues.colors || []).join(', '),
+        availableSizes: (initialValues.availableSizes || []).map(String).filter((size) => bangleSizes.includes(size)),
         isNewArrival: Boolean(initialValues.isNewArrival),
         isBestSeller: Boolean(initialValues.isBestSeller),
         imageItems: (initialValues.images || []).map((url) => ({ kind: 'existing', value: url })),
@@ -46,7 +49,23 @@ const ProductForm = ({ initialValues = null, onSubmit, loading = false }) => {
 
   const handleChange = (event) => {
     const { name, value, type, checked } = event.target;
-    setValues((prev) => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
+    setValues((prev) => {
+      const next = { ...prev, [name]: type === 'checkbox' ? checked : value };
+      if (name === 'productType' && value !== 'jewellery') next.availableSizes = [];
+      if (name === 'category' && value.toLowerCase() !== 'bangles') next.availableSizes = [];
+      return next;
+    });
+  };
+
+  const isBangle = values.productType === 'jewellery' && values.category.toLowerCase() === 'bangles';
+
+  const toggleBangleSize = (size) => {
+    setValues((prev) => ({
+      ...prev,
+      availableSizes: prev.availableSizes.includes(size)
+        ? prev.availableSizes.filter((item) => item !== size)
+        : [...prev.availableSizes, size],
+    }));
   };
 
   const handleImageChange = (event) => {
@@ -114,6 +133,7 @@ const ProductForm = ({ initialValues = null, onSubmit, loading = false }) => {
     formData.append('work', values.work);
     formData.append('occasion', values.occasion);
     formData.append('colors', values.colors);
+    formData.append('availableSizes', JSON.stringify(isBangle ? values.availableSizes : []));
     formData.append('isNewArrival', String(values.isNewArrival));
     formData.append('isBestSeller', String(values.isBestSeller));
     const existingImages = values.imageItems.filter((item) => item.kind === 'existing').map((item) => item.value);
@@ -160,7 +180,7 @@ const ProductForm = ({ initialValues = null, onSubmit, loading = false }) => {
         </div>
 
         <div className="col-12 col-md-6">
-          <label className="form-label">Category</label>
+          <label className="form-label">{values.productType === 'jewellery' ? 'Jewellery Type' : 'Category'}</label>
           <select name="category" className="form-select rounded-4" value={values.category} onChange={handleChange}>
             {categoryOptions.map((option) => (
               <option key={option} value={option}>
@@ -229,6 +249,26 @@ const ProductForm = ({ initialValues = null, onSubmit, loading = false }) => {
           <label className="form-label">Colors</label>
           <input name="colors" className="form-control rounded-4" value={values.colors} onChange={handleChange} placeholder="Red, Gold" />
         </div>
+
+        {isBangle && (
+          <fieldset className="col-12">
+            <legend className="form-label fs-6">Available Sizes</legend>
+            <div className="d-flex flex-wrap gap-4">
+              {bangleSizes.map((size) => (
+                <label className="form-check" key={size}>
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    checked={values.availableSizes.includes(size)}
+                    onChange={() => toggleBangleSize(size)}
+                  />
+                  <span className="form-check-label">{size}</span>
+                </label>
+              ))}
+            </div>
+            {!values.availableSizes.length && <small className="text-danger">Select at least one size.</small>}
+          </fieldset>
+        )}
 
         <div className="col-12 col-md-6 d-flex align-items-end gap-4">
           <label className="form-check">

@@ -27,6 +27,7 @@ const ProductDetails = () => {
   const [error, setError] = useState('');
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [isImageOpen, setIsImageOpen] = useState(false);
+  const [selectedSize, setSelectedSize] = useState('');
   const touchStartX = useRef(0);
 
   const { addToCart, buyNow, syncError: cartSyncError } = useContext(CartContext);
@@ -52,6 +53,7 @@ const ProductDetails = () => {
         const productData = response.data?.product || response.data?.data || response.data || findProductByIdentifier(catalogProducts, id);
         if (!productData) throw new Error('Product not found');
         setProduct(productData);
+        setSelectedSize('');
         setMainImage(productData.images?.[0] || productData.image || '');
       } catch (err) {
         try {
@@ -62,6 +64,7 @@ const ProductDetails = () => {
           const productData = liveProduct || catalogProduct;
           if (!productData) throw new Error('Product not found');
           setProduct(productData);
+          setSelectedSize('');
           setMainImage(productData.images?.[0] || productData.image || '');
         } catch (fallbackError) {
           setError('Product not found.');
@@ -118,12 +121,20 @@ const ProductDetails = () => {
     );
   }
 
+  const isBangle = product.productType === 'jewellery' && String(product.category || '').toLowerCase() === 'bangles';
+  const availableBangleSizes = (product.availableSizes || []).map(String);
+
   const handleAddToCart = () => {
     if (!isAuthenticated) {
       setLoginPrompt('Please login to add products to your cart.');
       return;
     }
-    addToCart(product, quantity);
+    if (isBangle && !availableBangleSizes.includes(selectedSize)) {
+      setNotificationMessage('Please select a bangle size.');
+      setShowNotification(true);
+      return;
+    }
+    addToCart({ ...product, selectedSize: isBangle ? selectedSize : undefined }, quantity);
     setShowNotification(true);
     setTimeout(() => setShowNotification(false), 3000);
   };
@@ -140,12 +151,30 @@ const ProductDetails = () => {
       setLoginPrompt('Please login to add products to your cart.');
       return;
     }
-    buyNow(product, quantity);
+    if (isBangle && !availableBangleSizes.includes(selectedSize)) {
+      setNotificationMessage('Please select a bangle size.');
+      setShowNotification(true);
+      return;
+    }
+    buyNow({ ...product, selectedSize: isBangle ? selectedSize : undefined }, quantity);
     navigate('/checkout');
   };
   const inWishlist = isInWishlist(product.id);
   const images = product.images?.length ? product.images : [product.image].filter(Boolean);
   const colors = product.colors || [];
+  const jewelleryCategories = ['earrings', 'necklaces', 'sets', 'bangles', 'black-beads', 'thali-chains', 'rings', 'bridal'];
+  const isJewellery = String(product.productType || '').toLowerCase() === 'jewellery'
+    || jewelleryCategories.includes(String(product.category || '').toLowerCase());
+  const jewelleryDetails = [
+    { label: 'Product Code', value: product.searchId },
+    { label: 'Material / Metal', value: product.material || product.metal || product.fabric },
+    { label: 'Colour', value: colors.length ? colors.join(', ') : '' },
+    { label: 'Jewellery Type', value: product.jewelleryType || product.category },
+    { label: 'Size / Length', value: product.size || product.length },
+    { label: 'Occasion', value: product.occasion },
+    { label: 'Care Instructions', value: product.careInstructions || product.care },
+    { label: 'Availability', value: product.stock > 0 ? `${product.stock} in stock` : 'Out of stock' },
+  ].filter((detail) => detail.value);
 
   return (
     <>
@@ -259,25 +288,56 @@ const ProductDetails = () => {
                 {/* Description */}
                 <p className="description mb-4">{product.description}</p>
 
+                {isBangle && (
+                  <fieldset className="bangle-size-selector mb-4">
+                    <legend>Select Size</legend>
+                    <div className="bangle-size-options">
+                      {availableBangleSizes.map((size) => (
+                        <label className={`bangle-size-option ${selectedSize === size ? 'active' : ''}`} key={size}>
+                          <input
+                            type="radio"
+                            name="bangle-size"
+                            value={size}
+                            checked={selectedSize === size}
+                            onChange={(event) => setSelectedSize(event.target.value)}
+                          />
+                          <span>{size}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </fieldset>
+                )}
+
                 {/* Product Details */}
-                <div className="details-grid mb-4">
-                  <div className="detail-item">
-                    <span className="label">Fabric:</span>
-                    <span className="value">{product.fabric}</span>
+                {isJewellery ? (
+                  <div className="details-grid mb-4">
+                    {jewelleryDetails.map((detail) => (
+                      <div className="detail-item" key={detail.label}>
+                        <span className="label">{detail.label}:</span>
+                        <span className="value">{detail.value}</span>
+                      </div>
+                    ))}
                   </div>
-                  <div className="detail-item">
-                    <span className="label">Work:</span>
-                    <span className="value">{product.work}</span>
+                ) : (
+                  <div className="details-grid mb-4">
+                    <div className="detail-item">
+                      <span className="label">Fabric:</span>
+                      <span className="value">{product.fabric}</span>
+                    </div>
+                    <div className="detail-item">
+                      <span className="label">Work:</span>
+                      <span className="value">{product.work}</span>
+                    </div>
+                    <div className="detail-item">
+                      <span className="label">Occasion:</span>
+                      <span className="value">{product.occasion}</span>
+                    </div>
+                    <div className="detail-item">
+                      <span className="label">Available Colors:</span>
+                      <span className="value">{colors.length ? colors.join(', ') : 'As shown'}</span>
+                    </div>
                   </div>
-                  <div className="detail-item">
-                    <span className="label">Occasion:</span>
-                    <span className="value">{product.occasion}</span>
-                  </div>
-                  <div className="detail-item">
-                    <span className="label">Available Colors:</span>
-                    <span className="value">{colors.length ? colors.join(', ') : 'As shown'}</span>
-                  </div>
-                </div>
+                )}
 
                 {/* Quantity and Actions */}
                 <div className="actions-section mb-4">
@@ -384,54 +444,90 @@ const ProductDetails = () => {
                   {activeTab === 'description' && (
                     <div className="tab-pane">
                       <p>{product.description}</p>
-                      <h5>Why Choose This Saree?</h5>
-                      <ul>
-                        <li>Premium {product.fabric} fabric</li>
-                        <li>Exquisite {product.work}</li>
-                        <li>Perfect for {product.occasion} occasions</li>
-                        <li>Beautiful color options: {colors.length ? colors.join(', ') : 'as shown'}</li>
-                      </ul>
+                      {isJewellery ? (
+                        <>
+                          <h5>Why You'll Love This Jewellery</h5>
+                          <ul>
+                            <li>Elegant and stylish design</li>
+                            <li>Premium-looking finish</li>
+                            <li>Perfect for festive and special occasions</li>
+                            <li>Easy to pair with traditional and modern outfits</li>
+                            <li>Beautiful detailing and comfortable wear</li>
+                          </ul>
+                        </>
+                      ) : (
+                        <>
+                          <h5>Why Choose This Saree?</h5>
+                          <ul>
+                            <li>Premium {product.fabric} fabric</li>
+                            <li>Exquisite {product.work}</li>
+                            <li>Perfect for {product.occasion} occasions</li>
+                            <li>Beautiful color options: {colors.length ? colors.join(', ') : 'as shown'}</li>
+                          </ul>
+                        </>
+                      )}
                     </div>
                   )}
                   {activeTab === 'details' && (
                     <div className="tab-pane">
-                      <table className="details-table">
-                        <tbody>
-                          <tr>
-                            <td>Fabric</td>
-                            <td>{product.fabric}</td>
-                          </tr>
-                          <tr>
-                            <td>Work</td>
-                            <td>{product.work}</td>
-                          </tr>
-                          <tr>
-                            <td>Occasion</td>
-                            <td>{product.occasion}</td>
-                          </tr>
-                          <tr>
-                            <td>Available Colors</td>
-                            <td>{colors.length ? colors.join(', ') : 'As shown'}</td>
-                          </tr>
-                          <tr>
-                            <td>Length</td>
-                            <td>5.5 meters</td>
-                          </tr>
-                          <tr>
-                            <td>Blouse Piece</td>
-                            <td>0.8 meters</td>
-                          </tr>
-                        </tbody>
-                      </table>
+                      {isJewellery ? (
+                        <table className="details-table">
+                          <tbody>
+                            {jewelleryDetails.map((detail) => (
+                              <tr key={detail.label}>
+                                <td>{detail.label}</td>
+                                <td>{detail.value}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      ) : (
+                        <table className="details-table">
+                          <tbody>
+                            <tr>
+                              <td>Fabric</td>
+                              <td>{product.fabric}</td>
+                            </tr>
+                            <tr>
+                              <td>Work</td>
+                              <td>{product.work}</td>
+                            </tr>
+                            <tr>
+                              <td>Occasion</td>
+                              <td>{product.occasion}</td>
+                            </tr>
+                            <tr>
+                              <td>Available Colors</td>
+                              <td>{colors.length ? colors.join(', ') : 'As shown'}</td>
+                            </tr>
+                            <tr>
+                              <td>Length</td>
+                              <td>5.5 meters</td>
+                            </tr>
+                            <tr>
+                              <td>Blouse Piece</td>
+                              <td>0.8 meters</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      )}
                     </div>
                   )}
                   {activeTab === 'reviews' && (
                     <div className="tab-pane">
-                      <div className="reviews-container">
-                        <p>Great saree! Excellent quality and fast delivery.</p>
-                        <p>Highly recommended for special occasions.</p>
-                        <p>Beautiful colors and intricate work. Worth the price!</p>
-                      </div>
+                      {isJewellery ? (
+                        <div className="reviews-container">
+                          <p>Beautiful detailing, comfortable to wear, and perfect for special occasions.</p>
+                          <p>Lovely finish and easy to pair with both traditional and modern outfits.</p>
+                          <p>Elegant quality and fast delivery. Worth the price!</p>
+                        </div>
+                      ) : (
+                        <div className="reviews-container">
+                          <p>Great saree! Excellent quality and fast delivery.</p>
+                          <p>Highly recommended for special occasions.</p>
+                          <p>Beautiful colors and intricate work. Worth the price!</p>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>

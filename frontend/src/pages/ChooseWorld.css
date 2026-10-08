@@ -25,6 +25,7 @@
   height: 6.5%;
   cursor: pointer;
   outline: none;
+  border-radius: 0.35rem;
 }
 
 .clothing-hotspot {
@@ -40,4 +41,8 @@
 .choose-world-hotspot:focus-visible {
   outline: 3px solid #b72c59;
   outline-offset: 3px;
+}
+
+.choose-world-hotspot:hover {
+  box-shadow: 0 0 0 3px rgba(183, 44, 89, 0.28);
 }

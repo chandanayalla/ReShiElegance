@@ -6,7 +6,7 @@ const statusOptions = ['Confirmed', 'Processing', 'Shipped', 'Out for Delivery',
 
 const getProductNames = (products) => {
   if (!Array.isArray(products)) return '';
-  return products.map((item) => `${item?.name || 'Product'} x${item?.quantity || item?.qty || 1}`).join(', ');
+  return products.map((item) => `${item?.name || 'Product'}${item?.selectedSize ? ` (Size ${item.selectedSize})` : ''} x${item?.quantity || item?.qty || 1}`).join(', ');
 };
 
 const formatAddress = (address) => {

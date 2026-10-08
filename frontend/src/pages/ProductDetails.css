@@ -201,6 +201,54 @@
   line-height: 1.7;
 }
 
+.bangle-size-selector {
+  border: 0;
+  padding: 0;
+}
+
+.bangle-size-selector legend {
+  float: none;
+  width: auto;
+  margin-bottom: 0.75rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.bangle-size-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.bangle-size-option {
+  cursor: pointer;
+}
+
+.bangle-size-option input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.bangle-size-option span {
+  display: block;
+  min-width: 3.5rem;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-color);
+  text-align: center;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.bangle-size-option:hover span,
+.bangle-size-option.active span {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+  color: #fff;
+}
+
 /* Details Grid */
 .details-grid {
   display: grid;

@@ -9,13 +9,20 @@ const upload = multer({
   limits: { files: 6, fileSize: 5 * 1024 * 1024 },
 });
 
-let products = seedProducts.map((product) => ({
-  ...product,
-  id: String(product.id),
-  searchId: product.searchId || `RE-${product.productType === 'jewellery' ? 'JW' : 'CL'}-${String(product.id).slice(-3).padStart(3, '0')}`,
-  createdAt: product.createdAt || new Date().toISOString(),
-  updatedAt: product.updatedAt || new Date().toISOString(),
-}));
+const fallbackSequences = { clothing: 0, jewellery: 0 };
+let products = seedProducts.map((product) => {
+  const productType = product.productType === 'jewellery' ? 'jewellery' : 'clothing';
+  fallbackSequences[productType] += 1;
+  const prefix = productType === 'jewellery' ? 'JW' : 'CL';
+
+  return {
+    ...product,
+    id: String(product.id),
+    searchId: product.searchId || `${prefix} ${String(fallbackSequences[productType]).padStart(3, '0')}`,
+    createdAt: product.createdAt || new Date().toISOString(),
+    updatedAt: product.updatedAt || new Date().toISOString(),
+  };
+});
 
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -23,6 +30,8 @@ const productsTable = process.env.SUPABASE_PRODUCTS_TABLE || 'products';
 const storageBucket = process.env.SUPABASE_STORAGE_BUCKET || 'products';
 const seedFallbackEnabled = process.env.SEED_FALLBACK_ENABLED !== 'false';
 const fallbackProductImage = 'https://images.unsplash.com/photo-1596752831369-5900ec1be783?auto=format&fit=crop&w=900&q=80';
+const bangleSizes = ['2.2', '2.4', '2.6', '2.8'];
+const isBangle = (productType, category) => productType === 'jewellery' && String(category || '').toLowerCase() === 'bangles';
 
 const hasRealSupabaseConfig = Boolean(
   supabaseUrl
@@ -50,7 +59,7 @@ const hasSupabase = () => Boolean(supabase);
 
 const publicProductFields = `
   id,search_id,name,slug,product_type,category,price,original_price,discount,description,fabric,work,
-  occasion,colors,stock,status,rating,reviews_count,images,is_new_arrival,
+  occasion,colors,available_sizes,stock,status,rating,reviews_count,images,is_new_arrival,
   is_best_seller,created_at
 `;
 
@@ -77,6 +86,9 @@ const toCamelProduct = (product) => {
     work: product.work || '',
     occasion: product.occasion || '',
     colors: Array.isArray(product.colors) ? product.colors : [],
+    availableSizes: Array.isArray(product.available_sizes ?? product.availableSizes)
+      ? (product.available_sizes ?? product.availableSizes).map(String).filter((size) => bangleSizes.includes(size))
+      : [],
     stock,
     status: product.status || (stock > 0 ? 'In Stock' : 'Out of Stock'),
     rating: Number(product.rating || 4.6),
@@ -104,6 +116,7 @@ const toDbProduct = (product) => ({
   work: product.work,
   occasion: product.occasion,
   colors: product.colors,
+  available_sizes: product.availableSizes,
   stock: product.stock,
   status: product.status,
   rating: product.rating,
@@ -129,6 +142,8 @@ const readArray = (value) => {
     return String(value).split(',').map((item) => item.trim()).filter(Boolean);
   }
 };
+
+const readBangleSizes = (value) => [...new Set(readArray(value).map(String).filter((size) => bangleSizes.includes(size)))];
 
 const uploadImage = async (file) => {
   if (!file) return '';
@@ -156,12 +171,12 @@ const uploadImage = async (file) => {
 };
 
 const getNextFallbackSearchId = (productType) => {
-  const prefix = productType === 'jewellery' ? 'RE-JW-' : 'RE-CL-';
+  const prefix = productType === 'jewellery' ? 'JW' : 'CL';
   const highest = products.reduce((current, product) => {
-    const match = String(product.searchId || '').match(new RegExp(`^${prefix}(\\d+)$`, 'i'));
+    const match = String(product.searchId || '').match(new RegExp(`^${prefix} (\\d+)$`, 'i'));
     return match ? Math.max(current, Number(match[1])) : current;
   }, 0);
-  return `${prefix}${String(highest + 1).padStart(3, '0')}`;
+  return `${prefix} ${String(highest + 1).padStart(3, '0')}`;
 };
 
 const allocateSearchId = async (productType) => {
@@ -172,14 +187,17 @@ const allocateSearchId = async (productType) => {
     if (error) throw error;
     return data;
   } catch (error) {
-    const prefix = productType === 'jewellery' ? 'RE-JW-' : 'RE-CL-';
+    const prefix = productType === 'jewellery' ? 'JW' : 'CL';
     const { data, error: queryError } = await supabase
       .from(productsTable)
       .select('search_id')
-      .like('search_id', `${prefix}%`);
+      .like('search_id', `${prefix} %`);
     if (queryError) throw queryError;
-    const highest = (data || []).reduce((current, item) => Math.max(current, Number(String(item.search_id || '').slice(prefix.length)) || 0), 0);
-    return `${prefix}${String(highest + 1).padStart(3, '0')}`;
+    const highest = (data || []).reduce((current, item) => {
+      const match = String(item.search_id || '').match(new RegExp(`^${prefix} (\\d+)$`, 'i'));
+      return match ? Math.max(current, Number(match[1])) : current;
+    }, 0);
+    return `${prefix} ${String(highest + 1).padStart(3, '0')}`;
   }
 };
 
@@ -197,6 +215,15 @@ const buildProduct = async (payload, files = [], existing = null) => {
   const originalPrice = Number(payload.originalPrice || payload.original_price || price);
   const stock = Number(payload.stock || 0);
   const productId = existing?.id || crypto.randomUUID();
+  const productType = payload.productType || existing?.productType || 'clothing';
+  const category = payload.category || existing?.category || 'Sarees';
+  const availableSizes = isBangle(productType, category) ? readBangleSizes(payload.availableSizes) : [];
+
+  if (isBangle(productType, category) && !availableSizes.length) {
+    const error = new Error('Select at least one available bangle size.');
+    error.statusCode = 400;
+    throw error;
+  }
 
   return {
     id: productId,
@@ -204,8 +231,8 @@ const buildProduct = async (payload, files = [], existing = null) => {
     searchId: existing?.searchId || await allocateSearchId(payload.productType || existing?.productType || 'clothing'),
     name: payload.name?.trim() || existing?.name || 'Untitled product',
     slug: payload.slug?.trim() || slugify(payload.name || existing?.name || 'product'),
-    category: payload.category || existing?.category || 'Sarees',
-    productType: payload.productType || existing?.productType || 'clothing',
+    category,
+    productType,
     price,
     originalPrice,
     discount: originalPrice > price ? Math.round(((originalPrice - price) / originalPrice) * 100) : Number(payload.discount || 0),
@@ -214,6 +241,7 @@ const buildProduct = async (payload, files = [], existing = null) => {
     work: payload.work?.trim() || existing?.work || '',
     occasion: payload.occasion?.trim() || existing?.occasion || '',
     colors: readArray(payload.colors),
+    availableSizes,
     stock,
     status: stock > 0 ? 'In Stock' : 'Out of Stock',
     rating: Number(payload.rating || existing?.rating || 4.6),
@@ -270,13 +298,13 @@ const getProducts = async () => {
   }
 };
 
-const getProduct = async (id) => {
+export const getProduct = async (id) => {
   if (!hasSupabase()) {
     return products.find((product) => String(product.id) === String(id) || String(product._id) === String(id) || String(product.searchId).toLowerCase() === String(id).toLowerCase()) || null;
   }
 
   try {
-    const isSearchId = /^RE-(CL|JW)-\d+$/i.test(String(id));
+    const isSearchId = /^(?:CL|JW) \d+$|^RE-(?:CL|JW)-\d+$/i.test(String(id));
     const { data, error } = await supabase
       .from(productsTable)
       .select(publicProductFields)
@@ -368,7 +396,7 @@ router.post('/add', upload.array('images', 8), async (req, res) => {
     return res.status(201).json(product);
   } catch (error) {
     console.error('Product create error:', error);
-    return res.status(500).json({ message: 'Unable to save product.' });
+    return res.status(error.statusCode || 500).json({ message: error.statusCode ? error.message : 'Unable to save product.' });
   }
 });
 
@@ -414,7 +442,7 @@ router.put('/:id', upload.array('images', 8), async (req, res) => {
     return res.json(product);
   } catch (error) {
     console.error('Product update error:', error);
-    return res.status(500).json({ message: 'Unable to update product.' });
+    return res.status(error.statusCode || 500).json({ message: error.statusCode ? error.message : 'Unable to update product.' });
   }
 });
 

@@ -20,15 +20,19 @@ export const readStoredItems = (key) => {
 
 export const sameProductId = (left, right) => String(left) === String(right);
 
+export const sameCartItem = (left, right) => sameProductId(left?.id ?? left, right?.id ?? right)
+  && String(left?.selectedSize || '') === String(right?.selectedSize || '');
+
 export const mergeCartItems = (localItems, remoteItems) => {
   const merged = new Map();
 
   remoteItems.forEach((item) => {
-    merged.set(String(item.id), { ...item, quantity: Number(item.quantity) || 0 });
+    const key = `${item.id}::${item.selectedSize || ''}`;
+    merged.set(key, { ...item, quantity: Number(item.quantity) || 0 });
   });
 
   localItems.forEach((item) => {
-    const key = String(item.id);
+    const key = `${item.id}::${item.selectedSize || ''}`;
     const existing = merged.get(key);
     merged.set(key, {
       ...(existing || {}),
@@ -70,6 +74,6 @@ export const resolveStoredProducts = async (items, supabase) => {
   return items.map((item) => {
     const match = products.find((product) => [product.id, product.searchId, product.name]
       .some((value) => String(value || '') === String(item.id) || String(value || '') === String(item.name || '')));
-    return match ? { ...match, quantity: item.quantity } : item;
+    return match ? { ...match, selectedSize: item.selectedSize, quantity: item.quantity } : item;
   });
 };

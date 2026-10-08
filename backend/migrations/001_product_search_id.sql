@@ -9,15 +9,15 @@ returns text
 language plpgsql
 as $$
 declare
-  prefix text := case when p_product_type = 'jewellery' then 'RE-JW-' else 'RE-CL-' end;
+  prefix text := case when p_product_type = 'jewellery' then 'JW' else 'CL' end;
   next_number integer;
 begin
   perform pg_advisory_xact_lock(hashtext(prefix));
-  select coalesce(max(substring(search_id from 7)::integer), 0) + 1
+  select coalesce(max(substring(search_id from 4)::integer), 0) + 1
     into next_number
     from public.products
-   where search_id like prefix || '%';
-  return prefix || lpad(next_number::text, 3, '0');
+   where search_id ~ ('^' || prefix || ' [0-9]+$');
+  return prefix || ' ' || lpad(next_number::text, 3, '0');
 end;
 $$;
 
@@ -26,11 +26,17 @@ declare
   product_row record;
 begin
   for product_row in
-    select id, product_type
+    select id, product_type, search_id
     from public.products
     where search_id is null
+       or search_id !~ '^(CL|JW) [0-9]+$'
     order by created_at, id
   loop
+    if product_row.search_id is not null then
+      update public.products
+      set search_id = null
+      where id = product_row.id;
+    end if;
     update public.products
     set search_id = public.allocate_product_search_id(product_row.product_type)
     where id = product_row.id;

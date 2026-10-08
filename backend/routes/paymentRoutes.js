@@ -137,7 +137,7 @@ router.post('/razorpay/verify', async (req, res) => {
     return res.json({ verified: true, order: savedOrder });
   } catch (error) {
     console.error('Verified order save error:', error);
-    return res.status(500).json({ message: 'Payment verified, but order could not be saved.' });
+    return res.status(error.statusCode || 500).json({ message: error.statusCode ? error.message : 'Payment verified, but order could not be saved.' });
   }
 });
 

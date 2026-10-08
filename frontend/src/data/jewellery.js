@@ -108,6 +108,7 @@ export const jewelleryProducts = [
     work: 'Textured finish',
     occasion: 'Everyday',
     colors: ['Gold'],
+    availableSizes: ['2.2', '2.4', '2.6', '2.8'],
     stock: 20,
     rating: 4.5,
     reviewsCount: 8,

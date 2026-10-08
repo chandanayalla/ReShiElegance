@@ -28,7 +28,25 @@ create table if not exists public.products (
 
 alter table public.products add column if not exists product_type text not null default 'clothing';
 alter table public.products add column if not exists search_id text;
+alter table public.products add column if not exists available_sizes text[] not null default '{}';
 create unique index if not exists products_search_id_unique_idx on public.products(search_id) where search_id is not null;
+
+create or replace function public.allocate_product_search_id(p_product_type text)
+returns text
+language plpgsql
+as $$
+declare
+  prefix text := case when p_product_type = 'jewellery' then 'JW' else 'CL' end;
+  next_number integer;
+begin
+  perform pg_advisory_xact_lock(hashtext(prefix));
+  select coalesce(max(substring(search_id from 4)::integer), 0) + 1
+    into next_number
+    from public.products
+   where search_id ~ ('^' || prefix || ' [0-9]+$');
+  return prefix || ' ' || lpad(next_number::text, 3, '0');
+end;
+$$;
 
 create table if not exists public.orders (
   id uuid primary key default gen_random_uuid(),
