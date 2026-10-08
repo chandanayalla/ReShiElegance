@@ -21,8 +21,8 @@
 
 .choose-world-hotspot {
   position: absolute;
-  top: 61%;
-  height: 10%;
+  top: 70%;
+  height: 11%;
   cursor: pointer;
   outline: none;
   border-radius: 0.35rem;
@@ -30,12 +30,12 @@
 
 .clothing-hotspot {
   left: 4%;
-  width: 21%;
+  width: 19%;
 }
 
 .jewellery-hotspot {
   left: 53.5%;
-  width: 22%;
+  width: 18%;
 }
 
 .choose-world-hotspot:focus-visible {

@@ -10,9 +10,9 @@
 .home-category-image-section { width: 100%; padding: clamp(1rem, 3vw, 2.5rem) 0; background: var(--ivory); }
 .home-category-artwork { position: relative; width: 100%; line-height: 0; }
 .home-category-artwork img { display: block; width: 100%; height: auto; }
-.home-category-hotspot { position: absolute; top: 61%; height: 10%; cursor: pointer; outline: none; }
-.home-category-clothing { left: 4%; width: 21%; }
-.home-category-jewellery { left: 53.5%; width: 22%; }
+.home-category-hotspot { position: absolute; top: 70%; height: 11%; cursor: pointer; outline: none; }
+.home-category-clothing { left: 4%; width: 19%; }
+.home-category-jewellery { left: 53.5%; width: 18%; }
 .home-category-hotspot:focus-visible { outline: 3px solid #b72c59; outline-offset: 3px; }
 .home-category-hotspot:hover { box-shadow: 0 0 0 3px rgba(183, 44, 89, 0.28); }
 .category-feature-card, .home-showcase-card { position: relative; min-height: 480px; overflow: hidden; color: #fff; }
