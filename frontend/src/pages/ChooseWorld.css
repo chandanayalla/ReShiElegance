@@ -21,21 +21,21 @@
 
 .choose-world-hotspot {
   position: absolute;
-  top: 64%;
-  height: 6.5%;
+  top: 61%;
+  height: 10%;
   cursor: pointer;
   outline: none;
   border-radius: 0.35rem;
 }
 
 .clothing-hotspot {
-  left: 4.5%;
-  width: 16%;
+  left: 4%;
+  width: 21%;
 }
 
 .jewellery-hotspot {
   left: 53.5%;
-  width: 16.5%;
+  width: 22%;
 }
 
 .choose-world-hotspot:focus-visible {

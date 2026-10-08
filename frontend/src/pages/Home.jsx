@@ -8,6 +8,7 @@ import { products } from '../data/products';
 import { jewelleryProducts } from '../data/jewellery';
 import clothingImage from '../assets/clothinghero.png';
 import jewelleryImage from '../assets/jewelleryhero.png';
+import categoryImage from '../assets/screen2.png';
 import './Home.css';
 
 const Home = () => {
@@ -31,11 +32,11 @@ const Home = () => {
           <span><i className="bi bi-box-seam"></i> Carefully packed</span>
           <span><i className="bi bi-heart"></i> Made for your moments</span>
         </section>
-        <section className="home-section home-categories">
-          <div className="home-section-heading"><p className="eyebrow">YOUR STYLE, YOUR STORY</p><h2>Shop by category</h2><p>Pieces with an effortless sense of occasion.</p></div>
-          <div className="category-feature-grid">
-            <Link to="/clothing" className="category-feature-card category-feature-card-large"><img src={clothingImage} alt="Saree collection" /><div><span>01 / CLOTHING</span><h3>The art of the drape</h3><b>Explore sarees <i className="bi bi-arrow-up-right"></i></b></div></Link>
-            <Link to="/jewellery" className="category-feature-card"><img src={jewelleryImage} alt="Jewellery collection" /><div><span>02 / JEWELLERY</span><h3>Details that glow</h3><b>Explore jewellery <i className="bi bi-arrow-up-right"></i></b></div></Link>
+        <section className="home-category-image-section" aria-label="Choose a collection">
+          <div className="home-category-artwork">
+            <img src={categoryImage} alt="Clothing and jewellery collections" />
+            <Link to="/clothing" className="home-category-hotspot home-category-clothing" aria-label="Explore clothing" />
+            <Link to="/jewellery" className="home-category-hotspot home-category-jewellery" aria-label="Explore jewellery" />
           </div>
         </section>
         <section className="home-section home-products-section">
